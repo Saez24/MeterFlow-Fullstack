@@ -1,0 +1,157 @@
+<div class="page-container">
+  <div class="page-header">
+    <button mat-icon-button (click)="goBack()" class="back-btn">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <div>
+      <h1 class="page-title">Ablesung erfassen</h1>
+      <p class="page-subtitle">Aktuellen Zählerstand eintragen</p>
+    </div>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="save()" class="reading-form">
+    <!-- Meter Selection -->
+    <div class="form-section">
+      <h3 class="section-title">Zähler wählen</h3>
+      <div class="meter-selector">
+        @for (meter of activeMeters(); track meter.id) {
+          <button
+            type="button"
+            class="meter-select-btn"
+            [class.meter-select-btn--active]="form.get('meterId')?.value === meter.id"
+            [style.--meter-color]="meter.color"
+            (click)="selectMeter(meter.id)"
+          >
+            <div class="meter-select-icon" [style.background]="meter.color + '22'">
+              <mat-icon [style.color]="meter.color">{{ meter.icon }}</mat-icon>
+            </div>
+            <div class="meter-select-info">
+              <span class="meter-select-name">{{ meter.name }}</span>
+              <span class="meter-select-type">{{ getMeta(meter.type).label }}</span>
+            </div>
+            @if (form.get('meterId')?.value === meter.id) {
+              <mat-icon class="selected-check">check_circle</mat-icon>
+            }
+          </button>
+        }
+      </div>
+    </div>
+
+    @if (selectedMeter(); as meter) {
+      <mat-divider class="section-divider"></mat-divider>
+
+      <!-- Reading Value -->
+      <div class="form-section">
+        <h3 class="section-title">Zählerstand</h3>
+
+        <div class="current-meter-info">
+          <div class="meter-badge-large" [style.background]="meter.color + '22'">
+            <mat-icon [style.color]="meter.color">{{ meter.icon }}</mat-icon>
+          </div>
+          <div>
+            <div class="current-meter-name">{{ meter.name }}</div>
+            @if (lastReading(); as lr) {
+              <div class="last-reading-info">
+                Letzter Stand: <strong>{{ lr.value | number: '1.0-3' }} {{ meter.unit }}</strong> am
+                {{ lr.date | date: 'dd.MM.yyyy' }}
+              </div>
+            } @else {
+              <div class="last-reading-info">Erste Ablesung für diesen Zähler</div>
+            }
+          </div>
+        </div>
+
+        <div class="form-row form-row--2">
+          <mat-form-field appearance="outline" class="form-field value-field">
+            <mat-label>Zählerstand</mat-label>
+            <input
+              matInput
+              type="number"
+              formControlName="value"
+              step="0.001"
+              [min]="minValue()"
+              placeholder="0.000"
+              class="reading-input"
+            />
+            <span matSuffix class="unit-suffix">{{ meter.unit }}</span>
+            <mat-error>{{ getValueError() }}</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Datum</mat-label>
+            <input matInput [matDatepicker]="datePicker" formControlName="date" />
+            <mat-datepicker-toggle matIconSuffix [for]="datePicker"></mat-datepicker-toggle>
+            <mat-datepicker #datePicker></mat-datepicker>
+          </mat-form-field>
+        </div>
+
+        <!-- Live Preview -->
+        @if (consumptionPreview(); as preview) {
+          <div class="consumption-preview">
+            <div class="preview-item">
+              <span class="preview-label">Verbrauch</span>
+              <span class="preview-value"
+                >{{ preview.consumption | number: '1.0-3' }} {{ meter.unit }}</span
+              >
+            </div>
+            @if (meter.type === 'gas') {
+              <div class="preview-item">
+                <span class="preview-label">Kilowattstunden</span>
+                <span class="preview-value highlight">{{ preview.kwh | number: '1.0-2' }} kWh</span>
+              </div>
+            }
+            <div class="preview-item">
+              <span class="preview-label">Kosten (ca.)</span>
+              <span class="preview-value cost">{{
+                preview.cost | currency: 'EUR' : 'symbol' : '1.2-2'
+              }}</span>
+            </div>
+          </div>
+        }
+
+        <!-- Gas info -->
+        @if (meter.type === 'gas') {
+          <div class="gas-info-box">
+            <mat-icon>info</mat-icon>
+            <span>
+              Brennwert: <strong>{{ meter.calorificValue }} kWh/m³</strong> · Z-Zahl:
+              <strong>{{ meter.zNumber }}</strong>
+            </span>
+          </div>
+        }
+      </div>
+
+      <mat-divider class="section-divider"></mat-divider>
+
+      <!-- Note -->
+      <div class="form-section">
+        <h3 class="section-title">Notiz (optional)</h3>
+        <mat-form-field appearance="outline" class="form-field form-field--full">
+          <mat-label>Anmerkung zur Ablesung</mat-label>
+          <textarea
+            matInput
+            formControlName="note"
+            rows="2"
+            placeholder="z.B. Zähler abgelesen nach Urlaub..."
+          ></textarea>
+          <mat-icon matSuffix>notes</mat-icon>
+        </mat-form-field>
+      </div>
+    }
+
+    <!-- Actions -->
+    <div class="form-actions">
+      <button type="button" mat-button (click)="goBack()">Abbrechen</button>
+      <button
+        type="submit"
+        mat-flat-button
+        color="primary"
+        [disabled]="form.invalid || !selectedMeter()"
+        class="save-btn"
+      >
+        <mat-icon>check</mat-icon>
+        Ablesung speichern
+      </button>
+    </div>
+  </form>
+</div>

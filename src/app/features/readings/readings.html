@@ -1,0 +1,101 @@
+<div class="page-container">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Ablesungen</h1>
+      <p class="page-subtitle">Alle erfassten Zählerstände</p>
+    </div>
+    <button mat-flat-button color="primary" routerLink="new" class="action-btn">
+      <mat-icon>add</mat-icon>
+      Ablesung erfassen
+    </button>
+  </div>
+
+  <!-- Filter -->
+  <div class="filter-bar">
+    <mat-form-field appearance="outline" class="filter-select">
+      <mat-label>Zähler filtern</mat-label>
+      <mat-select [(ngModel)]="filterMeterId">
+        <mat-option value="">Alle Zähler</mat-option>
+        @for (meter of meters(); track meter.id) {
+          <mat-option [value]="meter.id">{{ meter.name }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  @if (filteredReadings().length === 0) {
+    <div class="empty-state">
+      <mat-icon>history</mat-icon>
+      <h3>Keine Ablesungen gefunden</h3>
+      <p>Füge deine erste Ablesung hinzu.</p>
+      <button mat-flat-button color="primary" routerLink="new">Ablesung erfassen</button>
+    </div>
+  }
+
+  <div class="readings-table">
+    @for (reading of filteredReadings(); track reading.id) {
+      @if (getMeter(reading.meterId); as meter) {
+        <div class="reading-row">
+          <div class="reading-meter-col">
+            <div class="reading-icon" [style.background]="meter.color + '22'">
+              <mat-icon [style.color]="meter.color">{{ meter.icon }}</mat-icon>
+            </div>
+            <div class="reading-meter-info">
+              <span class="reading-meter-name">{{ meter.name }}</span>
+              <span class="reading-type">{{ getMeta(meter.type).label }}</span>
+            </div>
+          </div>
+
+          <div class="reading-date-col">
+            <span class="reading-date">{{ reading.date | date: 'dd.MM.yyyy' }}</span>
+            <span class="reading-weekday">{{ reading.date | date: 'EEEE' : '' : 'de' }}</span>
+          </div>
+
+          <div class="reading-value-col">
+            <span class="reading-val">{{ reading.value | number: '1.0-3' }}</span>
+            <span class="reading-unit">{{ meter.unit }}</span>
+          </div>
+
+          <div class="reading-consumption-col">
+            @if (reading.consumption && reading.consumption > 0) {
+              <span class="consumption-badge">
+                +{{ reading.consumption | number: '1.0-3' }} {{ meter.unit }}
+              </span>
+              @if (reading.kwh) {
+                <span class="kwh-badge">{{ reading.kwh | number: '1.0-1' }} kWh</span>
+              }
+            } @else if (reading.consumption === 0) {
+              <span class="no-consumption">Erste Ablesung</span>
+            }
+          </div>
+
+          <div class="reading-cost-col">
+            @if (reading.cost && reading.cost > 0) {
+              <span class="cost-value">{{
+                reading.cost | currency: 'EUR' : 'symbol' : '1.2-2'
+              }}</span>
+            }
+          </div>
+
+          @if (reading.note) {
+            <div class="reading-note-col">
+              <mat-icon class="note-icon">notes</mat-icon>
+              <span class="note-text">{{ reading.note }}</span>
+            </div>
+          }
+
+          <div class="reading-actions-col">
+            <button
+              mat-icon-button
+              (click)="deleteReading(reading.id)"
+              class="delete-btn"
+              title="Ablesung löschen"
+            >
+              <mat-icon>delete_outline</mat-icon>
+            </button>
+          </div>
+        </div>
+      }
+    }
+  </div>
+</div>

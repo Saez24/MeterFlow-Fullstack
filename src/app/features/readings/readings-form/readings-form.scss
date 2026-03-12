@@ -1,0 +1,253 @@
+.page-container {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 40px 24px;
+}
+
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.back-btn {
+  margin-top: 4px;
+}
+
+.page-title {
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  margin: 0 0 4px;
+}
+
+.page-subtitle {
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.reading-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-section {
+  padding: 24px 0;
+}
+
+.section-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 20px;
+}
+
+.section-divider {
+  opacity: 0.4;
+}
+
+.meter-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.meter-select-btn {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  border-radius: 14px;
+  border: 2px solid var(--color-border);
+  background: var(--color-surface);
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+  width: 100%;
+}
+
+.meter-select-btn:hover {
+  border-color: var(--meter-color, var(--color-primary));
+}
+
+.meter-select-btn--active {
+  border-color: var(--meter-color, var(--color-primary)) !important;
+  background: color-mix(
+    in srgb,
+    var(--meter-color, var(--color-primary)) 8%,
+    transparent
+  ) !important;
+}
+
+.meter-select-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.meter-select-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.meter-select-name {
+  font-weight: 600;
+}
+
+.meter-select-type {
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+}
+
+.selected-check {
+  color: var(--meter-color, var(--color-primary));
+}
+
+.current-meter-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: var(--color-bg);
+  border-radius: 14px;
+  margin-bottom: 20px;
+}
+
+.meter-badge-large {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.meter-badge-large mat-icon {
+  font-size: 28px;
+  width: 28px;
+  height: 28px;
+}
+
+.current-meter-name {
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 4px;
+}
+
+.last-reading-info {
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+}
+
+.form-row {
+  display: flex;
+  gap: 16px;
+}
+
+.form-row--2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+@media (max-width: 600px) {
+  .form-row--2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+.form-field {
+  flex: 1;
+}
+.form-field--full {
+  width: 100%;
+}
+
+.reading-input {
+  font-size: 1.5rem !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.02em !important;
+}
+
+.unit-suffix {
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+.consumption-preview {
+  display: flex;
+  gap: 0;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  margin-bottom: 12px;
+}
+
+.preview-item {
+  flex: 1;
+  padding: 16px;
+  background: var(--color-surface);
+  border-right: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.preview-item:last-child {
+  border-right: none;
+}
+
+.preview-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+.preview-value {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.preview-value.highlight {
+  color: #3b82f6;
+}
+.preview-value.cost {
+  color: var(--color-primary);
+}
+
+.gas-info-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: rgba(59, 130, 246, 0.08);
+  border-radius: 10px;
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  margin-top: 8px;
+}
+
+.gas-info-box mat-icon {
+  color: #3b82f6;
+  font-size: 18px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding-top: 24px;
+}
+
+.save-btn {
+  border-radius: 100px !important;
+  padding: 0 24px !important;
+  height: 44px;
+}

@@ -1,0 +1,211 @@
+.page-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 40px 24px;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.page-title {
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  margin: 0 0 4px;
+}
+
+.page-subtitle {
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.action-btn {
+  border-radius: 100px !important;
+  height: 44px;
+}
+
+.filter-bar {
+  margin-bottom: 20px;
+}
+
+.filter-select {
+  min-width: 240px;
+}
+
+.readings-table {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.reading-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  border-radius: 14px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  flex-wrap: wrap;
+  transition: all 0.2s;
+}
+
+.reading-row:hover {
+  border-color: var(--color-primary);
+  box-shadow: 0 2px 12px var(--color-shadow);
+}
+
+.reading-meter-col {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 2;
+  min-width: 180px;
+}
+
+.reading-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.reading-meter-name {
+  font-weight: 600;
+  font-size: 0.9rem;
+  display: block;
+}
+
+.reading-type {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+}
+
+.reading-date-col {
+  flex: 1;
+  min-width: 100px;
+}
+
+.reading-date {
+  font-weight: 500;
+  display: block;
+}
+
+.reading-weekday {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+}
+
+.reading-value-col {
+  flex: 1;
+  min-width: 100px;
+}
+
+.reading-val {
+  font-weight: 700;
+  font-size: 1.1rem;
+  display: block;
+}
+
+.reading-unit {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+}
+
+.reading-consumption-col {
+  flex: 1;
+  min-width: 120px;
+}
+
+.consumption-badge {
+  display: inline-block;
+  background: rgba(16, 185, 129, 0.12);
+  color: #10b981;
+  font-weight: 600;
+  font-size: 0.8rem;
+  padding: 3px 10px;
+  border-radius: 100px;
+  margin-bottom: 4px;
+}
+
+.kwh-badge {
+  display: block;
+  font-size: 0.75rem;
+  color: #3b82f6;
+  font-weight: 500;
+}
+
+.no-consumption {
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+  font-style: italic;
+}
+
+.reading-cost-col {
+  min-width: 80px;
+}
+
+.cost-value {
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.reading-note-col {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 2;
+}
+
+.note-icon {
+  font-size: 16px;
+  color: var(--color-text-secondary);
+}
+
+.note-text {
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+  font-style: italic;
+}
+
+.reading-actions-col {
+  display: flex;
+}
+
+.delete-btn {
+  color: var(--color-text-secondary);
+}
+
+.delete-btn:hover {
+  color: #ef4444;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 80px 24px;
+  color: var(--color-text-secondary);
+}
+
+.empty-state mat-icon {
+  font-size: 64px;
+  width: 64px;
+  height: 64px;
+  margin-bottom: 16px;
+  opacity: 0.3;
+}
+
+.empty-state h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin: 0 0 8px;
+}

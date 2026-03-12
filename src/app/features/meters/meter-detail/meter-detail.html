@@ -1,0 +1,202 @@
+<div class="page-container">
+  @if (meter(); as m) {
+    <div class="page-header">
+      <button mat-icon-button routerLink="/meters" class="back-btn">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div class="header-icon" [style.background]="m.color + '22'">
+        <mat-icon [style.color]="m.color">{{ m.icon }}</mat-icon>
+      </div>
+      <div class="header-info">
+        <h1 class="page-title">{{ m.name }}</h1>
+        <p class="page-subtitle">
+          {{ getMeta(m.type).label }} · {{ m.provider ?? 'Kein Anbieter' }}
+        </p>
+      </div>
+      <div class="header-actions">
+        <button
+          mat-stroked-button
+          [routerLink]="['/readings/new']"
+          [queryParams]="{ meterId: m.id }"
+        >
+          <mat-icon>add</mat-icon>
+          Ablesung
+        </button>
+        <button mat-icon-button [routerLink]="['edit']">
+          <mat-icon>edit</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-icon" [style.background]="m.color + '22'">
+          <mat-icon [style.color]="m.color">speed</mat-icon>
+        </div>
+        <div>
+          <div class="stat-label">Aktueller Stand</div>
+          <div class="stat-value">
+            @if (latestReading(); as lr) {
+              {{ lr.value | number: '1.0-3' }} {{ m.unit }}
+            } @else {
+              –
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon" style="background: rgba(16, 185, 129, 0.12)">
+          <mat-icon style="color: #10b981">trending_down</mat-icon>
+        </div>
+        <div>
+          <div class="stat-label">Letzter Verbrauch</div>
+          <div class="stat-value">
+            @if (lastConsumption() !== null) {
+              {{ lastConsumption() | number: '1.0-3' }} {{ m.unit }}
+            } @else {
+              –
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon" style="background: rgba(245, 158, 11, 0.12)">
+          <mat-icon style="color: #f59e0b">euro</mat-icon>
+        </div>
+        <div>
+          <div class="stat-label">Grundgebühr / Monat</div>
+          <div class="stat-value">{{ m.baseCharge | currency: 'EUR' : 'symbol' : '1.2-2' }}</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon" style="background: rgba(99, 102, 241, 0.12)">
+          <mat-icon style="color: #6366f1">receipt_long</mat-icon>
+        </div>
+        <div>
+          <div class="stat-label">Preis</div>
+          <div class="stat-value">
+            {{ m.pricePerUnit | currency: 'EUR' : 'symbol' : '1.4-4' }}/{{ m.unit }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    @if (m.type === 'gas') {
+      <div class="gas-params-box">
+        <mat-icon style="color: #3b82f6">local_fire_department</mat-icon>
+        <span
+          >Brennwert: <strong>{{ m.calorificValue }} kWh/m³</strong></span
+        >
+        <span class="sep">·</span>
+        <span
+          >Z-Zahl: <strong>{{ m.zNumber }}</strong></span
+        >
+        <span class="sep">·</span>
+        <span
+          >Umrechnungsfaktor:
+          <strong>{{ m.calorificValue! * m.zNumber! | number: '1.4-4' }}</strong></span
+        >
+      </div>
+    }
+
+    <!-- Readings History -->
+    <div class="readings-section">
+      <div class="section-header">
+        <h2>Ablesungshistorie</h2>
+        <span class="reading-count">{{ readings().length }} Ablesungen</span>
+      </div>
+
+      @if (readings().length === 0) {
+        <div class="empty-readings">
+          <mat-icon>add_chart</mat-icon>
+          <p>Noch keine Ablesungen. Fange jetzt an!</p>
+          <button
+            mat-flat-button
+            color="primary"
+            [routerLink]="['/readings/new']"
+            [queryParams]="{ meterId: m.id }"
+          >
+            Erste Ablesung
+          </button>
+        </div>
+      }
+
+      <div class="readings-list">
+        @for (reading of readings(); track reading.id; let i = $index) {
+          <div class="reading-entry" [class.reading-entry--first]="i === 0">
+            <div class="reading-timeline">
+              <div
+                class="timeline-dot"
+                [style.background]="i === 0 ? m.color : 'var(--color-border)'"
+              ></div>
+              @if (i < readings().length - 1) {
+                <div class="timeline-line"></div>
+              }
+            </div>
+
+            <div class="reading-card">
+              <div class="reading-card__header">
+                <div class="reading-date-label">
+                  {{ reading.date | date: 'dd. MMMM yyyy' : '' : 'de' }}
+                </div>
+                @if (i === 0) {
+                  <span class="latest-badge">Aktuell</span>
+                }
+                <button mat-icon-button (click)="deleteReading(reading.id)" class="delete-btn">
+                  <mat-icon>delete_outline</mat-icon>
+                </button>
+              </div>
+
+              <div class="reading-card__body">
+                <div class="reading-main-value">
+                  {{ reading.value | number: '1.0-3' }}
+                  <span class="reading-main-unit">{{ m.unit }}</span>
+                </div>
+
+                @if (reading.consumption !== undefined && reading.consumption > 0) {
+                  <div class="reading-details-row">
+                    <div class="detail-chip consumption-chip">
+                      <mat-icon>show_chart</mat-icon>
+                      +{{ reading.consumption | number: '1.0-3' }} {{ m.unit }}
+                    </div>
+                    @if (reading.kwh) {
+                      <div class="detail-chip kwh-chip">
+                        <mat-icon>bolt</mat-icon>
+                        {{ reading.kwh | number: '1.0-2' }} kWh
+                      </div>
+                    }
+                    @if (reading.cost) {
+                      <div class="detail-chip cost-chip">
+                        <mat-icon>euro</mat-icon>
+                        {{ reading.cost | currency: 'EUR' : 'symbol' : '1.2-2' }}
+                      </div>
+                    }
+                  </div>
+                } @else if (reading.consumption === 0) {
+                  <div class="first-reading-badge">Erste Ablesung</div>
+                }
+
+                @if (reading.note) {
+                  <div class="reading-note">
+                    <mat-icon>notes</mat-icon>
+                    {{ reading.note }}
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  } @else {
+    <div class="not-found">
+      <mat-icon>search_off</mat-icon>
+      <h3>Zähler nicht gefunden</h3>
+      <button mat-flat-button color="primary" routerLink="/meters">Zurück</button>
+    </div>
+  }
+</div>
