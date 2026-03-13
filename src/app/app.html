@@ -5,20 +5,21 @@
       @if (!sidebarCollapsed()) {
       <span class="logo-text">EnergieMon</span>
       }
+      <div>
+        @switch (supabaseService.connectionStatus()) {
+        @case ('connected') {
+        <span style="color: #10B981">●</span>
+        }
+        @case ('error') {
+        <span style="color: #EF4444">●</span>
+        }
+        @case ('checking') {
+        <span style="color: #F59E0B">●</span>
+        }
+        }
+      </div>
     </div>
-    <div>
-      @switch (supabaseService.connectionStatus()) {
-      @case ('connected') {
-      <span style="color: #10B981">● Verbunden</span>
-      }
-      @case ('error') {
-      <span style="color: #EF4444">● Keine Verbindung</span>
-      }
-      @case ('checking') {
-      <span style="color: #F59E0B">● Verbinde...</span>
-      }
-      }
-    </div>
+
 
     <div class="sidebar__nav">
       @for (item of navItems; track item.path) {
