@@ -13,6 +13,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDividerModule } from '@angular/material/divider';
 import { EnergyService } from '../../../core/services/energy.service';
 import { ENERGY_META } from '../../../core/models/energy.models';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-readings-form',
@@ -50,8 +51,12 @@ export class ReadingsForm implements OnInit {
     note: [''],
   });
 
+  private readonly formValue = toSignal(this.form.valueChanges, {
+    initialValue: this.form.value,
+  });
+
   readonly selectedMeter = computed(() => {
-    const id = this.form.get('meterId')?.value;
+    const id = this.formValue().meterId;
     return id ? this.energyService.getMeter(id) : null;
   });
 
@@ -68,7 +73,7 @@ export class ReadingsForm implements OnInit {
 
   readonly consumptionPreview = computed(() => {
     const meter = this.selectedMeter();
-    const value = this.form.get('value')?.value;
+    const value = this.formValue().value;
     const last = this.lastReading();
     if (!meter || value === null || value === undefined) return null;
     const consumption = last ? value - last.value : 0;
