@@ -89,6 +89,31 @@
   padding-top: 16px;
   border-top: 1px solid var(--color-border);
 }
+
+.logout-btn {
+  width: 100%;
+  border-radius: 12px !important;
+  padding: 0 12px !important;
+  height: 40px;
+  transition: all 0.2s;
+}
+
+.logout-btn:hover {
+  background: var(--color-hover) !important;
+  color: var(--color-text) !important;
+}
+
+.sidebar--collapsed .logout-btn {
+  width: 40px;
+  min-width: 40px !important;
+  padding: 0 !important;
+  justify-content: center !important;
+}
+
+.sidebar--collapsed .logout-btn span {
+  display: none;
+}
+
 .main-content {
   flex: 1;
   overflow-y: auto;

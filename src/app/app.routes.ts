@@ -8,13 +8,16 @@ import { Readings } from './features/readings/readings';
 import { ReadingsForm } from './features/readings/readings-form/readings-form';
 import { Reports } from './features/reports/reports';
 import { Settings } from './features/settings/settings';
+import { authGuard } from './core/guards/auth.guard';
+import { Auth } from './features/auth/auth';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
 
-  { path: 'dashboard', component: Dashboard },
+  { path: 'dashboard', component: Dashboard, canActivate: [authGuard] },
+  { path: 'auth', component: Auth },
   {
-    path: 'meters',
+    path: 'meters', canActivate: [authGuard],
     children: [
       { path: '', component: Meters },
       { path: 'new', component: MeterForm },
@@ -23,14 +26,14 @@ export const routes: Routes = [
     ],
   },
   {
-    path: 'readings',
+    path: 'readings', canActivate: [authGuard],
     children: [
       { path: '', component: Readings },
       { path: 'new', component: ReadingsForm },
     ],
   },
-  { path: 'reports', component: Reports },
-  { path: 'settings', component: Settings },
+  { path: 'reports', component: Reports, canActivate: [authGuard] },
+  { path: 'settings', component: Settings, canActivate: [authGuard] },
 
   { path: '**', redirectTo: 'dashboard' },
 ];

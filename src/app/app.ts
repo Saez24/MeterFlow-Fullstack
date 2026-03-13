@@ -1,10 +1,11 @@
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, RouterOutlet } from '@angular/router';
+import { Router, RouterModule, RouterOutlet } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ThemeService } from './core/services/theme.service';
+import { SupabaseService } from './core/services/supabse.service';
 
 interface NavItem {
   path: string;
@@ -28,6 +29,7 @@ interface NavItem {
 export class App {
   protected readonly title = signal('MeterFlow');
   readonly themeService = inject(ThemeService);
+  readonly supabaseService = inject(SupabaseService);
   readonly sidebarCollapsed = signal(false);
   readonly navItems: NavItem[] = [
     { path: '/', icon: 'dashboard', label: 'Dashboard' },
@@ -36,4 +38,12 @@ export class App {
     { path: '/reports', icon: 'bar_chart', label: 'Auswertungen' },
     { path: '/settings', icon: 'settings', label: 'Einstellungen' },
   ];
+
+  private readonly supabase = inject(SupabaseService);
+  private readonly router = inject(Router);
+
+  async logout(): Promise<void> {
+    await this.supabase.signOut();
+    this.router.navigate(['/auth']);
+  }
 }

@@ -3,40 +3,48 @@
     <div class="sidebar__logo">
       <div class="logo-icon"><mat-icon>electric_bolt</mat-icon></div>
       @if (!sidebarCollapsed()) {
-        <span class="logo-text">EnergieMon</span>
+      <span class="logo-text">EnergieMon</span>
       }
     </div>
+    <div>
+      @switch (supabaseService.connectionStatus()) {
+      @case ('connected') {
+      <span style="color: #10B981">● Verbunden</span>
+      }
+      @case ('error') {
+      <span style="color: #EF4444">● Keine Verbindung</span>
+      }
+      @case ('checking') {
+      <span style="color: #F59E0B">● Verbinde...</span>
+      }
+      }
+    </div>
+
     <div class="sidebar__nav">
       @for (item of navItems; track item.path) {
-        <a
-          class="nav-item"
-          [routerLink]="item.path"
-          routerLinkActive="nav-item--active"
-          [routerLinkActiveOptions]="{ exact: item.path === '/' }"
-          [matTooltip]="sidebarCollapsed() ? item.label : ''"
-          matTooltipPosition="right"
-        >
-          <mat-icon>{{ item.icon }}</mat-icon>
-          @if (!sidebarCollapsed()) {
-            <span>{{ item.label }}</span>
-          }
-        </a>
+      <a class="nav-item" [routerLink]="item.path" routerLinkActive="nav-item--active"
+        [routerLinkActiveOptions]="{ exact: item.path === '/' }" [matTooltip]="sidebarCollapsed() ? item.label : ''"
+        matTooltipPosition="right">
+        <mat-icon>{{ item.icon }}</mat-icon>
+        @if (!sidebarCollapsed()) {
+        <span>{{ item.label }}</span>
+        }
+      </a>
       }
     </div>
     <div class="sidebar__footer">
-      <button
-        mat-icon-button
-        (click)="themeService.toggle()"
-        [matTooltip]="themeService.isDark() ? 'Heller Modus' : 'Dunkler Modus'"
-        matTooltipPosition="right"
-      >
+      <button mat-stroked-button color="warn" (click)="logout()" class="logout-btn"
+        [matTooltip]="sidebarCollapsed() ? 'Abmelden' : ''" matTooltipPosition="right">
+        <mat-icon>logout</mat-icon>
+        @if (!sidebarCollapsed()) {
+        <span>Abmelden</span>
+        }
+      </button>
+      <button mat-icon-button (click)="themeService.toggle()"
+        [matTooltip]="themeService.isDark() ? 'Heller Modus' : 'Dunkler Modus'" matTooltipPosition="right">
         <mat-icon>{{ themeService.isDark() ? 'light_mode' : 'dark_mode' }}</mat-icon>
       </button>
-      <button
-        mat-icon-button
-        (click)="sidebarCollapsed.set(!sidebarCollapsed())"
-        matTooltipPosition="right"
-      >
+      <button mat-icon-button (click)="sidebarCollapsed.set(!sidebarCollapsed())" matTooltipPosition="right">
         <mat-icon>{{ sidebarCollapsed() ? 'chevron_right' : 'chevron_left' }}</mat-icon>
       </button>
     </div>
@@ -52,15 +60,11 @@
   </main>
   <nav class="bottom-nav">
     @for (item of navItems; track item.path) {
-      <a
-        class="bottom-nav-item"
-        [routerLink]="item.path"
-        routerLinkActive="bottom-nav-item--active"
-        [routerLinkActiveOptions]="{ exact: item.path === '/' }"
-      >
-        <mat-icon>{{ item.icon }}</mat-icon>
-        <span>{{ item.label }}</span>
-      </a>
+    <a class="bottom-nav-item" [routerLink]="item.path" routerLinkActive="bottom-nav-item--active"
+      [routerLinkActiveOptions]="{ exact: item.path === '/' }">
+      <mat-icon>{{ item.icon }}</mat-icon>
+      <span>{{ item.label }}</span>
+    </a>
     }
   </nav>
 </div>

@@ -6,6 +6,8 @@ import { MatCardModule } from '@angular/material/card';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ThemeService } from '../../core/services/theme.service';
 import { EnergyService } from '../../core/services/energy.service';
+import { SupabaseService } from '../../core/services/supabse.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-settings',

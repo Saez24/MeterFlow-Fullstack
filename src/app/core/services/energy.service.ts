@@ -12,6 +12,7 @@ import {
   TariffPeriod,
 } from '../models/energy.models';
 import { StorageService } from './storage.service';
+import { SupabaseService } from './supabse.service';
 
 const METERS_KEY = 'energy_meters';
 const READINGS_KEY = 'energy_readings';
@@ -19,9 +20,16 @@ const READINGS_KEY = 'energy_readings';
 @Injectable({ providedIn: 'root' })
 export class EnergyService {
   private readonly storage = new StorageService();
+  private readonly supabase = new SupabaseService();
 
-  readonly meters = signal<MeterConfig[]>(this.loadMeters());
-  readonly readings = signal<MeterReading[]>(this.loadReadings());
+  // Daten
+
+  // readonly meters = signal<MeterConfig[]>(this.loadMeters());
+  // readonly readings = signal<MeterReading[]>(this.loadReadings());
+
+  readonly meters = signal<MeterConfig[]>([]);
+  readonly readings = signal<MeterReading[]>([]);
+  readonly loading = signal(true);
 
   // Aktive Zähler
   readonly activeMeters = computed(() => this.meters().filter((m) => m.active));
@@ -202,6 +210,29 @@ export class EnergyService {
     return [...years].sort((a, b) => b - a);
   });
 
+  constructor() {
+    effect(() => {
+      if (this.supabase.currentUser()) {
+        this.loadAll();
+      } else {
+        this.meters.set([]);
+        this.readings.set([]);
+        this.loading.set(false);
+      }
+    });
+  }
+
+  private async loadAll(): Promise<void> {
+    this.loading.set(true);
+    const [meters, readings] = await Promise.all([
+      this.supabase.getMeters(),
+      this.supabase.getReadings(),
+    ]);
+    this.meters.set(meters);
+    this.readings.set(readings);
+    this.loading.set(false);
+  }
+
   getMonthStats(year: number): MonthStats[] {
     const result: MonthStats[] = [];
     for (let month = 1; month <= 12; month++) {
@@ -251,7 +282,7 @@ export class EnergyService {
   }
 
   // ============ TARIFF HISTORY ============
-  addTariffPeriod(meterId: string, period: Omit<TariffPeriod, 'id'>): void {
+  async addTariffPeriod(meterId: string, period: Omit<TariffPeriod, 'id'>): Promise<void> {
     const meter = this.getMeter(meterId);
     if (!meter) return;
     const history = meter.tariffHistory ?? [];
@@ -260,17 +291,17 @@ export class EnergyService {
       id: crypto.randomUUID(),
       validFrom: new Date(period.validFrom),
     };
-    this.updateMeter(meterId, {
+    await this.updateMeter(meterId, {
       tariffHistory: [...history, newPeriod].sort(
         (a, b) => new Date(b.validFrom).getTime() - new Date(a.validFrom).getTime(),
       ),
     });
   }
 
-  deleteTariffPeriod(meterId: string, periodId: string): void {
+  async deleteTariffPeriod(meterId: string, periodId: string): Promise<void> {
     const meter = this.getMeter(meterId);
     if (!meter) return;
-    this.updateMeter(meterId, {
+    await this.updateMeter(meterId, {
       tariffHistory: (meter.tariffHistory ?? []).filter((p) => p.id !== periodId),
     });
   }
@@ -299,23 +330,21 @@ export class EnergyService {
   }
 
   // ============ METER CRUD ============
-  addMeter(meter: Omit<MeterConfig, 'id' | 'createdAt'>): MeterConfig {
-    const newMeter: MeterConfig = { ...meter, id: crypto.randomUUID(), createdAt: new Date() };
-    this.meters.update((list) => [...list, newMeter]);
-    this.persistMeters();
-    return newMeter;
+  async addMeter(meter: Omit<MeterConfig, 'id' | 'createdAt'>): Promise<MeterConfig> {
+    const saved = await this.supabase.addMeter(meter);
+    this.meters.update(list => [...list, saved]);
+    return saved;
   }
 
-  updateMeter(id: string, changes: Partial<MeterConfig>): void {
-    this.meters.update((list) => list.map((m) => (m.id === id ? { ...m, ...changes } : m)));
-    this.persistMeters();
+  async updateMeter(id: string, changes: Partial<MeterConfig>): Promise<void> {
+    await this.supabase.updateMeter(id, changes);
+    this.meters.update(list => list.map(m => m.id === id ? { ...m, ...changes } : m));
   }
 
-  deleteMeter(id: string): void {
-    this.meters.update((list) => list.filter((m) => m.id !== id));
-    this.readings.update((list) => list.filter((r) => r.meterId !== id));
-    this.persistMeters();
-    this.persistReadings();
+  async deleteMeter(id: string): Promise<void> {
+    await this.supabase.deleteMeter(id);
+    this.meters.update(list => list.filter(m => m.id !== id));
+    this.readings.update(list => list.filter(r => r.meterId !== id));
   }
 
   getMeter(id: string): MeterConfig | undefined {
@@ -323,60 +352,48 @@ export class EnergyService {
   }
 
   // ============ READING CRUD ============
-  addReading(reading: Omit<MeterReading, 'id'>): MeterReading {
+  async addReading(reading: Omit<MeterReading, 'id'>): Promise<MeterReading> {
     const meter = this.getMeter(reading.meterId);
     if (!meter) throw new Error('Meter not found');
 
+    // Berechnungslogik bleibt identisch ...
     const allReadings = this.readingsByMeter().get(reading.meterId) ?? [];
     const prev = allReadings[0];
     const consumption = prev ? reading.value - prev.value : 0;
-
-    let kwh: number | undefined;
-    let cost = 0;
-    let wastewaterCost = 0;
+    let kwh: number | undefined, cost = 0, wastewaterCost = 0;
 
     if (meter.type === 'gas') {
       kwh = consumption * (meter.calorificValue ?? 10.55) * (meter.zNumber ?? 0.9672);
       cost = kwh * meter.pricePerUnit;
     } else if (meter.type === 'water') {
       cost = consumption * meter.pricePerUnit;
-      const gardenM3 = this.getGardenWaterConsumptionForPeriod(
-        meter.id,
-        prev?.date ?? reading.date,
-        new Date(reading.date),
-      );
-      const billableWastewater = Math.max(0, consumption - gardenM3);
-      wastewaterCost = billableWastewater * (meter.wastewaterPrice ?? 0);
-    } else if (meter.type === 'garden_water') {
-      cost = consumption * meter.pricePerUnit;
+      const gardenM3 = this.getGardenWaterConsumptionForPeriod(meter.id, prev?.date ?? reading.date, new Date(reading.date));
+      wastewaterCost = Math.max(0, consumption - gardenM3) * (meter.wastewaterPrice ?? 0);
     } else {
       cost = consumption * meter.pricePerUnit;
     }
 
-    const newReading: MeterReading = {
+    const payload: Omit<MeterReading, 'id'> = {
       ...reading,
-      id: crypto.randomUUID(),
-      consumption,
-      kwh,
-      cost,
+      consumption, kwh, cost,
       wastewaterCost: wastewaterCost > 0 ? wastewaterCost : undefined,
       totalCost: cost + wastewaterCost,
       date: new Date(reading.date),
     };
 
-    this.readings.update((list) => [...list, newReading]);
-    this.persistReadings();
-    return newReading;
+    const saved = await this.supabase.addReading(payload);
+    this.readings.update(list => [...list, saved]);
+    return saved;
   }
 
-  updateReading(id: string, changes: Partial<MeterReading>): void {
-    this.readings.update((list) => list.map((r) => (r.id === id ? { ...r, ...changes } : r)));
-    this.persistReadings();
+  async updateReading(id: string, changes: Partial<MeterReading>): Promise<void> {
+    await this.supabase.updateReading(id, changes);
+    this.readings.update(list => list.map(r => r.id === id ? { ...r, ...changes } : r));
   }
 
-  deleteReading(id: string): void {
-    this.readings.update((list) => list.filter((r) => r.id !== id));
-    this.persistReadings();
+  async deleteReading(id: string): Promise<void> {
+    await this.supabase.deleteReading(id);
+    this.readings.update(list => list.filter(r => r.id !== id));
   }
 
   getReadingsForMeter(meterId: string): MeterReading[] {
@@ -438,36 +455,10 @@ export class EnergyService {
         color: '#F59E0B',
         active: true,
         createdAt: new Date(),
-        pricePerUnit: 0.32,
-        baseCharge: 9.5,
-        provider: 'Stadtwerke',
-      },
-      {
-        id: crypto.randomUUID(),
-        name: 'Erdgas Heizung',
-        type: EnergyType.Gas,
-        unit: 'm³',
-        icon: 'local_fire_department',
-        color: '#3B82F6',
-        active: true,
-        createdAt: new Date(),
-        pricePerUnit: 0.12,
-        baseCharge: 12.0,
-        calorificValue: 10.55,
-        zNumber: 0.9672,
-      },
-      {
-        id: crypto.randomUUID(),
-        name: 'Trinkwasser',
-        type: EnergyType.Water,
-        unit: 'm³',
-        icon: 'water_drop',
-        color: '#06B6D4',
-        active: true,
-        createdAt: new Date(),
-        pricePerUnit: 2.5,
-        baseCharge: 5.0,
-        wastewaterPrice: 2.8,
+        pricePerUnit: 0,
+        baseCharge: 0,
+        tariffHistory: [],
+        provider: '',
       },
     ];
   }
@@ -480,12 +471,14 @@ export class EnergyService {
     );
   }
 
-  importData(json: string): void {
+  async importData(json: string): Promise<void> {
     const data = JSON.parse(json);
-    if (data.meters) this.meters.set(data.meters);
-    if (data.readings)
-      this.readings.set(data.readings.map((r: MeterReading) => ({ ...r, date: new Date(r.date) })));
-    this.persistMeters();
-    this.persistReadings();
+    if (data.meters) {
+      for (const m of data.meters) await this.supabase.addMeter(m);
+    }
+    if (data.readings) {
+      for (const r of data.readings) await this.supabase.addReading({ ...r, date: new Date(r.date) });
+    }
+    await this.loadAll();
   }
 }
