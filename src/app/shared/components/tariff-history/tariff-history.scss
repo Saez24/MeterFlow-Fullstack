@@ -1,0 +1,330 @@
+.tariff-container {
+  padding: 8px 0;
+}
+
+.tariff-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.tariff-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tariff-desc {
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.add-btn {
+  border-radius: 100px !important;
+}
+
+/* ---- Formular ---- */
+.tariff-form {
+  background: var(--color-bg);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 24px;
+  border: 1px solid var(--color-border);
+}
+
+.form-title {
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 16px;
+  color: var(--color-primary);
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+@media (max-width: 600px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.field {
+  width: 100%;
+}
+.field--full {
+  grid-column: 1 / -1;
+}
+
+.price-diff-preview {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--color-surface);
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.diff-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.diff-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-secondary);
+}
+
+.diff-value {
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.new-price {
+  color: var(--color-primary);
+}
+
+.diff-arrow {
+  color: var(--color-text-secondary);
+}
+
+.diff-badge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 100px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  margin-left: auto;
+}
+
+.diff-badge--up {
+  background: rgba(239, 68, 68, 0.12);
+  color: #ef4444;
+}
+.diff-badge--down {
+  background: rgba(16, 185, 129, 0.12);
+  color: #10b981;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.save-btn {
+  border-radius: 100px !important;
+}
+
+/* ---- Timeline ---- */
+.tariff-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.no-history {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px;
+  background: var(--color-bg);
+  border-radius: 12px;
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  border: 1px dashed var(--color-border);
+  margin-bottom: 16px;
+}
+
+.no-history mat-icon {
+  color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+.tariff-entry {
+  display: flex;
+  gap: 16px;
+  position: relative;
+}
+
+.tariff-entry--current {
+  margin-bottom: 8px;
+}
+
+.tariff-timeline-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--color-border);
+  flex-shrink: 0;
+  margin-top: 18px;
+  position: relative;
+  z-index: 1;
+}
+
+.tariff-timeline-dot--current {
+  background: var(--color-primary);
+  width: 14px;
+  height: 14px;
+}
+
+.tariff-timeline-line {
+  position: absolute;
+  left: 6px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--color-border);
+}
+
+.tariff-card {
+  flex: 1;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+
+.tariff-card--current {
+  border-color: var(--color-primary);
+  background: var(--color-primary-alpha);
+}
+
+.tariff-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.tariff-date-block {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.date-icon {
+  font-size: 16px;
+  color: var(--color-text-secondary);
+}
+
+.tariff-date {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.tariff-current-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  background: var(--color-primary);
+  color: white;
+  padding: 2px 8px;
+  border-radius: 100px;
+}
+
+.tariff-active-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+  padding: 2px 8px;
+  border-radius: 100px;
+}
+
+.tariff-prices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.price-chip {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  padding: 8px 12px;
+}
+
+.price-label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+.price-val {
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.delete-btn {
+  color: var(--color-text-secondary);
+  transform: scale(0.85);
+}
+
+.delete-btn:hover {
+  color: #ef4444;
+}
+
+.tariff-note {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+  font-style: italic;
+}
+
+.tariff-note mat-icon {
+  font-size: 14px;
+}
+
+.tariff-diff {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 6px 10px;
+  border-radius: 8px;
+}
+
+.tariff-diff mat-icon {
+  font-size: 16px;
+}
+.tariff-diff--up {
+  background: rgba(239, 68, 68, 0.08);
+  color: #ef4444;
+}
+.tariff-diff--down {
+  background: rgba(16, 185, 129, 0.08);
+  color: #10b981;
+}

@@ -8,6 +8,8 @@ import {
   YearStats,
   MONTH_NAMES,
   WaterBill,
+  BudgetAlert,
+  TariffPeriod,
 } from '../models/energy.models';
 import { StorageService } from './storage.service';
 
@@ -71,6 +73,73 @@ export class EnergyService {
       stats[meter.id] = { consumption, cost, unit: ENERGY_META[meter.type].unit, trend };
     }
     return stats;
+  });
+
+  // ============ BUDGET ALERTS ============
+  readonly budgetAlerts = computed((): BudgetAlert[] => {
+    const alerts: BudgetAlert[] = [];
+    const now = new Date();
+    const thisMonth = now.getMonth() + 1;
+    const thisYear = now.getFullYear();
+
+    for (const meter of this.activeMeters()) {
+      if (!meter.budget) continue;
+      const { budget } = meter;
+      const monthStats = this.getMonthStats(thisYear).find((m) => m.month === thisMonth);
+      const yearStats = this.getYearStats(thisYear);
+      const ms = monthStats?.byMeter[meter.id];
+      const ys = yearStats.byMeter[meter.id];
+
+      if (budget.monthlyLimit && ms) {
+        const pct = (ms.cost / budget.monthlyLimit) * 100;
+        if (pct >= budget.alertAt) {
+          alerts.push({
+            meterId: meter.id,
+            meterName: meter.name,
+            type: 'monthly_cost',
+            current: ms.cost,
+            limit: budget.monthlyLimit,
+            percent: pct,
+            unit: '€',
+            color: meter.color,
+            critical: pct >= 100,
+          });
+        }
+      }
+      if (budget.yearlyLimit && ys) {
+        const pct = (ys.cost / budget.yearlyLimit) * 100;
+        if (pct >= budget.alertAt) {
+          alerts.push({
+            meterId: meter.id,
+            meterName: meter.name,
+            type: 'yearly_cost',
+            current: ys.cost,
+            limit: budget.yearlyLimit,
+            percent: pct,
+            unit: '€',
+            color: meter.color,
+            critical: pct >= 100,
+          });
+        }
+      }
+      if (budget.consumptionLimit && ms) {
+        const pct = (ms.consumption / budget.consumptionLimit) * 100;
+        if (pct >= budget.alertAt) {
+          alerts.push({
+            meterId: meter.id,
+            meterName: meter.name,
+            type: 'consumption',
+            current: ms.consumption,
+            limit: budget.consumptionLimit,
+            percent: pct,
+            unit: ENERGY_META[meter.type].unit,
+            color: meter.color,
+            critical: pct >= 100,
+          });
+        }
+      }
+    }
+    return alerts.sort((a, b) => b.percent - a.percent);
   });
 
   // ============ WASSER-ABRECHNUNG ============
@@ -179,6 +248,54 @@ export class EnergyService {
       }
     }
     return { year, totalCost, byMeter, months };
+  }
+
+  // ============ TARIFF HISTORY ============
+  addTariffPeriod(meterId: string, period: Omit<TariffPeriod, 'id'>): void {
+    const meter = this.getMeter(meterId);
+    if (!meter) return;
+    const history = meter.tariffHistory ?? [];
+    const newPeriod: TariffPeriod = {
+      ...period,
+      id: crypto.randomUUID(),
+      validFrom: new Date(period.validFrom),
+    };
+    this.updateMeter(meterId, {
+      tariffHistory: [...history, newPeriod].sort(
+        (a, b) => new Date(b.validFrom).getTime() - new Date(a.validFrom).getTime(),
+      ),
+    });
+  }
+
+  deleteTariffPeriod(meterId: string, periodId: string): void {
+    const meter = this.getMeter(meterId);
+    if (!meter) return;
+    this.updateMeter(meterId, {
+      tariffHistory: (meter.tariffHistory ?? []).filter((p) => p.id !== periodId),
+    });
+  }
+
+  getActiveTariffForDate(
+    meter: MeterConfig,
+    date: Date,
+  ): {
+    pricePerUnit: number;
+    baseCharge: number;
+    wastewaterPrice?: number;
+    calorificValue?: number;
+    zNumber?: number;
+  } {
+    const history = (meter.tariffHistory ?? [])
+      .filter((p) => new Date(p.validFrom) <= date)
+      .sort((a, b) => new Date(b.validFrom).getTime() - new Date(a.validFrom).getTime());
+    if (history.length > 0) return history[0];
+    return {
+      pricePerUnit: meter.pricePerUnit,
+      baseCharge: meter.baseCharge,
+      wastewaterPrice: meter.wastewaterPrice,
+      calorificValue: meter.calorificValue,
+      zNumber: meter.zNumber,
+    };
   }
 
   // ============ METER CRUD ============

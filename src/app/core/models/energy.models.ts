@@ -10,6 +10,24 @@ export enum EnergyType {
   Solar = 'solar',
 }
 
+export interface TariffPeriod {
+  id: string;
+  validFrom: Date;
+  pricePerUnit: number;
+  baseCharge: number;
+  wastewaterPrice?: number;
+  calorificValue?: number;
+  zNumber?: number;
+  note?: string;
+}
+
+export interface BudgetConfig {
+  monthlyLimit?: number; // € Gesamtlimit
+  yearlyLimit?: number; // € Jahreslimit
+  consumptionLimit?: number; // Einheit-Limit (kWh / m³)
+  alertAt: number; // % Schwelle für Warnung (z.B. 80)
+}
+
 export type UnitByEnergyType = {
   [EnergyType.Electricity]: 'kWh';
   [EnergyType.Gas]: 'm³';
@@ -41,10 +59,12 @@ export interface MeterConfig<T extends EnergyType = EnergyType> {
   color: string;
   active: boolean;
   createdAt: Date;
+  budget?: BudgetConfig;
 
   // Tariff
   pricePerUnit: number; // €/Unit
   baseCharge: number; // €/month
+  tariffHistory?: TariffPeriod[];
 
   // Water-specific
   wastewaterPrice?: number; // €/m³ (nur water & garden_water)
@@ -68,14 +88,15 @@ export interface MeterConfig<T extends EnergyType = EnergyType> {
 export interface MeterReading {
   id: string;
   meterId: string;
-  consumption: number;
-  kwh?: number;
-  cost: number;
-  wastewaterCost?: number;
-  totalCost: number;
   date: Date;
   value: number;
   note?: string;
+  photo?: string; // base64 data URL
+  consumption?: number;
+  kwh?: number;
+  cost?: number;
+  wastewaterCost?: number;
+  totalCost?: number;
 }
 
 // ------------------------
@@ -111,6 +132,18 @@ export interface YearStats {
   months: MonthStats[];
 }
 
+export interface BudgetAlert {
+  meterId: string;
+  meterName: string;
+  type: 'monthly_cost' | 'yearly_cost' | 'consumption';
+  current: number;
+  limit: number;
+  percent: number;
+  unit: string;
+  color: string;
+  critical: boolean; // > 100%
+}
+
 // ------------------------
 // Constants
 // ------------------------
@@ -140,3 +173,18 @@ export const MONTH_NAMES = [
   'Nov',
   'Dez',
 ] as const;
+
+export const MONTH_NAMES_FULL = [
+  'Januar',
+  'Februar',
+  'März',
+  'April',
+  'Mai',
+  'Juni',
+  'Juli',
+  'August',
+  'September',
+  'Oktober',
+  'November',
+  'Dezember',
+];
