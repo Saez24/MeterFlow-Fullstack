@@ -99,7 +99,7 @@
   color: var(--color-text-secondary);
 }
 
-.import-btn {
+.import-export-btn {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -107,13 +107,22 @@
   border-radius: 8px;
   border: 1px solid var(--color-border);
   background: var(--color-surface);
+  color: var(--color-text); /* ← das fehlte */
   cursor: pointer;
   font-size: 0.875rem;
+  font-family: inherit; /* ← damit Font gleich wie mat-button */
   transition: all 0.2s;
 }
 
-.import-btn:hover {
+.import-export-btn:hover {
   border-color: var(--color-primary);
+  color: var(--color-primary); /* ← optional: gleicher Hover wie mat-button */
+}
+
+.import-export-btn mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
 }
 
 .stats-grid {

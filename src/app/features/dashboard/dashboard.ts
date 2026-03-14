@@ -25,7 +25,9 @@ import { ENERGY_META } from '../../core/models/energy.models';
 })
 export class Dashboard {
   private readonly energyService = inject(EnergyService);
-
+  readonly availableYears = this.energyService.availableYears;
+  selectedYear = signal(this.availableYears()[0] ?? new Date().getFullYear());
+  readonly yearStats = computed(() => this.energyService.getYearStats(this.selectedYear()));
   readonly activeMeters = this.energyService.activeMeters;
   readonly totalMonthly = this.energyService.totalMonthlyCost;
 

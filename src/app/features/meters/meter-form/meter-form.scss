@@ -3,32 +3,40 @@
   margin: 0 auto;
   padding: 40px 24px;
 }
+
 .page-header {
   display: flex;
   align-items: flex-start;
   gap: 16px;
   margin-bottom: 32px;
 }
+
 .back-btn {
   margin-top: 4px;
 }
+
 .page-title {
   font-size: 2rem;
   font-weight: 700;
   letter-spacing: -0.03em;
   margin: 0 0 4px;
+  color: var(--color-text);
 }
+
 .page-subtitle {
   color: var(--color-text-secondary);
   margin: 0;
 }
+
 .meter-form {
   display: flex;
   flex-direction: column;
 }
+
 .form-section {
   padding: 24px 0;
 }
+
 .section-title {
   font-size: 1rem;
   font-weight: 600;
@@ -36,16 +44,21 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  color: var(--color-text);
 }
+
 .section-divider {
   opacity: 0.4;
 }
+
+/* ── Typ-Auswahl ── */
 .type-selector {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
   margin-bottom: 24px;
 }
+
 .type-btn {
   display: flex;
   flex-direction: column;
@@ -61,91 +74,112 @@
   color: var(--color-text-secondary);
   font-size: 0.75rem;
   font-weight: 500;
+  font-family: inherit;
 }
+
 .type-btn:hover {
   border-color: var(--type-color);
   color: var(--type-color);
 }
+
 .type-btn--active {
   border-color: var(--type-color) !important;
   background: color-mix(in srgb, var(--type-color) 12%, transparent) !important;
   color: var(--type-color) !important;
 }
+
+/* ── Form Layout ── */
 .form-row {
   display: flex;
   gap: 16px;
   margin-bottom: 8px;
 }
+
 .form-row--2 {
   display: grid;
   grid-template-columns: 1fr 1fr;
 }
+
 @media (max-width: 600px) {
   .form-row--2 {
     grid-template-columns: 1fr;
   }
 }
+
 .form-field {
   flex: 1;
   width: 100%;
 }
+
 .form-field--full {
   width: 100%;
 }
 
+/* ── Wasser ── */
 .water-price-info {
   display: flex;
   align-items: flex-start;
   gap: 10px;
   padding: 12px 16px;
   background: rgba(6, 182, 212, 0.08);
+  border: 1px solid rgba(6, 182, 212, 0.2);
   border-radius: 12px;
   margin-bottom: 20px;
   font-size: 0.85rem;
-  color: var(--color-text-secondary);
+  color: var(--color-text);
 }
+
 .water-price-info mat-icon {
   color: #06b6d4;
   flex-shrink: 0;
   margin-top: 2px;
 }
+
 .water-total-preview {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 12px 16px;
-  background: var(--color-surface);
+  background: var(--color-bg);
   border: 1px solid var(--color-border);
   border-radius: 10px;
   margin-bottom: 16px;
 }
+
 .preview-label {
   font-size: 0.8rem;
   color: var(--color-text-secondary);
 }
+
 .preview-value {
   font-weight: 700;
   color: #06b6d4;
 }
 
+/* ── Gartenwasser ── */
 .garden-section {
-  background: rgba(16, 185, 129, 0.05);
+  background: rgba(16, 185, 129, 0.06);
+  border: 1px solid rgba(16, 185, 129, 0.15);
   border-radius: 16px;
   padding: 20px;
   margin: 0;
+  color: var(--color-text);
 }
+
 .garden-header {
   margin-bottom: 12px;
 }
 .garden-icon {
   color: #10b981;
 }
+
 .garden-desc {
   font-size: 0.85rem;
   color: var(--color-text-secondary);
   margin: 0 0 20px;
   line-height: 1.6;
 }
+
 .link-preview {
   display: flex;
   align-items: center;
@@ -157,6 +191,7 @@
   color: #10b981;
   margin-top: 8px;
 }
+
 .no-water-meter {
   display: flex;
   align-items: center;
@@ -168,27 +203,34 @@
   color: #f59e0b;
 }
 
+/* ── Gas ── */
 .gas-section {
-  background: rgba(59, 130, 246, 0.05);
+  background: rgba(59, 130, 246, 0.06);
+  border: 1px solid rgba(59, 130, 246, 0.15);
   border-radius: 16px;
   padding: 20px;
   margin: 0;
+  color: var(--color-text);
 }
+
 .gas-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
 }
+
 .gas-icon {
   color: #3b82f6;
 }
+
 .gas-hint {
   font-size: 0.8rem;
   color: var(--color-text-secondary);
 }
+
 .gas-preview {
-  background: var(--color-surface);
+  background: var(--color-bg);
   border-radius: 12px;
   padding: 16px;
   border: 1px solid var(--color-border);
@@ -199,6 +241,7 @@
   flex-wrap: wrap;
   gap: 12px;
 }
+
 .formula-label,
 .example-label {
   font-size: 0.75rem;
@@ -206,22 +249,27 @@
   display: block;
   margin-bottom: 4px;
 }
+
 .formula {
   font-family: monospace;
   font-size: 0.9rem;
   font-weight: 600;
+  color: var(--color-text);
 }
+
 .example-result {
   font-weight: 600;
   color: #3b82f6;
 }
 
+/* ── Aktionen ── */
 .form-actions {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
   padding-top: 24px;
 }
+
 .save-btn {
   border-radius: 100px !important;
   padding: 0 24px !important;

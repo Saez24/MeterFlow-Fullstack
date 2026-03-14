@@ -32,7 +32,7 @@
           <div class="data-action-title">Daten exportieren</div>
           <div class="data-action-desc">Alle Zähler und Ablesungen als JSON-Datei exportieren</div>
         </div>
-        <button mat-stroked-button (click)="exportData()">
+        <button (click)="exportData()" class="import-export-btn">
           <mat-icon>download</mat-icon>
           Exportieren
         </button>
@@ -43,7 +43,7 @@
           <div class="data-action-title">Daten importieren</div>
           <div class="data-action-desc">Zuvor exportierte Daten wiederherstellen</div>
         </div>
-        <label class="import-btn">
+        <label class="import-export-btn">
           <input type="file" accept=".json" (change)="importData($event)" hidden />
           <mat-icon>upload</mat-icon>
           Importieren

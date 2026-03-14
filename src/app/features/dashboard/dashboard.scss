@@ -51,6 +51,7 @@
 .summary-card {
   display: flex;
   align-items: center;
+  flex-direction: column;
   gap: 16px;
   padding: 20px;
   border-radius: 16px;
@@ -83,8 +84,11 @@
 
 .summary-info {
   display: flex;
-  flex-direction: column;
+  width: 100%;
+  flex-direction: row;
   gap: 2px;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .summary-label {

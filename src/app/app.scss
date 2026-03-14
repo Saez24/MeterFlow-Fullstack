@@ -1,10 +1,14 @@
+/* ── Shell ── */
 .app-shell {
   display: flex;
   height: 100vh;
   overflow: hidden;
   background: var(--color-bg);
   color: var(--color-text);
+  position: relative;
 }
+
+/* ── Sidebar ── */
 .sidebar {
   width: 240px;
   height: 100%;
@@ -17,23 +21,76 @@
   flex-shrink: 0;
   overflow: hidden;
 }
+
 .sidebar--collapsed {
-  width: 74px;
+  width: 76px;
 }
+
 @media (max-width: 768px) {
   .sidebar {
     display: none;
   }
 }
+
+/* ── Einklapp-Button ── */
+.sidebar-toggle {
+  position: fixed;
+  top: 20px;
+  left: 228px; /* 240px - halbe Button-Breite */
+  z-index: 200;
+  background: var(--color-surface) !important;
+  border: 1px solid var(--color-border) !important;
+  border-radius: 50% !important;
+  width: 28px !important;
+  height: 28px !important;
+  min-width: 28px !important;
+  transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sidebar-toggle mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+/* Position anpassen wenn eingeklappt */
+:host-context(.sidebar--collapsed) .sidebar-toggle,
+.sidebar--collapsed ~ * .sidebar-toggle {
+  left: 76px;
+}
+
+/* Auf Mobile verstecken */
+@media (max-width: 768px) {
+  .sidebar-toggle {
+    display: none;
+  }
+}
+
+/* ── Sidebar Top (Logo + Theme) ── */
+.sidebar__top {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--color-border);
+  margin-bottom: 12px;
+}
+
 .sidebar__logo {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 8px 8px 24px;
+  gap: 10px;
+  padding: 4px 8px;
   overflow: hidden;
   white-space: nowrap;
+  min-height: 40px;
 }
+
 .logo-icon {
+  transition: background 0.5s ease;
   width: 40px;
   height: 40px;
   border-radius: 12px;
@@ -43,23 +100,48 @@
   justify-content: center;
   flex-shrink: 0;
 }
+
 .logo-icon mat-icon {
   color: white;
   font-size: 22px;
   width: 22px;
   height: 22px;
 }
+
 .logo-text {
   font-size: 1.1rem;
   font-weight: 700;
   letter-spacing: -0.02em;
+  flex: 1;
 }
+
+.mobile-logo .logo-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  transition: background 0.5s ease;
+}
+
+.mobile-logo .logo-icon mat-icon {
+  color: white;
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+.status-dot {
+  font-size: 10px;
+  flex-shrink: 0;
+}
+
+/* ── Nav ── */
 .sidebar__nav {
   flex: 1;
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
+
 .nav-item {
   display: flex;
   align-items: center;
@@ -74,19 +156,20 @@
   white-space: nowrap;
   overflow: hidden;
 }
+
 .nav-item:hover {
   background: var(--color-hover);
   color: var(--color-text);
 }
+
 .nav-item--active {
   background: var(--color-primary-alpha) !important;
   color: var(--color-primary) !important;
 }
+
+/* ── Footer (Logout) ── */
 .sidebar__footer {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding-top: 16px;
+  padding-top: 12px;
   border-top: 1px solid var(--color-border);
 }
 
@@ -95,12 +178,8 @@
   border-radius: 12px !important;
   padding: 0 12px !important;
   height: 40px;
+  justify-content: flex-start !important;
   transition: all 0.2s;
-}
-
-.logout-btn:hover {
-  background: var(--color-hover) !important;
-  color: var(--color-text) !important;
 }
 
 .sidebar--collapsed .logout-btn {
@@ -110,32 +189,33 @@
   justify-content: center !important;
 }
 
-.sidebar--collapsed .logout-btn span {
-  display: none;
-}
-
+/* ── Main ── */
 .main-content {
   flex: 1;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
 }
+
+/* ── Mobile Header ── */
 .mobile-header {
   display: none;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 20px;
+  padding: 12px 20px;
   background: var(--color-surface);
   border-bottom: 1px solid var(--color-border);
   position: sticky;
   top: 0;
   z-index: 10;
 }
+
 @media (max-width: 768px) {
   .mobile-header {
     display: flex;
   }
 }
+
 .mobile-logo {
   display: flex;
   align-items: center;
@@ -143,12 +223,22 @@
   font-weight: 700;
   font-size: 1.1rem;
 }
+
 .mobile-logo mat-icon {
   color: var(--color-primary);
 }
+
+.mobile-header__actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
 .content-area {
   flex: 1;
 }
+
+/* ── Bottom Nav ── */
 .bottom-nav {
   display: none;
   position: fixed;
@@ -160,6 +250,7 @@
   padding: 8px 0;
   z-index: 100;
 }
+
 @media (max-width: 768px) {
   .bottom-nav {
     display: flex;
@@ -168,6 +259,7 @@
     padding-bottom: 80px;
   }
 }
+
 .bottom-nav-item {
   flex: 1;
   display: flex;
@@ -179,8 +271,9 @@
   font-size: 0.65rem;
   font-weight: 500;
   padding: 4px 0;
-  transition: all 0.2s;
+  transition: color 0.2s;
 }
+
 .bottom-nav-item mat-icon {
   font-size: 22px;
   width: 22px;

@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule, RouterOutlet } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -38,6 +38,25 @@ export class App {
     { path: '/reports', icon: 'bar_chart', label: 'Auswertungen' },
     { path: '/settings', icon: 'settings', label: 'Einstellungen' },
   ];
+  readonly toggleBtnLeft = computed(() =>
+    this.sidebarCollapsed() ? '62px' : '228px'
+  );
+
+  readonly connectionColor = computed(() => {
+    switch (this.supabaseService.connectionStatus()) {
+      case 'connected': return 'var(--color-primary)';
+      case 'error': return '#EF4444';
+      case 'checking': return '#F59E0B';
+    }
+  });
+
+  readonly connectionTooltip = computed(() => {
+    switch (this.supabaseService.connectionStatus()) {
+      case 'connected': return 'Verbunden';
+      case 'error': return 'Keine Verbindung';
+      case 'checking': return 'Verbinde...';
+    }
+  });
 
   private readonly supabase = inject(SupabaseService);
   private readonly router = inject(Router);

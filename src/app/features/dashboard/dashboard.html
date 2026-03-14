@@ -16,14 +16,27 @@
   <section class="summary-section">
     <div class="summary-grid">
       <div class="summary-card summary-card--total">
-        <div class="summary-icon">
-          <mat-icon>account_balance_wallet</mat-icon>
-        </div>
+        <span class="summary-label">Grundgebühren / Monat</span>
         <div class="summary-info">
-          <span class="summary-label">Grundgebühren / Monat</span>
+          <div class="summary-icon">
+            <mat-icon>account_balance_wallet</mat-icon>
+          </div>
+
           <span class="summary-value">{{
             totalMonthly() | currency: 'EUR' : 'symbol' : '1.2-2'
-          }}</span>
+            }}</span>
+        </div>
+
+      </div>
+      <div class="summary-card summary-card--total">
+        <div class="summary-icon">
+          <mat-icon>account_balance</mat-icon>
+        </div>
+        <div class="summary-info">
+          <span class="summary-label">Gesamtkosten {{ selectedYear() }}</span>
+          <span class="summary-value">{{
+            yearStats().totalCost | currency: 'EUR' : 'symbol' : '1.2-2'
+            }}</span>
         </div>
       </div>
       <div class="summary-card summary-card--meters">
@@ -57,117 +70,102 @@
     </div>
 
     @if (activeMeters().length === 0) {
-      <div class="empty-state">
-        <mat-icon>add_circle_outline</mat-icon>
-        <h3>Noch keine Zähler angelegt</h3>
-        <p>Füge deinen ersten Zähler hinzu, um zu beginnen.</p>
-        <button mat-flat-button color="primary" routerLink="/meters/new">Zähler hinzufügen</button>
-      </div>
+    <div class="empty-state">
+      <mat-icon>add_circle_outline</mat-icon>
+      <h3>Noch keine Zähler angelegt</h3>
+      <p>Füge deinen ersten Zähler hinzu, um zu beginnen.</p>
+      <button mat-flat-button color="primary" routerLink="/meters/new">Zähler hinzufügen</button>
+    </div>
     }
 
     <div class="meters-grid">
       @for (meter of activeMeters(); track meter.id) {
-        <div
-          class="meter-card"
-          [style.--meter-color]="meter.color"
-          matRipple
-          [routerLink]="['/meters', meter.id]"
-        >
-          <div class="meter-card__header">
-            <div class="meter-icon" [style.background]="meter.color + '22'">
-              <mat-icon [style.color]="meter.color">{{ meter.icon }}</mat-icon>
-            </div>
-            <div class="meter-badge">{{ getMeta(meter.type).label }}</div>
+      <div class="meter-card" [style.--meter-color]="meter.color" matRipple [routerLink]="['/meters', meter.id]">
+        <div class="meter-card__header">
+          <div class="meter-icon" [style.background]="meter.color + '22'">
+            <mat-icon [style.color]="meter.color">{{ meter.icon }}</mat-icon>
           </div>
+          <div class="meter-badge">{{ getMeta(meter.type).label }}</div>
+        </div>
 
-          <div class="meter-card__body">
-            <h3 class="meter-name">{{ meter.name }}</h3>
-            @if (latestReading(meter.id); as reading) {
-              <div class="meter-reading">
-                <span class="reading-value">{{ reading.value | number: '1.0-3' }}</span>
-                <span class="reading-unit">{{ meter.unit }}</span>
-              </div>
-              <div class="reading-date">{{ reading.date | date: 'dd.MM.yyyy' }}</div>
-            } @else {
-              <div class="no-reading">Noch keine Ablesung</div>
+        <div class="meter-card__body">
+          <h3 class="meter-name">{{ meter.name }}</h3>
+          @if (latestReading(meter.id); as reading) {
+          <div class="meter-reading">
+            <span class="reading-value">{{ reading.value | number: '1.0-3' }}</span>
+            <span class="reading-unit">{{ meter.unit }}</span>
+          </div>
+          <div class="reading-date">{{ reading.date | date: 'dd.MM.yyyy' }}</div>
+          } @else {
+          <div class="no-reading">Noch keine Ablesung</div>
+          }
+        </div>
+
+        <div class="meter-card__footer">
+          <div class="meter-stats">
+            @if (stats(meter.id); as stat) {
+            <div class="stat">
+              <span class="stat-label">Verbrauch</span>
+              <span class="stat-value">{{ stat.consumption | number: '1.0-2' }} {{ stat.unit }}</span>
+            </div>
+            <div class="stat">
+              <span class="stat-label">Kosten</span>
+              <span class="stat-value cost">{{
+                stat.cost | currency: 'EUR' : 'symbol' : '1.2-2'
+                }}</span>
+            </div>
+            @if (stat.trend !== 0) {
+            <div class="trend" [class.trend--up]="stat.trend > 0" [class.trend--down]="stat.trend < 0">
+              <mat-icon>{{ stat.trend > 0 ? 'trending_up' : 'trending_down' }}</mat-icon>
+              {{ stat.trend | number: '1.0-1' }}%
+            </div>
+            }
             }
           </div>
-
-          <div class="meter-card__footer">
-            <div class="meter-stats">
-              @if (stats(meter.id); as stat) {
-                <div class="stat">
-                  <span class="stat-label">Verbrauch</span>
-                  <span class="stat-value"
-                    >{{ stat.consumption | number: '1.0-2' }} {{ stat.unit }}</span
-                  >
-                </div>
-                <div class="stat">
-                  <span class="stat-label">Kosten</span>
-                  <span class="stat-value cost">{{
-                    stat.cost | currency: 'EUR' : 'symbol' : '1.2-2'
-                  }}</span>
-                </div>
-                @if (stat.trend !== 0) {
-                  <div
-                    class="trend"
-                    [class.trend--up]="stat.trend > 0"
-                    [class.trend--down]="stat.trend < 0"
-                  >
-                    <mat-icon>{{ stat.trend > 0 ? 'trending_up' : 'trending_down' }}</mat-icon>
-                    {{ stat.trend | number: '1.0-1' }}%
-                  </div>
-                }
-              }
-            </div>
-            <div class="meter-price">
-              {{ meter.pricePerUnit | currency: 'EUR' : 'symbol' : '1.4-4' }}/{{ meter.unit }}
-            </div>
+          <div class="meter-price">
+            {{ meter.pricePerUnit | currency: 'EUR' : 'symbol' : '1.4-4' }}/{{ meter.unit }}
           </div>
         </div>
+      </div>
       }
     </div>
   </section>
 
   <!-- Recent Readings -->
   @if (recentReadings().length > 0) {
-    <section class="recent-section">
-      <div class="section-header">
-        <h2>Letzte Ablesungen</h2>
-        <button mat-button routerLink="/readings" class="see-all-btn">
-          Alle anzeigen <mat-icon>arrow_forward</mat-icon>
-        </button>
-      </div>
-      <div class="readings-list">
-        @for (reading of recentReadings(); track reading.id) {
-          <div class="reading-item">
-            @if (getMeterById(reading.meterId); as meter) {
-              <div class="reading-meter-icon" [style.background]="meter.color + '22'">
-                <mat-icon [style.color]="meter.color">{{ meter.icon }}</mat-icon>
-              </div>
-              <div class="reading-details">
-                <span class="reading-meter-name">{{ meter.name }}</span>
-                <span class="reading-date-small">{{ reading.date | date: 'dd.MM.yyyy' }}</span>
-              </div>
-              <div class="reading-values">
-                <span class="reading-val"
-                  >{{ reading.value | number: '1.0-3' }} {{ meter.unit }}</span
-                >
-                @if (reading.consumption && reading.consumption > 0) {
-                  <span class="reading-consumption"
-                    >+{{ reading.consumption | number: '1.0-2' }}</span
-                  >
-                }
-              </div>
-              @if (reading.cost && reading.cost > 0) {
-                <div class="reading-cost">
-                  {{ reading.cost | currency: 'EUR' : 'symbol' : '1.2-2' }}
-                </div>
-              }
-            }
-          </div>
+  <section class="recent-section">
+    <div class="section-header">
+      <h2>Letzte Ablesungen</h2>
+      <button mat-button routerLink="/readings" class="see-all-btn">
+        Alle anzeigen <mat-icon>arrow_forward</mat-icon>
+      </button>
+    </div>
+    <div class="readings-list">
+      @for (reading of recentReadings(); track reading.id) {
+      <div class="reading-item">
+        @if (getMeterById(reading.meterId); as meter) {
+        <div class="reading-meter-icon" [style.background]="meter.color + '22'">
+          <mat-icon [style.color]="meter.color">{{ meter.icon }}</mat-icon>
+        </div>
+        <div class="reading-details">
+          <span class="reading-meter-name">{{ meter.name }}</span>
+          <span class="reading-date-small">{{ reading.date | date: 'dd.MM.yyyy' }}</span>
+        </div>
+        <div class="reading-values">
+          <span class="reading-val">{{ reading.value | number: '1.0-3' }} {{ meter.unit }}</span>
+          @if (reading.consumption && reading.consumption > 0) {
+          <span class="reading-consumption">+{{ reading.consumption | number: '1.0-2' }}</span>
+          }
+        </div>
+        @if (reading.cost && reading.cost > 0) {
+        <div class="reading-cost">
+          {{ reading.cost | currency: 'EUR' : 'symbol' : '1.2-2' }}
+        </div>
+        }
         }
       </div>
-    </section>
+      }
+    </div>
+  </section>
   }
 </div>

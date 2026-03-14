@@ -196,6 +196,7 @@
   color: var(--color-text-secondary);
   font-weight: 600;
   gap: 8px;
+  justify-items: center;
 }
 .water-table-row {
   display: grid;
@@ -205,6 +206,7 @@
   gap: 8px;
   align-items: center;
   transition: background 0.15s;
+  justify-items: center;
 }
 .water-table-row:hover {
   background: var(--color-hover);
@@ -220,6 +222,7 @@
   background: var(--color-bg);
   font-weight: 700;
   gap: 8px;
+  justify-items: center;
 }
 .month-label {
   font-weight: 600;

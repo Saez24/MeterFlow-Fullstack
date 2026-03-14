@@ -1,4 +1,4 @@
-import { Component, inject, computed, signal, ViewChild, ElementRef } from '@angular/core';
+import { Component, inject, computed, signal, ViewChild, ElementRef, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -60,14 +60,37 @@ export class MeterDetail {
 
   private chartInstance: Chart | null = null;
 
+  constructor() {
+    effect(() => {
+      this.chartMode(); // Signal tracken
+      if (this.detailChartRef) {
+        setTimeout(() => this.buildChart(), 50);
+      }
+    });
+  }
+
   ngAfterViewInit(): void {
-    setTimeout(() => this.buildChart(), 150);
-    // effect(() => {
-    //   this.chartMode();
-    //   this.themeService.isDark();
-    //   this.readings();
-    //   setTimeout(() => this.buildChart(), 50);
-    // });
+    this.waitForCanvas();
+  }
+
+  private waitForCanvas(): void {
+    const observer = new MutationObserver(() => {
+      if (this.detailChartRef?.nativeElement) {
+        observer.disconnect();
+        this.buildChart();
+      }
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    // Fallback nach 1s
+    setTimeout(() => {
+      observer.disconnect();
+      if (this.detailChartRef?.nativeElement) this.buildChart();
+    }, 1000);
+  }
+
+  onTabChange(): void {
+    setTimeout(() => this.buildChart(), 50);
   }
 
   ngOnDestroy(): void {

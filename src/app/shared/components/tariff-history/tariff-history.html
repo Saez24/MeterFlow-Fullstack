@@ -17,125 +17,114 @@
 
   <!-- Formular für neuen Tarif -->
   @if (showForm()) {
-    <form [formGroup]="form" (ngSubmit)="save()" class="tariff-form">
-      <div class="form-title">Neuen Tarif eintragen</div>
+  <form [formGroup]="form" (ngSubmit)="save()" class="tariff-form">
+    <div class="form-title">Neuen Tarif eintragen</div>
 
-      <div class="form-grid">
-        <mat-form-field appearance="outline" class="field">
-          <mat-label>Gültig ab</mat-label>
-          <input matInput [matDatepicker]="dp" formControlName="validFrom" />
-          <mat-datepicker-toggle matIconSuffix [for]="dp"></mat-datepicker-toggle>
-          <mat-datepicker #dp></mat-datepicker>
-          <mat-hint>Ab diesem Datum gilt der neue Preis</mat-hint>
-          <mat-error>Datum erforderlich</mat-error>
-        </mat-form-field>
+    <div class="form-grid">
+      <mat-form-field appearance="outline" class="field">
+        <mat-label>Gültig ab</mat-label>
+        <input matInput [matDatepicker]="dp" formControlName="validFrom" />
+        <mat-datepicker-toggle matIconSuffix [for]="dp"></mat-datepicker-toggle>
+        <mat-datepicker #dp></mat-datepicker>
+        <mat-hint>Ab diesem Datum gilt der neue Preis</mat-hint>
+        <mat-error>Datum erforderlich</mat-error>
+      </mat-form-field>
 
-        <mat-form-field appearance="outline" class="field">
-          <mat-label>Preis pro {{ meter().unit }}</mat-label>
-          <input matInput type="number" formControlName="pricePerUnit" step="0.0001" min="0" />
-          <span matSuffix>€/{{ meter().unit }}</span>
-          <mat-error>Preis erforderlich</mat-error>
-        </mat-form-field>
+      <mat-form-field appearance="outline" class="field">
+        <mat-label>Preis pro {{ meter().unit }}</mat-label>
+        <input matInput type="number" formControlName="pricePerUnit" step="0.0001" min="0" />
+        <span matSuffix>€/{{ meter().unit }}</span>
+        <mat-error>Preis erforderlich</mat-error>
+      </mat-form-field>
 
-        <mat-form-field appearance="outline" class="field">
-          <mat-label>Grundgebühr / Monat</mat-label>
-          <input matInput type="number" formControlName="baseCharge" step="0.01" min="0" />
-          <span matSuffix>€/Monat</span>
-        </mat-form-field>
+      <mat-form-field appearance="outline" class="field">
+        <mat-label>Grundgebühr / Monat</mat-label>
+        <input matInput type="number" formControlName="baseCharge" step="0.01" min="0" />
+        <span matSuffix>€/Monat</span>
+      </mat-form-field>
 
-        <!-- Wasser: Abwasserpreis -->
-        @if (isWater()) {
-          <mat-form-field appearance="outline" class="field">
-            <mat-label>Abwasserpreis</mat-label>
-            <input matInput type="number" formControlName="wastewaterPrice" step="0.001" min="0" />
-            <span matSuffix>€/m³</span>
-          </mat-form-field>
-        }
-
-        <!-- Gas: Brennwert + Z-Zahl -->
-        @if (isGas()) {
-          <mat-form-field appearance="outline" class="field">
-            <mat-label>Brennwert (Hs)</mat-label>
-            <input matInput type="number" formControlName="calorificValue" step="0.01" min="0" />
-            <span matSuffix>kWh/m³</span>
-          </mat-form-field>
-          <mat-form-field appearance="outline" class="field">
-            <mat-label>Z-Zahl</mat-label>
-            <input matInput type="number" formControlName="zNumber" step="0.0001" min="0" />
-          </mat-form-field>
-        }
-
-        <mat-form-field appearance="outline" class="field field--full">
-          <mat-label>Notiz (optional)</mat-label>
-          <input matInput formControlName="note" placeholder="z.B. Jahreserhöhung 2025" />
-          <mat-icon matSuffix>notes</mat-icon>
-        </mat-form-field>
-      </div>
-
-      <!-- Live-Vorschau Preisvergleich -->
-      @if (currentTariff(); as current) {
-        <div class="price-diff-preview">
-          <div class="diff-item">
-            <span class="diff-label">Aktueller Preis</span>
-            <span class="diff-value"
-              >{{ current.pricePerUnit | currency: 'EUR' : 'symbol' : '1.4-4' }}/{{
-                meter().unit
-              }}</span
-            >
-          </div>
-          <mat-icon class="diff-arrow">arrow_forward</mat-icon>
-          <div class="diff-item">
-            <span class="diff-label">Neuer Preis</span>
-            <span class="diff-value new-price"
-              >{{ formValue().pricePerUnit | currency: 'EUR' : 'symbol' : '1.4-4' }}/{{
-                meter().unit
-              }}</span
-            >
-          </div>
-          @if (priceDiff() !== 0) {
-            <div
-              class="diff-badge"
-              [class.diff-badge--up]="priceDiff() > 0"
-              [class.diff-badge--down]="priceDiff() < 0"
-            >
-              <mat-icon>{{ priceDiff() > 0 ? 'trending_up' : 'trending_down' }}</mat-icon>
-              {{ priceDiff() > 0 ? '+' : '' }}{{ priceDiff() | number: '1.2-2' }} %
-            </div>
-          }
-        </div>
+      <!-- Wasser: Abwasserpreis -->
+      @if (isWater()) {
+      <mat-form-field appearance="outline" class="field">
+        <mat-label>Abwasserpreis</mat-label>
+        <input matInput type="number" formControlName="wastewaterPrice" step="0.001" min="0" />
+        <span matSuffix>€/m³</span>
+      </mat-form-field>
       }
 
-      <div class="form-actions">
-        <button type="button" mat-button (click)="showForm.set(false)">Abbrechen</button>
-        <button
-          type="submit"
-          mat-flat-button
-          color="primary"
-          [disabled]="form.invalid"
-          class="save-btn"
-        >
-          <mat-icon>save</mat-icon>
-          Tarif speichern
-        </button>
+      <!-- Gas: Brennwert + Z-Zahl -->
+      @if (isGas()) {
+      <mat-form-field appearance="outline" class="field">
+        <mat-label>Brennwert (Hs)</mat-label>
+        <input matInput type="number" formControlName="calorificValue" step="0.01" min="0" />
+        <span matSuffix>kWh/m³</span>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="field">
+        <mat-label>Z-Zahl</mat-label>
+        <input matInput type="number" formControlName="zNumber" step="0.0001" min="0" />
+      </mat-form-field>
+      }
+
+      <mat-form-field appearance="outline" class="field field--full">
+        <mat-label>Notiz (optional)</mat-label>
+        <input matInput formControlName="note" placeholder="z.B. Jahreserhöhung 2025" />
+        <mat-icon matSuffix>notes</mat-icon>
+      </mat-form-field>
+    </div>
+
+    <!-- Live-Vorschau Preisvergleich -->
+    @if (currentTariff(); as current) {
+    <div class="price-diff-preview">
+      <div class="diff-item">
+        <span class="diff-label">Aktueller Preis</span>
+        <span class="diff-value">{{ current.pricePerUnit | currency: 'EUR' : 'symbol' : '1.4-4' }}/{{
+          meter().unit
+          }}</span>
       </div>
-    </form>
+      <mat-icon class="diff-arrow">arrow_forward</mat-icon>
+      <div class="diff-item">
+        <span class="diff-label">Neuer Preis</span>
+        <span class="diff-value new-price">{{ formValue().pricePerUnit | currency: 'EUR' : 'symbol' : '1.4-4' }}/{{
+          meter().unit
+          }}</span>
+      </div>
+      @if (priceDiff() !== 0) {
+      <div class="diff-badge" [class.diff-badge--up]="priceDiff() > 0" [class.diff-badge--down]="priceDiff() < 0">
+        <mat-icon>{{ priceDiff() > 0 ? 'trending_up' : 'trending_down' }}</mat-icon>
+        {{ priceDiff() > 0 ? '+' : '' }}{{ priceDiff() | number: '1.2-2' }} %
+      </div>
+      }
+    </div>
+    }
+
+    <div class="form-actions">
+      <button type="button" mat-button (click)="showForm.set(false)">Abbrechen</button>
+      <button type="submit" mat-flat-button color="primary" [disabled]="form.invalid" class="save-btn">
+        <mat-icon>save</mat-icon>
+        Tarif speichern
+      </button>
+    </div>
+  </form>
   }
 
   <!-- Tarifhistorie Liste -->
   <div class="tariff-timeline">
     @if (sortedHistory().length === 0) {
-      <div class="no-history">
-        <mat-icon>info_outline</mat-icon>
-        <span
-          >Noch kein historischer Tarif hinterlegt. Der aktuelle Zählerpreis gilt für alle
-          Ablesungen.</span
-        >
-      </div>
+    <div class="no-history">
+      <mat-icon>info_outline</mat-icon>
+      <span>Noch kein historischer Tarif hinterlegt. Der aktuelle Zählerpreis gilt für alle
+        Ablesungen.</span>
+    </div>
     }
 
     <!-- Aktueller Tarif (aus Zähler-Config = Basisteil) -->
-    <div class="tariff-entry tariff-entry--current">
-      <div class="tariff-timeline-dot tariff-timeline-dot--current"></div>
+    <div class="tariff-entry">
+      <div class="tariff-timeline-col">
+        <div class="tariff-dot tariff-dot--current"></div>
+        @if (sortedHistory().length > 0) {
+        <div class="tariff-line"></div>
+        }
+      </div>
       <div class="tariff-card tariff-card--current">
         <div class="tariff-card-header">
           <span class="tariff-date">Aktueller Tarif (Zählerkonfiguration)</span>
@@ -144,125 +133,106 @@
         <div class="tariff-prices">
           <div class="price-chip">
             <span class="price-label">Arbeitspreis</span>
-            <span class="price-val"
-              >{{ meter().pricePerUnit | currency: 'EUR' : 'symbol' : '1.4-4' }}/{{
-                meter().unit
-              }}</span
-            >
+            <span class="price-val">{{ meter().pricePerUnit | currency: 'EUR' : 'symbol' : '1.4-4' }}/{{
+              meter().unit
+              }}</span>
           </div>
           <div class="price-chip">
             <span class="price-label">Grundgebühr</span>
-            <span class="price-val"
-              >{{ meter().baseCharge | currency: 'EUR' : 'symbol' : '1.2-2' }}/Mon.</span
-            >
+            <span class="price-val">{{ meter().baseCharge | currency: 'EUR' : 'symbol' : '1.2-2' }}/Mon.</span>
           </div>
           @if (meter().wastewaterPrice) {
-            <div class="price-chip">
-              <span class="price-label">Abwasser</span>
-              <span class="price-val"
-                >{{ meter().wastewaterPrice | currency: 'EUR' : 'symbol' : '1.4-4' }}/m³</span
-              >
-            </div>
+          <div class="price-chip">
+            <span class="price-label">Abwasser</span>
+            <span class="price-val">{{ meter().wastewaterPrice | currency: 'EUR' : 'symbol' : '1.4-4' }}/m³</span>
+          </div>
           }
           @if (meter().calorificValue) {
-            <div class="price-chip">
-              <span class="price-label">Brennwert</span>
-              <span class="price-val">{{ meter().calorificValue }} kWh/m³</span>
-            </div>
+          <div class="price-chip">
+            <span class="price-label">Brennwert</span>
+            <span class="price-val">{{ meter().calorificValue }} kWh/m³</span>
+          </div>
           }
           @if (meter().zNumber) {
-            <div class="price-chip">
-              <span class="price-label">Z-Zahl</span>
-              <span class="price-val">{{ meter().zNumber }}</span>
-            </div>
+          <div class="price-chip">
+            <span class="price-label">Z-Zahl</span>
+            <span class="price-val">{{ meter().zNumber }}</span>
+          </div>
           }
         </div>
       </div>
     </div>
 
     <!-- Historische Tarife (neueste zuerst) -->
-    @for (period of sortedHistory(); track period.id; let i = $index) {
-      <div class="tariff-entry">
-        <div class="tariff-timeline-line"></div>
-        <div class="tariff-timeline-dot"></div>
-        <div class="tariff-card">
-          <div class="tariff-card-header">
-            <div class="tariff-date-block">
-              <mat-icon class="date-icon">event</mat-icon>
-              <span class="tariff-date">Gültig ab {{ period.validFrom | date: 'dd.MM.yyyy' }}</span>
-              @if (i === 0) {
-                <span class="tariff-active-badge">Aktiv</span>
-              }
-            </div>
-            <button
-              mat-icon-button
-              (click)="delete(period)"
-              [matTooltip]="'Tarif löschen'"
-              class="delete-btn"
-            >
-              <mat-icon>delete_outline</mat-icon>
-            </button>
-          </div>
-
-          <div class="tariff-prices">
-            <div class="price-chip">
-              <span class="price-label">Arbeitspreis</span>
-              <span class="price-val"
-                >{{ period.pricePerUnit | currency: 'EUR' : 'symbol' : '1.4-4' }}/{{
-                  meter().unit
-                }}</span
-              >
-            </div>
-            <div class="price-chip">
-              <span class="price-label">Grundgebühr</span>
-              <span class="price-val"
-                >{{ period.baseCharge | currency: 'EUR' : 'symbol' : '1.2-2' }}/Mon.</span
-              >
-            </div>
-            @if (period.wastewaterPrice) {
-              <div class="price-chip">
-                <span class="price-label">Abwasser</span>
-                <span class="price-val"
-                  >{{ period.wastewaterPrice | currency: 'EUR' : 'symbol' : '1.4-4' }}/m³</span
-                >
-              </div>
-            }
-            @if (period.calorificValue) {
-              <div class="price-chip">
-                <span class="price-label">Brennwert</span>
-                <span class="price-val">{{ period.calorificValue }} kWh/m³</span>
-              </div>
-            }
-            @if (period.zNumber) {
-              <div class="price-chip">
-                <span class="price-label">Z-Zahl</span>
-                <span class="price-val">{{ period.zNumber }}</span>
-              </div>
+    @for (period of sortedHistory(); track period.id; let i = $index; let last = $last) {
+    <div class="tariff-entry">
+      <div class="tariff-timeline-col">
+        <div class="tariff-dot"></div>
+        @if (!last) { <div class="tariff-line"></div> }
+      </div>
+      <div class="tariff-card">
+        <div class="tariff-card-header">
+          <div class="tariff-date-block">
+            <mat-icon class="date-icon">event</mat-icon>
+            <span class="tariff-date">Gültig ab {{ period.validFrom | date: 'dd.MM.yyyy' }}</span>
+            @if (i === 0) {
+            <span class="tariff-active-badge">Aktiv</span>
             }
           </div>
+          <button mat-icon-button (click)="delete(period)" [matTooltip]="'Tarif löschen'" class="delete-btn">
+            <mat-icon>delete_outline</mat-icon>
+          </button>
+        </div>
 
-          @if (period.note) {
-            <div class="tariff-note">
-              <mat-icon>notes</mat-icon>
-              {{ period.note }}
-            </div>
+        <div class="tariff-prices">
+          <div class="price-chip">
+            <span class="price-label">Arbeitspreis</span>
+            <span class="price-val">{{ period.pricePerUnit | currency: 'EUR' : 'symbol' : '1.4-4' }}/{{
+              meter().unit
+              }}</span>
+          </div>
+          <div class="price-chip">
+            <span class="price-label">Grundgebühr</span>
+            <span class="price-val">{{ period.baseCharge | currency: 'EUR' : 'symbol' : '1.2-2' }}/Mon.</span>
+          </div>
+          @if (period.wastewaterPrice) {
+          <div class="price-chip">
+            <span class="price-label">Abwasser</span>
+            <span class="price-val">{{ period.wastewaterPrice | currency: 'EUR' : 'symbol' : '1.4-4' }}/m³</span>
+          </div>
           }
-
-          <!-- Preisvergleich zum vorherigen Tarif -->
-          @if (getPriceDiff(i); as diff) {
-            <div
-              class="tariff-diff"
-              [class.tariff-diff--up]="diff.pct > 0"
-              [class.tariff-diff--down]="diff.pct < 0"
-            >
-              <mat-icon>{{ diff.pct > 0 ? 'trending_up' : 'trending_down' }}</mat-icon>
-              {{ diff.pct > 0 ? '+' : '' }}{{ diff.pct | number: '1.1-1' }}% gegenüber vorherigem
-              Tarif ({{ diff.prev | currency: 'EUR' : 'symbol' : '1.4-4' }} →
-              {{ diff.curr | currency: 'EUR' : 'symbol' : '1.4-4' }})
-            </div>
+          @if (period.calorificValue) {
+          <div class="price-chip">
+            <span class="price-label">Brennwert</span>
+            <span class="price-val">{{ period.calorificValue }} kWh/m³</span>
+          </div>
+          }
+          @if (period.zNumber) {
+          <div class="price-chip">
+            <span class="price-label">Z-Zahl</span>
+            <span class="price-val">{{ period.zNumber }}</span>
+          </div>
           }
         </div>
+
+        @if (period.note) {
+        <div class="tariff-note">
+          <mat-icon>notes</mat-icon>
+          {{ period.note }}
+        </div>
+        }
+
+        <!-- Preisvergleich zum vorherigen Tarif -->
+        @if (getPriceDiff(i); as diff) {
+        <div class="tariff-diff" [class.tariff-diff--up]="diff.pct > 0" [class.tariff-diff--down]="diff.pct < 0">
+          <mat-icon>{{ diff.pct > 0 ? 'trending_up' : 'trending_down' }}</mat-icon>
+          {{ diff.pct > 0 ? '+' : '' }}{{ diff.pct | number: '1.1-1' }}% gegenüber vorherigem
+          Tarif ({{ diff.prev | currency: 'EUR' : 'symbol' : '1.4-4' }} →
+          {{ diff.curr | currency: 'EUR' : 'symbol' : '1.4-4' }})
+        </div>
+        }
       </div>
+    </div>
     }
   </div>
 </div>
