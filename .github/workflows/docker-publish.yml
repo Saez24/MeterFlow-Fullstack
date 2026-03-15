@@ -1,3 +1,4 @@
+# .github/workflows/publish.yml
 name: Publish MeterFlow Frontend Image
 
 on:
@@ -5,8 +6,8 @@ on:
     branches:
       - production
     paths:
-      - "**"
-      - ".github/workflows/publish.yml"
+      - '**'
+      - '.github/workflows/publish.yml'
 
 permissions:
   contents: read
@@ -42,3 +43,6 @@ jobs:
           tags: |
             ghcr.io/${{ steps.vars.outputs.owner_lowercase }}/meterflow:latest
             ghcr.io/${{ steps.vars.outputs.owner_lowercase }}/meterflow:${{ github.sha }}
+          build-args: |
+            SUPABASE_URL=${{ secrets.SUPABASE_URL }}
+            SUPABASE_KEY=${{ secrets.SUPABASE_KEY }}
