@@ -19,6 +19,7 @@ import { Chart, registerables } from 'chart.js';
 import { EnergyService } from '../../core/services/energy.service';
 import { ThemeService } from '../../core/services/theme.service';
 import { ENERGY_META, MONTH_NAMES } from '../../core/models/energy.models';
+import { StatsService } from '../../core/services/stats.service';
 
 Chart.register(...registerables);
 
@@ -38,6 +39,7 @@ Chart.register(...registerables);
 export class Reports implements AfterViewInit, OnDestroy {
   private readonly energyService = inject(EnergyService);
   private readonly themeService = inject(ThemeService);
+  readonly statsService = inject(StatsService);
 
   @ViewChild('costChart') costChartRef!: ElementRef<HTMLCanvasElement>;
   @ViewChild('consumptionChart') consumptionChartRef!: ElementRef<HTMLCanvasElement>;
@@ -49,19 +51,18 @@ export class Reports implements AfterViewInit, OnDestroy {
   readonly availableYears = this.energyService.availableYears;
   readonly activeMeters = this.energyService.activeMeters;
   readonly waterBills = this.energyService.waterBillStats;
-  selectedYear = signal(this.availableYears()[0] ?? new Date().getFullYear());
-  readonly selectedMeterChart = signal<string>(this.activeMeters()[0]?.id ?? '');
-
-  private costChartInstance: Chart | null = null;
-  private consumptionChartInstance: Chart | null = null;
-  private yearChartInstance: Chart | null = null;
+  readonly selectedYear = signal(this.availableYears()[0] ?? new Date().getFullYear());
 
   readonly yearStats = computed(() => this.energyService.getYearStats(this.selectedYear()));
 
   readonly waterBillsForYear = computed(() =>
     this.waterBills().filter((b) => b.year === this.selectedYear()),
   );
+  readonly selectedMeterChart = signal<string>(this.activeMeters()[0]?.id ?? '');
 
+  private costChartInstance: Chart | null = null;
+  private consumptionChartInstance: Chart | null = null;
+  private yearChartInstance: Chart | null = null;
   readonly waterTotals = computed(() => {
     const bills = this.waterBillsForYear();
     return {
@@ -74,6 +75,15 @@ export class Reports implements AfterViewInit, OnDestroy {
     };
   });
 
+
+  // get selectedYear() {
+  //   return this._selectedYear();
+  // }
+
+  // set selectedYear(value: number) {
+  //   this._selectedYear.set(value);
+  // }
+
   constructor() {
     effect(() => {
       this.themeService.isDark();
@@ -81,7 +91,6 @@ export class Reports implements AfterViewInit, OnDestroy {
       this.selectedMeterChart();
 
       if (!this.costChartRef) return;
-
       this.buildAllCharts();
     });
   }

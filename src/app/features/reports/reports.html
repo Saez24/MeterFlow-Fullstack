@@ -6,9 +6,9 @@
     </div>
     <mat-form-field appearance="outline" class="year-select">
       <mat-label>Jahr</mat-label>
-      <mat-select [(ngModel)]="selectedYear">
+      <mat-select [value]="selectedYear()" (selectionChange)="selectedYear.set($event.value)">
         @for (y of availableYears(); track y) {
-          <mat-option [value]="y">{{ y }}</mat-option>
+        <mat-option [value]="y">{{ y }}</mat-option>
         }
       </mat-select>
     </mat-form-field>
@@ -23,24 +23,22 @@
           <span class="kpi-label">Gesamtkosten {{ selectedYear() }}</span>
           <span class="kpi-value">{{
             yearStats().totalCost | currency: 'EUR' : 'symbol' : '1.2-2'
-          }}</span>
+            }}</span>
         </div>
       </div>
       @for (meter of activeMeters(); track meter.id) {
-        @if (yearStats().byMeter[meter.id]; as ms) {
-          <div class="kpi-card" [style.--kpi-color]="meter.color">
-            <div class="kpi-icon" [style.background]="meter.color + '22'">
-              <mat-icon [style.color]="meter.color">{{ meter.icon }}</mat-icon>
-            </div>
-            <div class="kpi-info">
-              <span class="kpi-label">{{ meter.name }}</span>
-              <span class="kpi-value">{{ ms.cost | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
-              <span class="kpi-sub"
-                >{{ ms.consumption | number: '1.0-2' }} {{ ENERGY_META[meter.type].unit }}</span
-              >
-            </div>
-          </div>
-        }
+      @if (yearStats().byMeter[meter.id]; as ms) {
+      <div class="kpi-card" [style.--kpi-color]="meter.color">
+        <div class="kpi-icon" [style.background]="meter.color + '22'">
+          <mat-icon [style.color]="meter.color">{{ meter.icon }}</mat-icon>
+        </div>
+        <div class="kpi-info">
+          <span class="kpi-label">{{ meter.name }}</span>
+          <span class="kpi-value">{{ ms.cost | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
+          <span class="kpi-sub">{{ ms.consumption | number: '1.0-2' }} {{ ENERGY_META[meter.type].unit }}</span>
+        </div>
+      </div>
+      }
       }
     </div>
   </section>
@@ -51,10 +49,10 @@
       <h2>Monatliche Kosten {{ selectedYear() }}</h2>
       <div class="chart-legend">
         @for (meter of activeMeters(); track meter.id) {
-          <div class="legend-item">
-            <span class="legend-dot" [style.background]="meter.color"></span>
-            <span>{{ meter.name }}</span>
-          </div>
+        <div class="legend-item">
+          <span class="legend-dot" [style.background]="meter.color"></span>
+          <span>{{ meter.name }}</span>
+        </div>
         }
       </div>
     </div>
@@ -69,15 +67,11 @@
       <h2>Monatlicher Verbrauch</h2>
       <div class="meter-toggle">
         @for (meter of activeMeters(); track meter.id) {
-          <button
-            class="toggle-btn"
-            [class.toggle-btn--active]="selectedMeterChart() === meter.id"
-            [style.--btn-color]="meter.color"
-            (click)="selectedMeterChart.set(meter.id)"
-          >
-            <mat-icon [style.color]="meter.color">{{ meter.icon }}</mat-icon>
-            {{ meter.name }}
-          </button>
+        <button class="toggle-btn" [class.toggle-btn--active]="selectedMeterChart() === meter.id"
+          [style.--btn-color]="meter.color" (click)="selectedMeterChart.set(meter.id)">
+          <mat-icon [style.color]="meter.color">{{ meter.icon }}</mat-icon>
+          {{ meter.name }}
+        </button>
         }
       </div>
     </div>
@@ -88,68 +82,65 @@
 
   <!-- Wasser-Spezialauswertung -->
   @if (waterBills().length > 0) {
-    <section class="water-section">
-      <h2 class="section-title">
-        <mat-icon style="color: #06b6d4">water_drop</mat-icon>
-        Wasserabrechnung {{ selectedYear() }}
-      </h2>
-      <p class="water-desc">
-        Abwasserkosten werden automatisch um den Gartenwasserverbrauch reduziert.
-      </p>
-      <div class="water-table">
-        <div class="water-table-header">
-          <span>Monat</span>
-          <span>Gesamt m³</span>
-          <span>Garten m³</span>
-          <span>Abw.-pflichtig</span>
-          <span>Frischwasser</span>
-          <span>Abwasser</span>
-          <span>Gesamt</span>
-        </div>
-        @for (bill of waterBillsForYear(); track bill.month) {
-          <div
-            class="water-table-row"
-            [class.water-table-row--has-garden]="bill.gardenConsumption > 0"
-          >
-            <span class="month-label">{{ MONTH_NAMES[bill.month - 1] }}</span>
-            <span>{{ bill.totalConsumption | number: '1.0-2' }} m³</span>
-            <span class="garden-col">
-              @if (bill.gardenConsumption > 0) {
-                <span class="garden-badge">-{{ bill.gardenConsumption | number: '1.0-2' }} m³</span>
-              } @else {
-                <span class="no-garden">–</span>
-              }
-            </span>
-            <span>{{ bill.billableWastewater | number: '1.0-2' }} m³</span>
-            <span>{{ bill.freshwaterCost | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
-            <span>{{ bill.wastewaterCost | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
-            <span class="total-col">{{
-              bill.totalCost | currency: 'EUR' : 'symbol' : '1.2-2'
-            }}</span>
-          </div>
-        }
-        <div class="water-table-footer">
-          <span>Jahresgesamt</span>
-          <span>{{ waterTotals().totalM3 | number: '1.0-2' }} m³</span>
-          <span class="garden-col">-{{ waterTotals().gardenM3 | number: '1.0-2' }} m³</span>
-          <span>{{ waterTotals().billableM3 | number: '1.0-2' }} m³</span>
-          <span>{{ waterTotals().freshCost | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
-          <span>{{ waterTotals().wasteCost | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
-          <span class="total-col">{{
-            waterTotals().total | currency: 'EUR' : 'symbol' : '1.2-2'
-          }}</span>
-        </div>
+  <section class="water-section">
+    <h2 class="section-title">
+      <mat-icon style="color: #06b6d4">water_drop</mat-icon>
+      Wasserabrechnung {{ selectedYear() }}
+    </h2>
+    <p class="water-desc">
+      Abwasserkosten werden automatisch um den Gartenwasserverbrauch reduziert.
+    </p>
+    <div class="water-table">
+      <div class="water-table-header">
+        <span>Monat</span>
+        <span>Gesamt m³</span>
+        <span>Garten m³</span>
+        <span>Abw.-pflichtig</span>
+        <span>Frischwasser</span>
+        <span>Abwasser</span>
+        <span>Gesamt</span>
       </div>
-    </section>
+      @for (bill of waterBillsForYear(); track bill.month) {
+      <div class="water-table-row" [class.water-table-row--has-garden]="bill.gardenConsumption > 0">
+        <span class="month-label">{{ MONTH_NAMES[bill.month - 1] }}</span>
+        <span>{{ bill.totalConsumption | number: '1.0-2' }} m³</span>
+        <span class="garden-col">
+          @if (bill.gardenConsumption > 0) {
+          <span class="garden-badge">-{{ bill.gardenConsumption | number: '1.0-2' }} m³</span>
+          } @else {
+          <span class="no-garden">–</span>
+          }
+        </span>
+        <span>{{ bill.billableWastewater | number: '1.0-2' }} m³</span>
+        <span>{{ bill.freshwaterCost | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
+        <span>{{ bill.wastewaterCost | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
+        <span class="total-col">{{
+          bill.totalCost | currency: 'EUR' : 'symbol' : '1.2-2'
+          }}</span>
+      </div>
+      }
+      <div class="water-table-footer">
+        <span>Jahresgesamt</span>
+        <span>{{ waterTotals().totalM3 | number: '1.0-2' }} m³</span>
+        <span class="garden-col">-{{ waterTotals().gardenM3 | number: '1.0-2' }} m³</span>
+        <span>{{ waterTotals().billableM3 | number: '1.0-2' }} m³</span>
+        <span>{{ waterTotals().freshCost | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
+        <span>{{ waterTotals().wasteCost | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
+        <span class="total-col">{{
+          waterTotals().total | currency: 'EUR' : 'symbol' : '1.2-2'
+          }}</span>
+      </div>
+    </div>
+  </section>
   }
 
   <!-- Jahresvergleich -->
   @if (availableYears().length > 1) {
-    <section class="chart-section">
-      <h2>Jahresvergleich Gesamtkosten</h2>
-      <div class="chart-wrapper chart-wrapper--small">
-        <canvas #yearChart></canvas>
-      </div>
-    </section>
+  <section class="chart-section">
+    <h2>Jahresvergleich Gesamtkosten</h2>
+    <div class="chart-wrapper chart-wrapper--small">
+      <canvas #yearChart></canvas>
+    </div>
+  </section>
   }
 </div>

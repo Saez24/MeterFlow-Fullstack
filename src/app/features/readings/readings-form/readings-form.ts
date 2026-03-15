@@ -44,6 +44,16 @@ export class ReadingsForm implements OnInit {
 
   readonly activeMeters = this.energyService.activeMeters;
 
+  readonly isSaveDisabled = computed(() => {
+    const value = this.formValue().value;
+    const max = this.maxValue();
+    return (
+      this.form.invalid ||
+      !this.selectedMeter() ||
+      (max !== null && value !== null && value !== undefined && value > max)
+    );
+  });
+
   form = this.fb.group({
     meterId: ['', Validators.required],
     value: [null as number | null, [Validators.required, Validators.min(0)]],
@@ -67,10 +77,6 @@ export class ReadingsForm implements OnInit {
     return readings[0] ?? null;
   });
 
-  readonly minValue = computed(() => {
-    return this.lastReading()?.value ?? 0;
-  });
-
   readonly consumptionPreview = computed(() => {
     const meter = this.selectedMeter();
     const value = this.formValue().value;
@@ -87,6 +93,48 @@ export class ReadingsForm implements OnInit {
       cost = consumption * meter.pricePerUnit;
     }
     return { consumption, kwh, cost };
+  });
+
+  // Findet den zeitlich vorherigen Eintrag basierend auf dem gewählten Datum
+  readonly previousReading = computed(() => {
+    const meter = this.selectedMeter();
+    const selectedDate = this.formValue().date;
+    if (!meter || !selectedDate) return null;
+
+    const readings = this.energyService.getReadingsForMeter(meter.id);
+    const selected = new Date(selectedDate).getTime();
+
+    // Alle Ablesungen die vor dem gewählten Datum liegen, neueste zuerst
+    const before = readings
+      .filter(r => new Date(r.date).getTime() < selected)
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+    return before[0] ?? null;
+  });
+
+  // Findet den zeitlich nächsten Eintrag nach dem gewählten Datum
+  readonly nextReading = computed(() => {
+    const meter = this.selectedMeter();
+    const selectedDate = this.formValue().date;
+    if (!meter || !selectedDate) return null;
+
+    const readings = this.energyService.getReadingsForMeter(meter.id);
+    const selected = new Date(selectedDate).getTime();
+
+    // Alle Ablesungen die nach dem gewählten Datum liegen, älteste zuerst
+    const after = readings
+      .filter(r => new Date(r.date).getTime() > selected)
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+    return after[0] ?? null;
+  });
+
+  readonly minValue = computed(() => {
+    return this.previousReading()?.value ?? 0;
+  });
+
+  readonly maxValue = computed(() => {
+    return this.nextReading()?.value ?? null;
   });
 
   ngOnInit(): void {
@@ -108,8 +156,12 @@ export class ReadingsForm implements OnInit {
 
   getValueError(): string {
     const control = this.form.get('value');
+    const value = control?.value;
     if (control?.hasError('required')) return 'Bitte Zählerstand eingeben';
-    if (control?.hasError('min')) return `Wert muss mindestens ${this.minValue()} sein`;
+    if (control?.hasError('min'))
+      return `Wert muss mindestens ${this.minValue()} sein (vorherige Ablesung)`;
+    if (this.maxValue() !== null && value !== null && value! > this.maxValue()!)
+      return `Wert darf maximal ${this.maxValue()} sein (nächste Ablesung)`;
     return '';
   }
 

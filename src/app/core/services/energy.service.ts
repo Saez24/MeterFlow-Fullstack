@@ -281,6 +281,61 @@ export class EnergyService {
     return { year, totalCost, byMeter, months };
   }
 
+  async recalculateAllReadingsForMeter(meterId: string): Promise<void> {
+    const meter = this.getMeter(meterId);
+    if (!meter) return;
+
+    // Chronologisch sortiert — älteste zuerst
+    const readings = (this.readingsByMeter().get(meterId) ?? [])
+      .slice()
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+    if (readings.length === 0) return;
+
+    for (let i = 0; i < readings.length; i++) {
+      const current = readings[i];
+      const prev = i > 0 ? readings[i - 1] : null;
+
+      const consumption = prev ? current.value - prev.value : 0;
+      let kwh: number | undefined;
+      let cost = 0;
+      let wastewaterCost: number | undefined;
+
+      if (meter.type === 'gas') {
+        kwh = consumption * (meter.calorificValue ?? 10.55) * (meter.zNumber ?? 0.9672);
+        cost = kwh * meter.pricePerUnit;
+      } else if (meter.type === 'water') {
+        cost = consumption * meter.pricePerUnit;
+        const gardenM3 = prev
+          ? this.getGardenWaterConsumptionForPeriod(meterId, prev.date, current.date)
+          : 0;
+        const wc = Math.max(0, consumption - gardenM3) * (meter.wastewaterPrice ?? 0);
+        wastewaterCost = wc > 0 ? wc : undefined;
+      } else {
+        cost = consumption * meter.pricePerUnit;
+      }
+
+      const totalCost = cost + (wastewaterCost ?? 0);
+
+      // Nur updaten wenn sich etwas geändert hat
+      const changed =
+        current.consumption !== consumption ||
+        current.cost !== cost ||
+        current.kwh !== kwh ||
+        current.totalCost !== totalCost;
+
+      if (changed) {
+        await this.updateReading(current.id, {
+          consumption,
+          kwh,
+          cost,
+          wastewaterCost,
+          totalCost,
+        });
+      }
+    }
+  }
+
   // ============ TARIFF HISTORY ============
   async addTariffPeriod(meterId: string, period: Omit<TariffPeriod, 'id'>): Promise<void> {
     const meter = this.getMeter(meterId);
@@ -383,6 +438,7 @@ export class EnergyService {
 
     const saved = await this.supabase.addReading(payload);
     this.readings.update(list => [...list, saved]);
+    await this.recalculateAllReadingsForMeter(reading.meterId);
     return saved;
   }
 
@@ -481,4 +537,5 @@ export class EnergyService {
     }
     await this.loadAll();
   }
+
 }

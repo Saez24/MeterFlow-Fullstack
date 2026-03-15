@@ -30,14 +30,15 @@ export class Readings {
   private readonly snackBar = inject(MatSnackBar);
 
   readonly meters = this.energyService.meters;
-  filterMeterId = '';
+  readonly filterMeterId = signal<string>('');
 
   readonly filteredReadings = computed(() => {
     const all = [...this.energyService.readings()].sort(
       (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
     );
-    if (!this.filterMeterId) return all;
-    return all.filter((r) => r.meterId === this.filterMeterId);
+    const filter = this.filterMeterId();
+    if (!filter) return all;
+    return all.filter((r) => r.meterId === filter);
   });
 
   getMeter(id: string) {

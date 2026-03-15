@@ -13,9 +13,8 @@ export interface MeterSummary {
 export class StatsService {
   private readonly energyService = inject(EnergyService);
 
-  getMeterSummary(meterId: string, year?: number): MeterSummary | null {
-    const targetYear = year ?? new Date().getFullYear();
-    const yearStats = this.energyService.getYearStats(targetYear);
+  getMeterSummary(meterId: string, year: number): MeterSummary | null {
+    const yearStats = this.energyService.getYearStats(year);
     const meterStats = yearStats.byMeter[meterId];
 
     if (!meterStats) return null;
