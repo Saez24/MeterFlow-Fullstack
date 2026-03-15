@@ -30,6 +30,7 @@
   .mat-mdc-text-field-wrapper {
     background-color: var(--color-surface) !important;
   }
+
   .mat-mdc-form-field-hint,
   .mat-mdc-form-field-label,
   .mdc-floating-label {
@@ -48,6 +49,13 @@
 *::after {
   box-sizing: border-box;
   color: var(--color-text);
+}
+
+.mat-mdc-unelevated-button,
+.mat-mdc-raised-button {
+  * {
+    color: inherit !important;
+  }
 }
 
 .mat-calendar-body-label {

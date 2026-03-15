@@ -1,3 +1,4 @@
+<!-- src/app/features/dashboard/dashboard.html -->
 <div class="dashboard">
   <header class="dashboard-header">
     <div class="header-content">
@@ -21,40 +22,29 @@
           <div class="summary-icon">
             <mat-icon>account_balance_wallet</mat-icon>
           </div>
-
           <span class="summary-value">{{
             totalMonthly() | currency: 'EUR' : 'symbol' : '1.2-2'
             }}</span>
         </div>
-
       </div>
       <div class="summary-card summary-card--total">
-        <div class="summary-icon">
-          <mat-icon>account_balance</mat-icon>
-        </div>
+        <span class="summary-label">Gesamtkosten {{ selectedYear() }}</span>
         <div class="summary-info">
-          <span class="summary-label">Gesamtkosten {{ selectedYear() }}</span>
+          <div class="summary-icon">
+            <mat-icon>account_balance</mat-icon>
+          </div>
           <span class="summary-value">{{
             yearStats().totalCost | currency: 'EUR' : 'symbol' : '1.2-2'
             }}</span>
         </div>
       </div>
       <div class="summary-card summary-card--meters">
-        <div class="summary-icon">
-          <mat-icon>speed</mat-icon>
-        </div>
+        <span class="summary-label">Aktive Zähler</span>
         <div class="summary-info">
-          <span class="summary-label">Aktive Zähler</span>
+          <div class="summary-icon">
+            <mat-icon>speed</mat-icon>
+          </div>
           <span class="summary-value">{{ activeCount() }}</span>
-        </div>
-      </div>
-      <div class="summary-card summary-card--readings">
-        <div class="summary-icon">
-          <mat-icon>history</mat-icon>
-        </div>
-        <div class="summary-info">
-          <span class="summary-label">Ablesungen gesamt</span>
-          <span class="summary-value">{{ readingCount() }}</span>
         </div>
       </div>
     </div>
@@ -74,7 +64,9 @@
       <mat-icon>add_circle_outline</mat-icon>
       <h3>Noch keine Zähler angelegt</h3>
       <p>Füge deinen ersten Zähler hinzu, um zu beginnen.</p>
-      <button mat-flat-button color="primary" routerLink="/meters/new">Zähler hinzufügen</button>
+      <button mat-flat-button color="primary" routerLink="/meters/new">
+        Zähler hinzufügen
+      </button>
     </div>
     }
 
@@ -90,38 +82,38 @@
 
         <div class="meter-card__body">
           <h3 class="meter-name">{{ meter.name }}</h3>
-          @if (latestReading(meter.id); as reading) {
-          <div class="meter-reading">
-            <span class="reading-value">{{ reading.value | number: '1.0-3' }}</span>
-            <span class="reading-unit">{{ meter.unit }}</span>
-          </div>
-          <div class="reading-date">{{ reading.date | date: 'dd.MM.yyyy' }}</div>
-          } @else {
-          <div class="no-reading">Noch keine Ablesung</div>
-          }
-        </div>
 
-        <div class="meter-card__footer">
-          <div class="meter-stats">
-            @if (stats(meter.id); as stat) {
-            <div class="stat">
-              <span class="stat-label">Verbrauch</span>
-              <span class="stat-value">{{ stat.consumption | number: '1.0-2' }} {{ stat.unit }}</span>
-            </div>
-            <div class="stat">
-              <span class="stat-label">Kosten</span>
-              <span class="stat-value cost">{{
-                stat.cost | currency: 'EUR' : 'symbol' : '1.2-2'
-                }}</span>
-            </div>
-            @if (stat.trend !== 0) {
-            <div class="trend" [class.trend--up]="stat.trend > 0" [class.trend--down]="stat.trend < 0">
-              <mat-icon>{{ stat.trend > 0 ? 'trending_up' : 'trending_down' }}</mat-icon>
-              {{ stat.trend | number: '1.0-1' }}%
-            </div>
-            }
+          @if (statsService.getMeterSummary(meter.id, selectedYear()); as summary) {
+          <div class="meter-reading">
+            @if (summary.consumptionKwh !== undefined) {
+            <!-- Gas: primär kWh, m³ in Klammern -->
+            <span class="reading-value">{{ summary.consumptionKwh | number: '1.0-0' }}</span>
+            <span class="reading-unit">kWh</span>
+            <span class="reading-unit reading-unit--secondary">
+              ({{ summary.consumption | number: '1.0-2' }} {{ summary.unit }})
+            </span>
+            } @else {
+            <!-- Alle anderen Zähler -->
+            <span class="reading-value">{{ summary.consumption | number: '1.0-2' }}</span>
+            <span class="reading-unit">{{ summary.unit }}</span>
             }
           </div>
+          <div class="reading-date">Verbrauch {{ selectedYear() }}</div>
+
+          <div class="meter-card__footer">
+            <div class="meter-stats">
+              <div class="stat">
+                <span class="stat-label">Jahreskosten</span>
+                <span class="stat-value cost" [style.color]="meter.color">
+                  {{ summary.cost | currency: 'EUR' : 'symbol' : '1.2-2' }}
+                </span>
+              </div>
+            </div>
+          </div>
+          } @else {
+          <div class="no-reading">Keine Daten für {{ selectedYear() }}</div>
+          }
+
           <div class="meter-price">
             {{ meter.pricePerUnit | currency: 'EUR' : 'symbol' : '1.4-4' }}/{{ meter.unit }}
           </div>
@@ -152,9 +144,13 @@
           <span class="reading-date-small">{{ reading.date | date: 'dd.MM.yyyy' }}</span>
         </div>
         <div class="reading-values">
-          <span class="reading-val">{{ reading.value | number: '1.0-3' }} {{ meter.unit }}</span>
+          <span class="reading-val">
+            {{ reading.value | number: '1.0-3' }} {{ meter.unit }}
+          </span>
           @if (reading.consumption && reading.consumption > 0) {
-          <span class="reading-consumption">+{{ reading.consumption | number: '1.0-2' }}</span>
+          <span class="reading-consumption">
+            +{{ reading.consumption | number: '1.0-2' }}
+          </span>
           }
         </div>
         @if (reading.cost && reading.cost > 0) {

@@ -8,6 +8,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatRippleModule } from '@angular/material/core';
 import { EnergyService } from '../../core/services/energy.service';
 import { ENERGY_META } from '../../core/models/energy.models';
+import { StatsService } from '../../core/services/stats.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -25,6 +26,7 @@ import { ENERGY_META } from '../../core/models/energy.models';
 })
 export class Dashboard {
   private readonly energyService = inject(EnergyService);
+  readonly statsService = inject(StatsService);
   readonly availableYears = this.energyService.availableYears;
   selectedYear = signal(this.availableYears()[0] ?? new Date().getFullYear());
   readonly yearStats = computed(() => this.energyService.getYearStats(this.selectedYear()));
@@ -33,12 +35,18 @@ export class Dashboard {
 
   readonly activeCount = computed(() => this.energyService.activeMeters().length);
   readonly readingCount = computed(() => this.energyService.readings().length);
-
+  readonly showKwhFor = signal<Record<string, boolean>>({});
   readonly recentReadings = computed(() => {
     return [...this.energyService.readings()]
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
       .slice(0, 8);
   });
+
+  toggleKwh(event: Event, meterId: string): void {
+    event.stopPropagation();
+    event.preventDefault();
+    this.showKwhFor.update((map) => ({ ...map, [meterId]: !map[meterId] }));
+  }
 
   getMeta(type: string) {
     return ENERGY_META[type as keyof typeof ENERGY_META];
