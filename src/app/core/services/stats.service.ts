@@ -22,6 +22,17 @@ export class StatsService {
     const meter = this.energyService.getMeter(meterId);
     if (!meter) return null;
 
+    // Anzahl Monate mit tatsächlichen Daten für diesen Zähler
+    const monthsWithData = yearStats.months.filter(
+      (m) => m.byMeter[meterId] !== undefined
+    ).length;
+
+    // Grundgebühr nur für Monate mit Daten
+    const baseChargeCost = meter.baseCharge * monthsWithData;
+
+    // Gesamtkosten = Verbrauchskosten + anteilige Grundgebühr
+    const totalCost = meterStats.cost + baseChargeCost;
+
     const unit = ENERGY_META[meter.type].unit;
 
     let consumptionKwh: number | undefined;
@@ -34,7 +45,7 @@ export class StatsService {
 
     return {
       consumption: meterStats.consumption,
-      cost: meterStats.cost,
+      cost: totalCost,
       unit,
       consumptionKwh,
     };

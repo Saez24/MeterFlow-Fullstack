@@ -54,8 +54,8 @@ export class EnergyService {
     return map;
   });
 
-  readonly totalMonthlyCost = computed(() =>
-    this.activeMeters().reduce((sum, m) => sum + m.baseCharge, 0),
+  readonly totalYearlyCost = computed(() =>
+    this.activeMeters().reduce((sum, m) => sum + m.baseCharge * 12, 0),
   );
 
   // Dashboard: Verbrauch, Kosten, Trend
@@ -278,6 +278,10 @@ export class EnergyService {
         totalCost += s.cost;
       }
     }
+
+    // Grundgebühren: 12 Monate × monatliche Grundgebühr
+    totalCost += this.totalYearlyCost();
+
     return { year, totalCost, byMeter, months };
   }
 

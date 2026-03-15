@@ -2,7 +2,6 @@ import {
   Component,
   inject,
   signal,
-  computed,
   AfterViewInit,
   OnDestroy,
   ViewChild,
@@ -14,12 +13,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { FormsModule } from '@angular/forms';
 import { Chart, registerables } from 'chart.js';
-import { EnergyService } from '../../core/services/energy.service';
 import { ThemeService } from '../../core/services/theme.service';
 import { ENERGY_META, MONTH_NAMES } from '../../core/models/energy.models';
-import { StatsService } from '../../core/services/stats.service';
+import { DashboardStateService } from '../../core/services/dashboard-state.service';
 
 Chart.register(...registerables);
 
@@ -31,15 +28,13 @@ Chart.register(...registerables);
     MatIconModule,
     MatSelectModule,
     MatFormFieldModule,
-    FormsModule,
   ],
   templateUrl: './reports.html',
   styleUrl: './reports.scss',
 })
 export class Reports implements AfterViewInit, OnDestroy {
-  private readonly energyService = inject(EnergyService);
+  readonly state = inject(DashboardStateService);
   private readonly themeService = inject(ThemeService);
-  readonly statsService = inject(StatsService);
 
   @ViewChild('costChart') costChartRef!: ElementRef<HTMLCanvasElement>;
   @ViewChild('consumptionChart') consumptionChartRef!: ElementRef<HTMLCanvasElement>;
@@ -48,48 +43,19 @@ export class Reports implements AfterViewInit, OnDestroy {
   readonly ENERGY_META = ENERGY_META;
   readonly MONTH_NAMES = MONTH_NAMES;
 
-  readonly availableYears = this.energyService.availableYears;
-  readonly activeMeters = this.energyService.activeMeters;
-  readonly waterBills = this.energyService.waterBillStats;
-  readonly selectedYear = signal(this.availableYears()[0] ?? new Date().getFullYear());
-
-  readonly yearStats = computed(() => this.energyService.getYearStats(this.selectedYear()));
-
-  readonly waterBillsForYear = computed(() =>
-    this.waterBills().filter((b) => b.year === this.selectedYear()),
+  readonly selectedMeterChart = signal<string>(
+    this.state.activeMeters()[0]?.id ?? ''
   );
-  readonly selectedMeterChart = signal<string>(this.activeMeters()[0]?.id ?? '');
 
   private costChartInstance: Chart | null = null;
   private consumptionChartInstance: Chart | null = null;
   private yearChartInstance: Chart | null = null;
-  readonly waterTotals = computed(() => {
-    const bills = this.waterBillsForYear();
-    return {
-      totalM3: bills.reduce((s, b) => s + b.totalConsumption, 0),
-      gardenM3: bills.reduce((s, b) => s + b.gardenConsumption, 0),
-      billableM3: bills.reduce((s, b) => s + b.billableWastewater, 0),
-      freshCost: bills.reduce((s, b) => s + b.freshwaterCost, 0),
-      wasteCost: bills.reduce((s, b) => s + b.wastewaterCost, 0),
-      total: bills.reduce((s, b) => s + b.totalCost, 0),
-    };
-  });
-
-
-  // get selectedYear() {
-  //   return this._selectedYear();
-  // }
-
-  // set selectedYear(value: number) {
-  //   this._selectedYear.set(value);
-  // }
 
   constructor() {
     effect(() => {
       this.themeService.isDark();
-      this.selectedYear();
+      this.state.selectedYear();
       this.selectedMeterChart();
-
       if (!this.costChartRef) return;
       this.buildAllCharts();
     });
@@ -108,7 +74,7 @@ export class Reports implements AfterViewInit, OnDestroy {
   private buildAllCharts(): void {
     this.buildCostChart();
     this.buildConsumptionChart();
-    if (this.availableYears().length > 1) this.buildYearChart();
+    if (this.state.availableYears().length > 1) this.buildYearChart();
   }
 
   private chartDefaults() {
@@ -116,15 +82,14 @@ export class Reports implements AfterViewInit, OnDestroy {
     return {
       gridColor: dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)',
       textColor: dark ? '#98989D' : '#6E6E73',
-      tickColor: dark ? '#98989D' : '#6E6E73',
     };
   }
 
   private buildCostChart(): void {
     this.costChartInstance?.destroy();
     const { gridColor, textColor } = this.chartDefaults();
-    const months = this.energyService.getMonthStats(this.selectedYear());
-    const meters = this.activeMeters();
+    const months = this.state.getMonthStats(this.state.selectedYear());
+    const meters = this.state.activeMeters();
 
     const datasets = meters.map((meter) => ({
       label: meter.name,
@@ -165,10 +130,10 @@ export class Reports implements AfterViewInit, OnDestroy {
     this.consumptionChartInstance?.destroy();
     const { gridColor, textColor } = this.chartDefaults();
     const meterId = this.selectedMeterChart();
-    const meter = this.activeMeters().find((m) => m.id === meterId);
+    const meter = this.state.activeMeters().find((m) => m.id === meterId);
     if (!meter) return;
 
-    const months = this.energyService.getMonthStats(this.selectedYear());
+    const months = this.state.getMonthStats(this.state.selectedYear());
     const data = months.map((m) => m.byMeter[meterId]?.consumption ?? 0);
     const unit = ENERGY_META[meter.type].unit;
 
@@ -176,23 +141,23 @@ export class Reports implements AfterViewInit, OnDestroy {
       type: 'bar',
       data: {
         labels: months.map((m) => m.label),
-        datasets: [
-          {
-            label: meter.name,
-            data,
-            backgroundColor: meter.color + 'AA',
-            borderColor: meter.color,
-            borderWidth: 2,
-            borderRadius: 8,
-          },
-        ],
+        datasets: [{
+          label: meter.name,
+          data,
+          backgroundColor: meter.color + 'AA',
+          borderColor: meter.color,
+          borderWidth: 2,
+          borderRadius: 8,
+        }],
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
           legend: { display: false },
-          tooltip: { callbacks: { label: (ctx) => ` ${(ctx.raw as number).toFixed(2)} ${unit}` } },
+          tooltip: {
+            callbacks: { label: (ctx) => ` ${(ctx.raw as number).toFixed(2)} ${unit}` },
+          },
         },
         scales: {
           x: { grid: { color: gridColor }, ticks: { color: textColor } },
@@ -209,25 +174,23 @@ export class Reports implements AfterViewInit, OnDestroy {
     this.yearChartInstance?.destroy();
     if (!this.yearChartRef) return;
     const { gridColor, textColor } = this.chartDefaults();
-    const years = this.availableYears();
-    const data = years.map((y) => this.energyService.getYearStats(y).totalCost);
+    const years = this.state.availableYears();
+    const data = years.map((y) => this.state.yearStats().totalCost);
 
     this.yearChartInstance = new Chart(this.yearChartRef.nativeElement, {
       type: 'bar',
       data: {
         labels: years.map(String),
-        datasets: [
-          {
-            label: 'Gesamtkosten',
-            data,
-            backgroundColor: years.map((_, i) =>
-              i === 0 ? 'rgba(79,70,229,0.8)' : 'rgba(79,70,229,0.4)',
-            ),
-            borderColor: '#4F46E5',
-            borderWidth: 2,
-            borderRadius: 10,
-          },
-        ],
+        datasets: [{
+          label: 'Gesamtkosten',
+          data,
+          backgroundColor: years.map((_, i) =>
+            i === 0 ? 'rgba(79,70,229,0.8)' : 'rgba(79,70,229,0.4)'
+          ),
+          borderColor: '#4F46E5',
+          borderWidth: 2,
+          borderRadius: 10,
+        }],
       },
       options: {
         responsive: true,

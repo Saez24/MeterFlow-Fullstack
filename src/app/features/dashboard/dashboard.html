@@ -1,4 +1,3 @@
-<!-- src/app/features/dashboard/dashboard.html -->
 <div class="dashboard">
   <header class="dashboard-header">
     <div class="header-content">
@@ -17,24 +16,24 @@
   <section class="summary-section">
     <div class="summary-grid">
       <div class="summary-card summary-card--total">
-        <span class="summary-label">Grundgebühren / Monat</span>
+        <span class="summary-label">Grundgebühren / Jahr</span>
         <div class="summary-info">
           <div class="summary-icon">
             <mat-icon>account_balance_wallet</mat-icon>
           </div>
           <span class="summary-value">{{
-            totalMonthly() | currency: 'EUR' : 'symbol' : '1.2-2'
+            state.totalYearlyCost() | currency: 'EUR' : 'symbol' : '1.2-2'
             }}</span>
         </div>
       </div>
       <div class="summary-card summary-card--total">
-        <span class="summary-label">Gesamtkosten {{ selectedYear() }}</span>
+        <span class="summary-label">Gesamtkosten {{ state.selectedYear() }}</span>
         <div class="summary-info">
           <div class="summary-icon">
             <mat-icon>account_balance</mat-icon>
           </div>
           <span class="summary-value">{{
-            yearStats().totalCost | currency: 'EUR' : 'symbol' : '1.2-2'
+            state.yearStats().totalCost | currency: 'EUR' : 'symbol' : '1.2-2'
             }}</span>
         </div>
       </div>
@@ -44,7 +43,7 @@
           <div class="summary-icon">
             <mat-icon>speed</mat-icon>
           </div>
-          <span class="summary-value">{{ activeCount() }}</span>
+          <span class="summary-value">{{ state.activeCount() }}</span>
         </div>
       </div>
     </div>
@@ -59,7 +58,7 @@
       </button>
     </div>
 
-    @if (activeMeters().length === 0) {
+    @if (state.activeMeters().length === 0) {
     <div class="empty-state">
       <mat-icon>add_circle_outline</mat-icon>
       <h3>Noch keine Zähler angelegt</h3>
@@ -71,39 +70,37 @@
     }
 
     <div class="meters-grid">
-      @for (meter of activeMeters(); track meter.id) {
+      @for (meter of state.activeMeters(); track meter.id) {
       <div class="meter-card" [style.--meter-color]="meter.color" matRipple [routerLink]="['/meters', meter.id]">
         <div class="meter-card__header">
           <div class="meter-icon" [style.background]="meter.color + '22'">
             <mat-icon [style.color]="meter.color">{{ meter.icon }}</mat-icon>
           </div>
-          <div class="meter-badge">{{ getMeta(meter.type).label }}</div>
+          <div class="meter-badge">{{ state.getMeta(meter.type).label }}</div>
         </div>
 
         <div class="meter-card__body">
           <h3 class="meter-name">{{ meter.name }}</h3>
 
-          @if (statsService.getMeterSummary(meter.id, selectedYear()); as summary) {
+          @if (state.statsService.getMeterSummary(meter.id, state.selectedYear()); as summary) {
           <div class="meter-reading">
             @if (summary.consumptionKwh !== undefined) {
-            <!-- Gas: primär kWh, m³ in Klammern -->
             <span class="reading-value">{{ summary.consumptionKwh | number: '1.0-0' }}</span>
             <span class="reading-unit">kWh</span>
             <span class="reading-unit reading-unit--secondary">
               ({{ summary.consumption | number: '1.0-2' }} {{ summary.unit }})
             </span>
             } @else {
-            <!-- Alle anderen Zähler -->
             <span class="reading-value">{{ summary.consumption | number: '1.0-2' }}</span>
             <span class="reading-unit">{{ summary.unit }}</span>
             }
           </div>
-          <div class="reading-date">Verbrauch {{ selectedYear() }}</div>
+          <div class="reading-date">Verbrauch {{ state.selectedYear() }}</div>
 
           <div class="meter-card__footer">
             <div class="meter-stats">
               <div class="stat">
-                <span class="stat-label">Jahreskosten</span>
+                <span class="stat-label">Aktuelle Kosten</span>
                 <span class="stat-value cost" [style.color]="meter.color">
                   {{ summary.cost | currency: 'EUR' : 'symbol' : '1.2-2' }}
                 </span>
@@ -111,7 +108,7 @@
             </div>
           </div>
           } @else {
-          <div class="no-reading">Keine Daten für {{ selectedYear() }}</div>
+          <div class="no-reading">Keine Daten für {{ state.selectedYear() }}</div>
           }
 
           <div class="meter-price">
@@ -124,7 +121,7 @@
   </section>
 
   <!-- Recent Readings -->
-  @if (recentReadings().length > 0) {
+  @if (state.recentReadings().length > 0) {
   <section class="recent-section">
     <div class="section-header">
       <h2>Letzte Ablesungen</h2>
@@ -133,9 +130,9 @@
       </button>
     </div>
     <div class="readings-list">
-      @for (reading of recentReadings(); track reading.id) {
+      @for (reading of state.recentReadings(); track reading.id) {
       <div class="reading-item">
-        @if (getMeterById(reading.meterId); as meter) {
+        @if (state.getMeterById(reading.meterId); as meter) {
         <div class="reading-meter-icon" [style.background]="meter.color + '22'">
           <mat-icon [style.color]="meter.color">{{ meter.icon }}</mat-icon>
         </div>

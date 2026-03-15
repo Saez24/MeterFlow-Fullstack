@@ -6,8 +6,8 @@
     </div>
     <mat-form-field appearance="outline" class="year-select">
       <mat-label>Jahr</mat-label>
-      <mat-select [value]="selectedYear()" (selectionChange)="selectedYear.set($event.value)">
-        @for (y of availableYears(); track y) {
+      <mat-select [value]="state.selectedYear()" (selectionChange)="state.selectedYear.set($event.value)">
+        @for (y of state.availableYears(); track y) {
         <mat-option [value]="y">{{ y }}</mat-option>
         }
       </mat-select>
@@ -20,22 +20,29 @@
       <div class="kpi-card kpi-card--total">
         <div class="kpi-icon"><mat-icon>euro</mat-icon></div>
         <div class="kpi-info">
-          <span class="kpi-label">Gesamtkosten {{ selectedYear() }}</span>
+          <span class="kpi-label">Gesamtkosten {{ state.selectedYear() }}</span>
           <span class="kpi-value">{{
-            yearStats().totalCost | currency: 'EUR' : 'symbol' : '1.2-2'
+            state.totalYearCostWithBase() | currency: 'EUR' : 'symbol' : '1.2-2'
             }}</span>
         </div>
       </div>
-      @for (meter of activeMeters(); track meter.id) {
-      @if (yearStats().byMeter[meter.id]; as ms) {
+      @for (meter of state.activeMeters(); track meter.id) {
+      @if (state.statsService.getMeterSummary(meter.id, state.selectedYear()); as summary) {
       <div class="kpi-card" [style.--kpi-color]="meter.color">
         <div class="kpi-icon" [style.background]="meter.color + '22'">
           <mat-icon [style.color]="meter.color">{{ meter.icon }}</mat-icon>
         </div>
         <div class="kpi-info">
           <span class="kpi-label">{{ meter.name }}</span>
-          <span class="kpi-value">{{ ms.cost | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
-          <span class="kpi-sub">{{ ms.consumption | number: '1.0-2' }} {{ ENERGY_META[meter.type].unit }}</span>
+          <span class="kpi-value">{{ summary.cost | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
+          <span class="kpi-sub">
+            @if (summary.consumptionKwh !== undefined) {
+            {{ summary.consumptionKwh | number: '1.0-0' }} kWh
+            ({{ summary.consumption | number: '1.0-2' }} {{ summary.unit }})
+            } @else {
+            {{ summary.consumption | number: '1.0-2' }} {{ summary.unit }}
+            }
+          </span>
         </div>
       </div>
       }
@@ -46,9 +53,9 @@
   <!-- Monats-Balkendiagramm Kosten -->
   <section class="chart-section">
     <div class="chart-header">
-      <h2>Monatliche Kosten {{ selectedYear() }}</h2>
+      <h2>Monatliche Kosten {{ state.selectedYear() }}</h2>
       <div class="chart-legend">
-        @for (meter of activeMeters(); track meter.id) {
+        @for (meter of state.activeMeters(); track meter.id) {
         <div class="legend-item">
           <span class="legend-dot" [style.background]="meter.color"></span>
           <span>{{ meter.name }}</span>
@@ -66,7 +73,7 @@
     <div class="chart-header">
       <h2>Monatlicher Verbrauch</h2>
       <div class="meter-toggle">
-        @for (meter of activeMeters(); track meter.id) {
+        @for (meter of state.activeMeters(); track meter.id) {
         <button class="toggle-btn" [class.toggle-btn--active]="selectedMeterChart() === meter.id"
           [style.--btn-color]="meter.color" (click)="selectedMeterChart.set(meter.id)">
           <mat-icon [style.color]="meter.color">{{ meter.icon }}</mat-icon>
@@ -81,11 +88,11 @@
   </section>
 
   <!-- Wasser-Spezialauswertung -->
-  @if (waterBills().length > 0) {
+  @if (state.waterBills().length > 0) {
   <section class="water-section">
     <h2 class="section-title">
       <mat-icon style="color: #06b6d4">water_drop</mat-icon>
-      Wasserabrechnung {{ selectedYear() }}
+      Wasserabrechnung {{ state.selectedYear() }}
     </h2>
     <p class="water-desc">
       Abwasserkosten werden automatisch um den Gartenwasserverbrauch reduziert.
@@ -100,13 +107,15 @@
         <span>Abwasser</span>
         <span>Gesamt</span>
       </div>
-      @for (bill of waterBillsForYear(); track bill.month) {
+      @for (bill of state.waterBillsForYear(); track bill.month) {
       <div class="water-table-row" [class.water-table-row--has-garden]="bill.gardenConsumption > 0">
         <span class="month-label">{{ MONTH_NAMES[bill.month - 1] }}</span>
         <span>{{ bill.totalConsumption | number: '1.0-2' }} m³</span>
         <span class="garden-col">
           @if (bill.gardenConsumption > 0) {
-          <span class="garden-badge">-{{ bill.gardenConsumption | number: '1.0-2' }} m³</span>
+          <span class="garden-badge">
+            -{{ bill.gardenConsumption | number: '1.0-2' }} m³
+          </span>
           } @else {
           <span class="no-garden">–</span>
           }
@@ -121,13 +130,15 @@
       }
       <div class="water-table-footer">
         <span>Jahresgesamt</span>
-        <span>{{ waterTotals().totalM3 | number: '1.0-2' }} m³</span>
-        <span class="garden-col">-{{ waterTotals().gardenM3 | number: '1.0-2' }} m³</span>
-        <span>{{ waterTotals().billableM3 | number: '1.0-2' }} m³</span>
-        <span>{{ waterTotals().freshCost | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
-        <span>{{ waterTotals().wasteCost | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
+        <span>{{ state.waterTotals().totalM3 | number: '1.0-2' }} m³</span>
+        <span class="garden-col">
+          -{{ state.waterTotals().gardenM3 | number: '1.0-2' }} m³
+        </span>
+        <span>{{ state.waterTotals().billableM3 | number: '1.0-2' }} m³</span>
+        <span>{{ state.waterTotals().freshCost | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
+        <span>{{ state.waterTotals().wasteCost | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
         <span class="total-col">{{
-          waterTotals().total | currency: 'EUR' : 'symbol' : '1.2-2'
+          state.waterTotals().total | currency: 'EUR' : 'symbol' : '1.2-2'
           }}</span>
       </div>
     </div>
@@ -135,7 +146,7 @@
   }
 
   <!-- Jahresvergleich -->
-  @if (availableYears().length > 1) {
+  @if (state.availableYears().length > 1) {
   <section class="chart-section">
     <h2>Jahresvergleich Gesamtkosten</h2>
     <div class="chart-wrapper chart-wrapper--small">
