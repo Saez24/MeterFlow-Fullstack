@@ -5,6 +5,14 @@ COPY package.json package-lock.json ./
 RUN npm ci
 
 COPY . .
+
+ARG SUPABASE_URL
+ARG SUPABASE_KEY
+
+# environment.ts zur Build-Zeit generieren
+RUN echo "export const environment = { production: true, supabaseUrl: '${SUPABASE_URL}', supabaseKey: '${SUPABASE_KEY}' };" \
+    > src/environments/environment.ts
+
 RUN ./node_modules/.bin/ng build --configuration=production
 
 # alpine statt latest → ~25MB statt ~190MB
