@@ -5,7 +5,7 @@ COPY package.json package-lock.json ./
 RUN npm ci
 
 COPY . .
-RUN ./node_modules/.bin/ng build --configuration=production
+RUN ng build --configuration=production
 
 # alpine statt latest → ~25MB statt ~190MB
 FROM nginx:alpine  
