@@ -1,7 +1,12 @@
 import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { FormsModule, ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
+import {
+  FormsModule,
+  ReactiveFormsModule,
+  FormBuilder,
+  Validators,
+} from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -12,7 +17,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDividerModule } from '@angular/material/divider';
 import { EnergyService } from '../../../core/services/energy.service';
-import { ENERGY_META } from '../../../core/models/energy.models';
+import { ENERGY_META, MeterReading } from '../../../core/models/energy.models';
 import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
@@ -43,6 +48,10 @@ export class ReadingsForm implements OnInit {
   private readonly fb = inject(FormBuilder);
 
   readonly activeMeters = this.energyService.activeMeters;
+  
+  private readonly readingId = this.route.snapshot.paramMap.get('id');
+  readonly isEditMode = !!this.readingId;
+  private readonly originalReading = this.isEditMode ? this.energyService.getReading(this.readingId!) : null;
 
   readonly isSaveDisabled = computed(() => {
     const value = this.formValue().value;
@@ -66,7 +75,7 @@ export class ReadingsForm implements OnInit {
   });
 
   readonly selectedMeter = computed(() => {
-    const id = this.formValue().meterId;
+    const id = this.form.getRawValue().meterId;
     return id ? this.energyService.getMeter(id) : null;
   });
 
@@ -87,7 +96,10 @@ export class ReadingsForm implements OnInit {
     let kwh: number | undefined;
     let cost: number;
     if (meter.type === 'gas') {
-      kwh = consumption * (meter.calorificValue ?? 10.55) * (meter.zNumber ?? 0.9672);
+      kwh =
+        consumption *
+        (meter.calorificValue ?? 10.55) *
+        (meter.zNumber ?? 0.9672);
       cost = kwh * meter.pricePerUnit;
     } else {
       cost = consumption * meter.pricePerUnit;
@@ -106,7 +118,7 @@ export class ReadingsForm implements OnInit {
 
     // Alle Ablesungen die vor dem gewählten Datum liegen, neueste zuerst
     const before = readings
-      .filter(r => new Date(r.date).getTime() < selected)
+      .filter((r) => new Date(r.date).getTime() < selected)
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
     return before[0] ?? null;
@@ -123,7 +135,7 @@ export class ReadingsForm implements OnInit {
 
     // Alle Ablesungen die nach dem gewählten Datum liegen, älteste zuerst
     const after = readings
-      .filter(r => new Date(r.date).getTime() > selected)
+      .filter((r) => new Date(r.date).getTime() > selected)
       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
     return after[0] ?? null;
@@ -138,11 +150,16 @@ export class ReadingsForm implements OnInit {
   });
 
   ngOnInit(): void {
-    const meterId = this.route.snapshot.queryParamMap.get('meterId');
-    if (meterId) {
-      this.form.patchValue({ meterId });
-    } else if (this.activeMeters().length === 1) {
-      this.form.patchValue({ meterId: this.activeMeters()[0].id });
+    if (this.isEditMode && this.originalReading) {
+      this.form.patchValue(this.originalReading);
+      this.form.controls.meterId.disable();
+    } else {
+      const meterId = this.route.snapshot.queryParamMap.get('meterId');
+      if (meterId) {
+        this.form.patchValue({ meterId });
+      } else if (this.activeMeters().length === 1) {
+        this.form.patchValue({ meterId: this.activeMeters()[0].id });
+      }
     }
   }
 
@@ -167,23 +184,35 @@ export class ReadingsForm implements OnInit {
 
   save(): void {
     if (this.form.invalid) return;
-    const { meterId, value, date, note } = this.form.value;
-    const preview = this.consumptionPreview();
 
-    this.energyService.addReading({
-      meterId: meterId!,
-      value: value!,
-      date: date!,
-      note: note ?? undefined,
-      consumption: preview?.consumption ?? 0,
-      cost: preview?.cost ?? 0,
-      totalCost: preview?.cost ?? 0,
-    });
+    if (this.isEditMode && this.originalReading) {
+      const updatedReading: MeterReading = {
+        ...this.originalReading,
+        value: this.form.value.value!,
+        date: this.form.value.date!,
+        note: this.form.value.note ?? undefined,
+      };
+      this.energyService.updateReading(updatedReading);
+    } else {
+      const { meterId, value, date, note } = this.form.getRawValue();
+      const preview = this.consumptionPreview();
+  
+      this.energyService.addReading({
+        meterId: meterId!,
+        value: value!,
+        date: date!,
+        note: note ?? undefined,
+        consumption: preview?.consumption ?? 0,
+        cost: preview?.cost ?? 0,
+        totalCost: preview?.cost ?? 0,
+      });
+    }
+
     this.snackBar.open('Ablesung gespeichert', 'OK', { duration: 3000 });
     this.goBack();
   }
 
   goBack(): void {
-    this.router.navigate(['/']);
+    this.router.navigate([this.isEditMode ? '/readings' : '/']);
   }
 }

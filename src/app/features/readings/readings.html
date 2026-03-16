@@ -85,6 +85,9 @@
       }
 
       <div class="reading-actions-col">
+        <button mat-icon-button [routerLink]="[reading.id, 'edit']" class="edit-btn" title="Ablesung bearbeiten">
+          <mat-icon>edit</mat-icon>
+        </button>
         <button mat-icon-button (click)="deleteReading(reading.id)" class="delete-btn" title="Ablesung löschen">
           <mat-icon>delete_outline</mat-icon>
         </button>

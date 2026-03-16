@@ -30,6 +30,7 @@ export const routes: Routes = [
     children: [
       { path: '', component: Readings },
       { path: 'new', component: ReadingsForm },
+      { path: ':id/edit', component: ReadingsForm },
     ],
   },
   { path: 'reports', component: Reports, canActivate: [authGuard] },

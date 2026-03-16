@@ -329,12 +329,13 @@ export class EnergyService {
         current.totalCost !== totalCost;
 
       if (changed) {
-        await this.updateReading(current.id, {
+        await this.updateReading({
+          ...current,
           consumption,
           kwh,
           cost,
-          wastewaterCost,
           totalCost,
+          wastewaterCost,
         });
       }
     }
@@ -410,6 +411,10 @@ export class EnergyService {
     return this.meters().find((m) => m.id === id);
   }
 
+  getReading(id: string): MeterReading | undefined {
+    return this.readings().find((r) => r.id === id);
+  }
+
   // ============ READING CRUD ============
   async addReading(reading: Omit<MeterReading, 'id'>): Promise<MeterReading> {
     const meter = this.getMeter(reading.meterId);
@@ -446,14 +451,21 @@ export class EnergyService {
     return saved;
   }
 
-  async updateReading(id: string, changes: Partial<MeterReading>): Promise<void> {
+  async updateReading(reading: MeterReading): Promise<void> {
+    const { id, ...changes } = reading;
     await this.supabase.updateReading(id, changes);
-    this.readings.update(list => list.map(r => r.id === id ? { ...r, ...changes } : r));
+    this.readings.update((list) =>
+      list.map((r) => (r.id === id ? { ...r, ...changes } : r)),
+    );
+    await this.recalculateAllReadingsForMeter(reading.meterId);
   }
 
   async deleteReading(id: string): Promise<void> {
+    const reading = this.getReading(id);
+    if (!reading) return;
     await this.supabase.deleteReading(id);
-    this.readings.update(list => list.filter(r => r.id !== id));
+    this.readings.update((list) => list.filter((r) => r.id !== id));
+    await this.recalculateAllReadingsForMeter(reading.meterId);
   }
 
   getReadingsForMeter(meterId: string): MeterReading[] {
