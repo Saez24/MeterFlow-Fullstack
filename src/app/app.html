@@ -1,6 +1,6 @@
 <div class="app-shell">
 
-  <!-- Einklapp-Button klebt außen an der Sidebar -->
+  @if (!isAuthPage()) {
   <button class="sidebar-toggle" [style.left]="toggleBtnLeft()" mat-icon-button
     (click)="sidebarCollapsed.set(!sidebarCollapsed())" [matTooltip]="sidebarCollapsed() ? 'Aufklappen' : 'Einklappen'"
     matTooltipPosition="right">
@@ -8,8 +8,6 @@
   </button>
 
   <nav class="sidebar" [class.sidebar--collapsed]="sidebarCollapsed()">
-
-    <!-- Logo + Theme-Switcher oben -->
     <div class="sidebar__top">
       <div class="sidebar__logo">
         <div class="logo-icon" [style.background]="connectionColor()" [matTooltip]="connectionTooltip()"
@@ -17,48 +15,45 @@
           <mat-icon>electric_bolt</mat-icon>
         </div>
         @if (!sidebarCollapsed()) {
-        <span class="logo-text">EnergieMon</span>
+        <span class="logo-text">MeterFlow</span>
         }
       </div>
-      <!-- Theme-Switcher direkt unter dem Logo -->
-      <!-- <button mat-icon-button (click)="themeService.toggle()"
-        [matTooltip]="themeService.isDark() ? 'Heller Modus' : 'Dunkler Modus'" matTooltipPosition="right">
-        <mat-icon>{{ themeService.isDark() ? 'light_mode' : 'dark_mode' }}</mat-icon>
-      </button> -->
     </div>
 
-    <!-- Navigation -->
     <div class="sidebar__nav">
       @for (item of navItems; track item.path) {
       <a class="nav-item" [routerLink]="item.path" routerLinkActive="nav-item--active"
         [routerLinkActiveOptions]="{ exact: item.path === '/' }" [matTooltip]="sidebarCollapsed() ? item.label : ''"
         matTooltipPosition="right">
         <mat-icon>{{ item.icon }}</mat-icon>
-        @if (!sidebarCollapsed()) { <span>{{ item.label }}</span> }
+        @if (!sidebarCollapsed()) {
+        <span>{{ item.label }}</span>
+        }
       </a>
       }
     </div>
 
-    <!-- Logout ganz unten -->
     <div class="sidebar__footer">
       <button mat-stroked-button color="warn" (click)="logout()" class="logout-btn"
         [matTooltip]="sidebarCollapsed() ? 'Abmelden' : ''" matTooltipPosition="right">
         <mat-icon>logout</mat-icon>
-        @if (!sidebarCollapsed()) { <span>Abmelden</span> }
+        @if (!sidebarCollapsed()) {
+        <span>Abmelden</span>
+        }
       </button>
     </div>
-
   </nav>
+  }
 
-  <main class="main-content">
-    <!-- Mobile Header -->
+  <main class="main-content" [class.main-content--auth]="isAuthPage()">
+    @if (!isAuthPage()) {
     <header class="mobile-header">
       <div class="mobile-logo">
         <div class="logo-icon" [style.background]="connectionColor()" [matTooltip]="connectionTooltip()"
           matTooltipPosition="below">
           <mat-icon>electric_bolt</mat-icon>
         </div>
-        <span>EnergieMon</span>
+        <span>MeterFlow</span>
       </div>
       <div class="mobile-header__actions">
         <button mat-icon-button (click)="themeService.toggle()">
@@ -69,10 +64,14 @@
         </button>
       </div>
     </header>
-    <div class="content-area"><router-outlet></router-outlet></div>
+    }
+
+    <div class="content-area">
+      <router-outlet></router-outlet>
+    </div>
   </main>
 
-  <!-- Mobile Bottom Nav -->
+  @if (!isAuthPage()) {
   <nav class="bottom-nav">
     @for (item of navItems; track item.path) {
     <a class="bottom-nav-item" [routerLink]="item.path" routerLinkActive="bottom-nav-item--active"
@@ -82,5 +81,6 @@
     </a>
     }
   </nav>
+  }
 
 </div>
