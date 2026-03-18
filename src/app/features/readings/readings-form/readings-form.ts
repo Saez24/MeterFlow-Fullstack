@@ -75,7 +75,7 @@ export class ReadingsForm implements OnInit {
   });
 
   readonly selectedMeter = computed(() => {
-    const id = this.form.getRawValue().meterId;
+    const id = this.formValue().meterId;
     return id ? this.energyService.getMeter(id) : null;
   });
 
@@ -88,21 +88,29 @@ export class ReadingsForm implements OnInit {
 
   readonly consumptionPreview = computed(() => {
     const meter = this.selectedMeter();
-    const value = this.formValue().value;
+    const formVal = this.formValue();
+    const value = formVal.value;
+    const date = formVal.date;
     const last = this.lastReading();
-    if (!meter || value === null || value === undefined) return null;
+
+    if (!meter || value === null || value === undefined || !date) return null;
+
+    const tariff = this.energyService.getActiveTariffForDate(meter, date);
+    if (!tariff) return { consumption: 0, kwh: 0, cost: 0 };
+
     const consumption = last ? value - last.value : 0;
     if (consumption < 0) return null;
+
     let kwh: number | undefined;
     let cost: number;
+
     if (meter.type === 'gas') {
-      kwh =
-        consumption *
-        (meter.calorificValue ?? 10.55) *
-        (meter.zNumber ?? 0.9672);
-      cost = kwh * meter.pricePerUnit;
+      const calorificValue = tariff.calorificValue ?? meter.calorificValue ?? 10.55;
+      const zNumber = tariff.zNumber ?? meter.zNumber ?? 0.9672;
+      kwh = consumption * calorificValue * zNumber;
+      cost = kwh * tariff.pricePerUnit;
     } else {
-      cost = consumption * meter.pricePerUnit;
+      cost = consumption * tariff.pricePerUnit;
     }
     return { consumption, kwh, cost };
   });

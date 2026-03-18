@@ -65,9 +65,6 @@ export class MeterForm implements OnInit {
     type: [EnergyType.Electricity, Validators.required], // ✅ Enum-Wert statt String-Literal
     provider: [''],
     meterNumber: [''],
-    pricePerUnit: [0, [Validators.required, Validators.min(0)]],
-    baseCharge: [0, [Validators.required, Validators.min(0)]],
-    wastewaterPrice: [undefined as number | undefined, [Validators.min(0)]],
     linkedWaterMeterId: [''],
     calorificValue: [undefined as number | undefined],
     zNumber: [undefined as number | undefined],
@@ -104,9 +101,6 @@ export class MeterForm implements OnInit {
     const z = this.form.get('zNumber')?.value ?? 0.9672;
     return 100 * cv * z;
   });
-  readonly gasCost = computed(
-    () => this.gasPreview() * (this.form.get('pricePerUnit')?.value ?? 0),
-  );
 
   constructor() {
     effect(() => {
@@ -127,7 +121,6 @@ export class MeterForm implements OnInit {
           // Sicherstellen, dass undefined-Felder korrekt gesetzt werden
           calorificValue: meter.calorificValue ?? undefined,
           zNumber: meter.zNumber ?? undefined,
-          wastewaterPrice: meter.wastewaterPrice ?? undefined,
         });
       }
     }
@@ -136,7 +129,6 @@ export class MeterForm implements OnInit {
   selectType(type: EnergyType): void {
     this.form.patchValue({
       type,
-      wastewaterPrice: type === 'water' ? 2.8 : type === 'garden_water' ? 0 : undefined,
       calorificValue: type === 'gas' ? 10.55 : undefined,
       zNumber: type === 'gas' ? 0.9672 : undefined,
       linkedWaterMeterId: '',
@@ -173,10 +165,7 @@ export class MeterForm implements OnInit {
       icon: meta.icon,
       color: meta.color,
       active: value.active ?? true,
-      pricePerUnit: value.pricePerUnit,
-      baseCharge: value.baseCharge,
       // Optionale Felder nur hinzufügen, wenn sie einen Wert haben
-      ...(value.wastewaterPrice != null && { wastewaterPrice: value.wastewaterPrice }),
       ...(value.linkedWaterMeterId && { linkedWaterMeterId: value.linkedWaterMeterId }),
       ...(value.calorificValue != null && { calorificValue: value.calorificValue }),
       ...(value.zNumber != null && { zNumber: value.zNumber }),

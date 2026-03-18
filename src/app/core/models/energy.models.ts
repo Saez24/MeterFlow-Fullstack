@@ -13,6 +13,7 @@ export enum EnergyType {
 export interface TariffPeriod {
   id: string;
   validFrom: Date;
+  validTo?: Date;
   pricePerUnit: number;
   baseCharge: number;
   wastewaterPrice?: number;
@@ -62,19 +63,10 @@ export interface MeterConfig<T extends EnergyType = EnergyType> {
   budget?: BudgetConfig;
 
   // Tariff
-  pricePerUnit: number; // €/Unit
-  baseCharge: number; // €/month
   tariffHistory?: TariffPeriod[];
 
   // Water-specific
-  wastewaterPrice?: number; // €/m³ (nur water & garden_water)
   linkedWaterMeterId?: string; // garden_water -> water meter
-
-  // Gas-specific
-  gasConversion?: {
-    calorificValue: number; // kWh/m³
-    zNumber: number; // Zustandszahl
-  };
 
   // Notes
   meterNumber?: string;

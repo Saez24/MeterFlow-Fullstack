@@ -51,71 +51,6 @@
       </mat-form-field>
     </div>
 
-    <mat-divider class="section-divider"></mat-divider>
-
-    <!-- Tarif -->
-    <div class="form-section">
-      <h3 class="section-title">Tarif & Preise</h3>
-
-      @if (isWater()) {
-        <!-- Wasser: Frischwasser + Abwasser separat -->
-        <div class="water-price-info">
-          <mat-icon>info_outline</mat-icon>
-          <span>
-            Wasserpreis wird in <strong>Frischwasser</strong> und
-            <strong>Abwasser</strong> aufgeteilt. Gartenwasserzähler berechnet
-            <em>kein Abwasser</em>.
-          </span>
-        </div>
-
-        <div class="form-row form-row--2">
-          <mat-form-field appearance="outline" class="form-field">
-            <mat-label>Frischwasser</mat-label>
-            <input matInput type="number" formControlName="pricePerUnit" step="0.001" min="0" />
-            <span matSuffix>€/m³</span>
-            <mat-hint>Nur Frischwasserpreis</mat-hint>
-          </mat-form-field>
-
-          <mat-form-field appearance="outline" class="form-field">
-            <mat-label>Abwasser</mat-label>
-            <input matInput type="number" formControlName="wastewaterPrice" step="0.001" min="0" />
-            <span matSuffix>€/m³</span>
-            <mat-hint>Abwassergebühr</mat-hint>
-          </mat-form-field>
-        </div>
-
-        <div class="water-total-preview">
-          <span class="preview-label">Gesamtpreis Frischwasser+Abwasser:</span>
-          <span class="preview-value">
-            {{
-              (form.get('pricePerUnit')?.value || 0) + (form.get('wastewaterPrice')?.value || 0)
-                | currency: 'EUR' : 'symbol' : '1.4-4'
-            }}/m³
-          </span>
-        </div>
-
-        <mat-form-field appearance="outline" class="form-field">
-          <mat-label>Grundgebühr pro Monat</mat-label>
-          <input matInput type="number" formControlName="baseCharge" step="0.01" min="0" />
-          <span matSuffix>€/Monat</span>
-        </mat-form-field>
-      } @else {
-        <!-- Andere Zähler: dynamische Einheit -->
-        <div class="form-row form-row--2">
-          <mat-form-field appearance="outline" class="form-field">
-            <mat-label>Preis pro {{ currentUnit() }}</mat-label>
-            <input matInput type="number" formControlName="pricePerUnit" step="0.0001" min="0" />
-            <span matSuffix>€/{{ currentUnit() }}</span>
-          </mat-form-field>
-          <mat-form-field appearance="outline" class="form-field">
-            <mat-label>Grundgebühr pro Monat</mat-label>
-            <input matInput type="number" formControlName="baseCharge" step="0.01" min="0" />
-            <span matSuffix>€/Monat</span>
-          </mat-form-field>
-        </div>
-      }
-    </div>
-
     <!-- Gartenwasser -->
     @if (isGardenWater()) {
       <mat-divider class="section-divider"></mat-divider>
@@ -189,13 +124,6 @@
           <div class="gas-formula">
             <span class="formula-label">Formel:</span>
             <span class="formula">kWh = m³ × Hs × Z</span>
-          </div>
-          <div class="gas-example">
-            <span class="example-label">Beispiel (100 m³):</span>
-            <span class="example-result">
-              {{ gasPreview() | number: '1.0-2' }} kWh =
-              {{ gasCost() | currency: 'EUR' : 'symbol' : '1.2-2' }}
-            </span>
           </div>
         </div>
       </div>

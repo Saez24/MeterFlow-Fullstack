@@ -64,11 +64,8 @@
       <div>
         <div class="stat-label">Grundgebühr / Monat</div>
         <div class="stat-value">
-          {{ (activeTariff()?.baseCharge ?? m.baseCharge) | currency:'EUR':'symbol':'1.2-2' }}
+          {{ (activeTariff()?.baseCharge ?? 0) | currency: 'EUR' : 'symbol' : '1.2-2' }}
         </div>
-        @if (activeTariff() && activeTariff()!.baseCharge !== m.baseCharge) {
-        <div class="stat-hint">Tarif ab {{ getLatestTariffDate(m) | date:'dd.MM.yy' }}</div>
-        }
       </div>
     </div>
 
@@ -79,15 +76,12 @@
       <div>
         <div class="stat-label">Preis / {{ m.unit }}</div>
         <div class="stat-value">
-          {{ (activeTariff()?.pricePerUnit ?? m.pricePerUnit) | currency:'EUR':'symbol':'1.4-4' }}
+          {{ (activeTariff()?.pricePerUnit ?? 0) | currency: 'EUR' : 'symbol' : '1.4-4' }}
         </div>
-        @if (activeTariff() && activeTariff()!.pricePerUnit !== m.pricePerUnit) {
-        <div class="stat-hint">Tarif ab {{ getLatestTariffDate(m) | date:'dd.MM.yy' }}</div>
-        }
       </div>
     </div>
 
-    @if (m.type === 'water' && m.wastewaterPrice) {
+    @if (m.type === 'water' && activeTariff()?.wastewaterPrice) {
     <div class="stat-card">
       <div class="stat-icon" style="background:rgba(6,182,212,0.12)">
         <mat-icon style="color:#06b6d4">water</mat-icon>
@@ -95,7 +89,7 @@
       <div>
         <div class="stat-label">Abwasser / m³</div>
         <div class="stat-value">
-          {{ m.wastewaterPrice | currency:'EUR':'symbol':'1.4-4' }}
+          {{ activeTariff()!.wastewaterPrice | currency:'EUR':'symbol':'1.4-4' }}
         </div>
       </div>
     </div>
@@ -103,12 +97,18 @@
 
   </div>
 
-  @if (m.type === 'gas') {
+  @if (m.type === 'gas' && activeTariff()) {
   <div class="gas-params-box">
     <mat-icon style="color:#3b82f6">local_fire_department</mat-icon>
-    Brennwert: <strong>{{ m.calorificValue }} kWh/m³</strong> ·
-    Z-Zahl: <strong>{{ m.zNumber }}</strong> ·
-    Faktor: <strong>{{ m.calorificValue! * m.zNumber! | number:'1.4-4' }}</strong>
+    Brennwert: <strong>{{ activeTariff()?.calorificValue ?? m.calorificValue }} kWh/m³</strong> ·
+    Z-Zahl: <strong>{{ activeTariff()?.zNumber ?? m.zNumber }}</strong> ·
+    Faktor:
+    <strong
+      >{{
+        ((activeTariff()?.calorificValue ?? m.calorificValue) ?? 0) *
+          ((activeTariff()?.zNumber ?? m.zNumber) ?? 0) | number: '1.4-4'
+      }}</strong
+    >
   </div>
   }
 
@@ -228,14 +228,18 @@
 </mat-tab>
 
 <mat-tab>
-  <ng-template mat-tab-label>
-    <ng-container><mat-icon>receipt_long</mat-icon>&nbsp;Tarife</ng-container>
-  </ng-template>
-  <div class="tab-content">
-    <app-tariff-history [meter]="m"></app-tariff-history>
-  </div>
-</mat-tab>
-
+    <ng-template mat-tab-label>
+          <ng-container><mat-icon>receipt_long</mat-icon>&nbsp;Tarife</ng-container>
+        </ng-template>
+        <div class="tab-content">
+          <app-tariff-history 
+            [meter]="m"
+            (addTariff)="openTariffDialog()"
+            (editTariff)="openTariffDialog($event)"
+            (deleteTariff)="deleteTariff(m.id, $event.id)"
+          ></app-tariff-history>
+        </div>
+      </mat-tab>
 </mat-tab-group>
 
 } @else {

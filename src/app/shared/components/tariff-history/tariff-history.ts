@@ -1,4 +1,4 @@
-import { Component, inject, input, computed, signal } from '@angular/core';
+import { Component, inject, input, computed, signal, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -34,14 +34,17 @@ import { MeterConfig, TariffPeriod } from '../../../core/models/energy.models';
 export class TariffHistory {
   private readonly energyService = inject(EnergyService);
   private readonly snackBar = inject(MatSnackBar);
-  private readonly fb = inject(FormBuilder);
 
   readonly meter = input.required<MeterConfig>();
-
-  readonly showForm = signal(false);
+  readonly addTariff = output<void>();
+  readonly editTariff = output<string>();
+  readonly deleteTariff = output<TariffPeriod>();
 
   readonly isGas = computed(() => this.meter().type === 'gas');
   readonly isWater = computed(() => ['water', 'garden_water'].includes(this.meter().type));
+  readonly isLinkedGardenWater = computed(
+    () => this.meter().type === 'garden_water' && !!this.meter().linkedWaterMeterId,
+  );
 
   readonly sortedHistory = computed(() =>
     [...(this.meter().tariffHistory ?? [])].sort(
@@ -54,75 +57,21 @@ export class TariffHistory {
     return h.length > 0 ? h[0] : null;
   });
 
-  form = this.fb.group({
-    validFrom: [new Date(), Validators.required],
-    pricePerUnit: [null as number | null, [Validators.required, Validators.min(0)]],
-    baseCharge: [null as number | null, [Validators.required, Validators.min(0)]],
-    wastewaterPrice: [null as number | null],
-    calorificValue: [null as number | null],
-    zNumber: [null as number | null],
-    note: [''],
-  });
-
-  // Signal für Formwerte (Zoneless-kompatibel)
-  protected readonly formValue = toSignal(this.form.valueChanges, {
-    initialValue: this.form.value,
-  });
-
-  readonly priceDiff = computed(() => {
-    const current = this.currentTariff();
-    const newPrice = this.formValue().pricePerUnit;
-    if (!current || !newPrice || newPrice === 0) return 0;
-    return ((newPrice - current.pricePerUnit) / current.pricePerUnit) * 100;
-  });
-
-  // Beim Öffnen: aktuelle Werte als Vorschlag eintragen
-  ngOnInit(): void {
-    const m = this.meter();
-    this.form.patchValue({
-      pricePerUnit: m.pricePerUnit,
-      baseCharge: m.baseCharge,
-      wastewaterPrice: m.wastewaterPrice ?? null,
-      calorificValue: m.calorificValue ?? null,
-      zNumber: m.zNumber ?? null,
-    });
-  }
-
   getPriceDiff(index: number): { pct: number; prev: number; curr: number } | null {
     const history = this.sortedHistory();
+    if (index >= history.length - 1) return null; // Can't compare the oldest entry
+
     const curr = history[index];
-    // Vergleich mit dem nächst-älteren Eintrag oder dem Basis-Tarif
-    const prev = history[index + 1] ?? null;
-    const prevPrice = prev ? prev.pricePerUnit : this.meter().pricePerUnit;
+    const prev = history[index + 1];
+
+    const prevPrice = prev.pricePerUnit;
     if (prevPrice === 0) return null;
+
     const pct = ((curr.pricePerUnit - prevPrice) / prevPrice) * 100;
     return { pct, prev: prevPrice, curr: curr.pricePerUnit };
   }
 
-  save(): void {
-    if (this.form.invalid) return;
-    const v = this.form.value;
-    this.energyService.addTariffPeriod(this.meter().id, {
-      validFrom: new Date(v.validFrom!),
-      pricePerUnit: v.pricePerUnit!,
-      baseCharge: v.baseCharge!,
-      wastewaterPrice: v.wastewaterPrice ?? undefined,
-      calorificValue: v.calorificValue ?? undefined,
-      zNumber: v.zNumber ?? undefined,
-      note: v.note || undefined,
-    });
-    this.snackBar.open('Tarif gespeichert', 'OK', { duration: 3000 });
-    this.showForm.set(false);
-  }
-
   delete(period: TariffPeriod): void {
-    if (
-      confirm(
-        `Tarif vom ${new Date(period.validFrom).toLocaleDateString('de-DE')} wirklich löschen?`,
-      )
-    ) {
-      this.energyService.deleteTariffPeriod(this.meter().id, period.id);
-      this.snackBar.open('Tarif gelöscht', 'OK', { duration: 3000 });
-    }
+    this.deleteTariff.emit(period);
   }
 }

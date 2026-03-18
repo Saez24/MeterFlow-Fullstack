@@ -25,10 +25,15 @@ export class StatsService {
     // Anzahl Monate mit tatsächlichen Daten für diesen Zähler
     const monthsWithData = yearStats.months.filter(
       (m) => m.byMeter[meterId] !== undefined
-    ).length;
+    );
 
-    // Grundgebühr nur für Monate mit Daten
-    const baseChargeCost = meter.baseCharge * monthsWithData;
+    const baseChargeCost = monthsWithData.reduce((sum, month) => {
+      const tariff = this.energyService.getActiveTariffForDate(
+        meter,
+        new Date(year, month.month - 1),
+      );
+      return sum + (tariff ? tariff.baseCharge : 0);
+    }, 0);
 
     // Gesamtkosten = Verbrauchskosten + anteilige Grundgebühr
     const totalCost = meterStats.cost + baseChargeCost;
@@ -37,10 +42,10 @@ export class StatsService {
 
     let consumptionKwh: number | undefined;
     if (meter.type === 'gas') {
-      consumptionKwh =
-        meterStats.consumption *
-        (meter.calorificValue ?? 10.55) *
-        (meter.zNumber ?? 0.9672);
+      consumptionKwh = this.energyService
+        .getReadingsForMeter(meterId)
+        .filter((r) => new Date(r.date).getFullYear() === year)
+        .reduce((sum, reading) => sum + (reading.kwh ?? 0), 0);
     }
 
     return {

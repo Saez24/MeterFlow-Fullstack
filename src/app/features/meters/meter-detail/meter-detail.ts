@@ -5,9 +5,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTabsModule } from '@angular/material/tabs';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { EnergyService } from '../../../core/services/energy.service';
 import { ENERGY_META, MeterConfig } from '../../../core/models/energy.models';
 import { TariffHistory } from '../../../shared/components/tariff-history/tariff-history';
+import { TariffFormComponent } from '../../../shared/components/tariff-form/tariff-form';
 import { Chart } from 'chart.js';
 import { ThemeService } from '../../../core/services/theme.service';
 
@@ -21,6 +23,7 @@ import { ThemeService } from '../../../core/services/theme.service';
     MatSnackBarModule,
     TariffHistory,
     MatTabsModule,
+    MatDialogModule,
   ],
   templateUrl: './meter-detail.html',
   styleUrl: './meter-detail.scss',
@@ -30,9 +33,22 @@ export class MeterDetail {
   private readonly route = inject(ActivatedRoute);
   private readonly snackBar = inject(MatSnackBar);
   private readonly themeService = inject(ThemeService);
+  private readonly dialog = inject(MatDialog);
 
   @ViewChild('detailChart') detailChartRef!: ElementRef<HTMLCanvasElement>;
   private readonly meterId = signal(this.route.snapshot.paramMap.get('id') ?? '');
+  
+  openTariffDialog(tariffId?: string): void {
+    const meter = this.meter();
+    if (!meter) return;
+
+    this.dialog.open(TariffFormComponent, {
+      data: {
+        meter: meter,
+        tariffId: tariffId,
+      },
+    });
+  }
 
   readonly meter = computed(() => this.energyService.getMeter(this.meterId()));
   readonly readings = computed(() => this.energyService.getReadingsForMeter(this.meterId()));
@@ -47,16 +63,6 @@ export class MeterDetail {
   readonly lastConsumption = computed(() => this.readings()[0]?.consumption ?? null);
   readonly chartMode = signal<'consumption' | 'cost' | 'kwh'>('consumption');
   readonly activePhoto = signal<string | null>(null);
-  readonly showAddTariff = signal(false);
-  newTariff = {
-    validFrom: new Date().toISOString().slice(0, 10),
-    pricePerUnit: 0,
-    baseCharge: 0,
-    wastewaterPrice: 0,
-    calorificValue: 10.55,
-    zNumber: 0.9672,
-    note: '',
-  };
 
   private chartInstance: Chart | null = null;
 
@@ -158,20 +164,6 @@ export class MeterDetail {
 
   getMeta(type: string) {
     return ENERGY_META[type as keyof typeof ENERGY_META];
-  }
-
-  saveTariff(meterId: string): void {
-    this.energyService.addTariffPeriod(meterId, {
-      validFrom: new Date(this.newTariff.validFrom),
-      pricePerUnit: +this.newTariff.pricePerUnit,
-      baseCharge: +this.newTariff.baseCharge,
-      wastewaterPrice: this.newTariff.wastewaterPrice ? +this.newTariff.wastewaterPrice : undefined,
-      calorificValue: this.newTariff.calorificValue ? +this.newTariff.calorificValue : undefined,
-      zNumber: this.newTariff.zNumber ? +this.newTariff.zNumber : undefined,
-      note: this.newTariff.note || undefined,
-    });
-    this.showAddTariff.set(false);
-    this.snackBar.open('Tarif gespeichert', 'OK', { duration: 2000 });
   }
 
   deleteTariff(meterId: string, periodId: string): void {

@@ -1,0 +1,130 @@
+import { Component, inject, signal, computed, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import {
+  FormsModule,
+  ReactiveFormsModule,
+  FormBuilder,
+  Validators,
+  FormGroup,
+} from '@angular/forms';
+
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { EnergyService } from '../../../core/services/energy.service';
+import { ENERGY_META, TariffPeriod, MeterConfig } from '../../../core/models/energy.models';
+
+export interface TariffFormData {
+  meter: MeterConfig;
+  tariffId?: string; // For edit mode
+}
+
+@Component({
+  selector: 'app-tariff-form',
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatIconModule,
+    MatDatepickerModule,
+    MatSnackBarModule,
+    MatDividerModule,
+  ],
+  standalone: true,
+  templateUrl: './tariff-form.html',
+  styleUrls: ['./tariff-form.scss'],
+})
+export class TariffFormComponent implements OnInit {
+  private readonly fb = inject(FormBuilder);
+  private readonly energyService = inject(EnergyService);
+  private readonly snackBar = inject(MatSnackBar);
+  public readonly dialogRef = inject(MatDialogRef<TariffFormComponent>);
+  public readonly data: TariffFormData = inject(MAT_DIALOG_DATA);
+
+  readonly meter = signal(this.data.meter);
+  readonly isEdit = computed(() => !!this.data.tariffId);
+  private originalTariff = this.isEdit() ? this.energyService.getTariff(this.meter().id, this.data.tariffId!) : null;
+
+  form: FormGroup = this.fb.group({
+    pricePerUnit: [0, [Validators.required, Validators.min(0)]],
+    baseCharge: [0, [Validators.required, Validators.min(0)]],
+    validFrom: [new Date(), Validators.required],
+    wastewaterPrice: [undefined as number | undefined],
+    calorificValue: [undefined as number | undefined],
+    zNumber: [undefined as number | undefined],
+    note: [''],
+  });
+
+  readonly isGas = computed(() => this.meter().type === 'gas');
+  readonly isWater = computed(() => this.meter().type === 'water');
+  readonly isLinkedGardenWater = computed(() => this.meter().type === 'garden_water' && !!this.meter().linkedWaterMeterId);
+
+  ngOnInit(): void {
+    if (this.isLinkedGardenWater()) {
+        this.form.controls['baseCharge'].disable();
+        this.form.patchValue({ baseCharge: 0 });
+    }
+
+    if (this.isEdit() && this.originalTariff) {
+      this.form.patchValue(this.originalTariff);
+    } else {
+      // Set defaults for new tariffs
+      if (this.isGas()) {
+        this.form.patchValue({
+          calorificValue: this.meter().calorificValue,
+          zNumber: this.meter().zNumber,
+        });
+      }
+      if (this.isWater()) {
+        const lastTariff = this.energyService.getActiveTariff(this.meter());
+        this.form.patchValue({
+            wastewaterPrice: lastTariff?.wastewaterPrice ?? 0,
+        });
+      }
+    }
+  }
+
+  save(): void {
+    if (this.form.invalid) {
+      return;
+    }
+
+    const formValue = this.form.getRawValue();
+    const tariffData: Partial<TariffPeriod> = {
+      pricePerUnit: formValue.pricePerUnit,
+      baseCharge: this.isLinkedGardenWater() ? 0 : formValue.baseCharge,
+      validFrom: formValue.validFrom,
+      note: formValue.note,
+    };
+    
+    if (this.isGas()) {
+        tariffData.calorificValue = formValue.calorificValue;
+        tariffData.zNumber = formValue.zNumber;
+    }
+    if (this.isWater()) {
+        tariffData.wastewaterPrice = formValue.wastewaterPrice;
+    }
+
+    if (this.isEdit()) {
+      this.energyService.updateTariff(this.meter().id, this.data.tariffId!, tariffData);
+      this.snackBar.open('Tarif aktualisiert', 'OK', { duration: 3000 });
+    } else {
+      this.energyService.addTariff(this.meter().id, tariffData as Omit<TariffPeriod, 'id'>);
+      this.snackBar.open('Neuer Tarif hinzugefügt', 'OK', { duration: 3000 });
+    }
+
+    this.dialogRef.close(true);
+  }
+
+  cancel(): void {
+    this.dialogRef.close();
+  }
+}

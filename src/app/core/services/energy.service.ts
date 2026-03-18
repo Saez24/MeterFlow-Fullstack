@@ -55,7 +55,10 @@ export class EnergyService {
   });
 
   readonly totalYearlyCost = computed(() =>
-    this.activeMeters().reduce((sum, m) => sum + m.baseCharge * 12, 0),
+    this.activeMeters().reduce((sum, m) => {
+      const tariff = this.getActiveTariffForDate(m, new Date());
+      return sum + (tariff ? tariff.baseCharge * 12 : 0);
+    }, 0),
   );
 
   // Dashboard: Verbrauch, Kosten, Trend
@@ -72,7 +75,7 @@ export class EnergyService {
         trend = 0;
       if (recent.length >= 2) {
         consumption = recent[0].value - recent[1].value;
-        cost = this.calcCost(meter, consumption);
+        cost = this.calcCost(meter, consumption, recent[0].date);
         if (readings.length >= 4) {
           const prev = readings[2].value - readings[3].value;
           trend = prev > 0 ? ((consumption - prev) / prev) * 100 : 0;
@@ -183,9 +186,10 @@ export class EnergyService {
           }
         }
 
+        const tariff = this.getActiveTariffForDate(mainMeter, r.date);
         const billableWastewater = Math.max(0, consumption - gardenConsumption);
-        const freshwaterCost = consumption * mainMeter.pricePerUnit;
-        const wastewaterCost = billableWastewater * (mainMeter.wastewaterPrice ?? 0);
+        const freshwaterCost = consumption * (tariff ? tariff.pricePerUnit : 0);
+        const wastewaterCost = billableWastewater * (tariff ? tariff.wastewaterPrice ?? 0 : 0);
 
         result.push({
           meterId: mainMeter.id,
@@ -255,7 +259,7 @@ export class EnergyService {
         if (readings.length >= 1) {
           const consumption =
             readings[0].consumption ?? readings[0].value - (readings[1]?.value ?? 0);
-          const cost = readings[0].cost ?? this.calcCost(meter, consumption);
+          const cost = readings[0].cost ?? this.calcCost(meter, consumption, readings[0].date);
           stats.byMeter[meter.id] = { consumption, cost, unit: ENERGY_META[meter.type].unit };
           stats.totalCost += cost;
         }
@@ -305,18 +309,23 @@ export class EnergyService {
       let cost = 0;
       let wastewaterCost: number | undefined;
 
-      if (meter.type === 'gas') {
-        kwh = consumption * (meter.calorificValue ?? 10.55) * (meter.zNumber ?? 0.9672);
-        cost = kwh * meter.pricePerUnit;
-      } else if (meter.type === 'water') {
-        cost = consumption * meter.pricePerUnit;
-        const gardenM3 = prev
-          ? this.getGardenWaterConsumptionForPeriod(meterId, prev.date, current.date)
-          : 0;
-        const wc = Math.max(0, consumption - gardenM3) * (meter.wastewaterPrice ?? 0);
-        wastewaterCost = wc > 0 ? wc : undefined;
-      } else {
-        cost = consumption * meter.pricePerUnit;
+      const tariff = this.getActiveTariffForDate(meter, current.date);
+      if (tariff) {
+        if (meter.type === 'gas') {
+          const calorificValue = tariff.calorificValue ?? meter.calorificValue ?? 10.55;
+          const zNumber = tariff.zNumber ?? meter.zNumber ?? 0.9672;
+          kwh = consumption * calorificValue * zNumber;
+          cost = kwh * tariff.pricePerUnit;
+        } else if (meter.type === 'water') {
+          cost = consumption * tariff.pricePerUnit;
+          const gardenM3 = prev
+            ? this.getGardenWaterConsumptionForPeriod(meterId, prev.date, current.date)
+            : 0;
+          const wc = Math.max(0, consumption - gardenM3) * (tariff.wastewaterPrice ?? 0);
+          wastewaterCost = wc > 0 ? wc : undefined;
+        } else {
+          cost = consumption * tariff.pricePerUnit;
+        }
       }
 
       const totalCost = cost + (wastewaterCost ?? 0);
@@ -342,20 +351,63 @@ export class EnergyService {
   }
 
   // ============ TARIFF HISTORY ============
-  async addTariffPeriod(meterId: string, period: Omit<TariffPeriod, 'id'>): Promise<void> {
+  getTariff(meterId: string, tariffId: string): TariffPeriod | null {
+    const meter = this.getMeter(meterId);
+    if (!meter || !meter.tariffHistory) return null;
+    return meter.tariffHistory.find((t) => t.id === tariffId) ?? null;
+  }
+
+  getActiveTariff(meter: MeterConfig): TariffPeriod | null {
+    return this.getActiveTariffForDate(meter, new Date());
+  }
+
+  async addTariff(meterId: string, period: Omit<TariffPeriod, 'id'>): Promise<void> {
     const meter = this.getMeter(meterId);
     if (!meter) return;
-    const history = meter.tariffHistory ?? [];
+
+    const newValidFrom = new Date(period.validFrom);
+    let history = [...(meter.tariffHistory ?? [])];
+
+    // Finde den aktuellsten Tarif, der vor dem neuen Tarif liegt
+    const sortedHistory = history.sort(
+      (a, b) => new Date(b.validFrom).getTime() - new Date(a.validFrom).getTime(),
+    );
+
+    const previousTariff = sortedHistory.find(
+      (p) => new Date(p.validFrom) < newValidFrom && !p.validTo,
+    );
+
+    if (previousTariff) {
+      const validTo = new Date(newValidFrom);
+      validTo.setDate(validTo.getDate() - 1);
+      const updatedPreviousTariff = { ...previousTariff, validTo };
+
+      // Ersetze den alten Tarif durch den aktualisierten im Array
+      history = history.map((p) => (p.id === previousTariff.id ? updatedPreviousTariff : p));
+    }
+
     const newPeriod: TariffPeriod = {
       ...period,
       id: crypto.randomUUID(),
-      validFrom: new Date(period.validFrom),
+      validFrom: newValidFrom,
     };
+
     await this.updateMeter(meterId, {
-      tariffHistory: [...history, newPeriod].sort(
-        (a, b) => new Date(b.validFrom).getTime() - new Date(a.validFrom).getTime(),
-      ),
+      tariffHistory: [...history, newPeriod],
     });
+
+    // Neuberechnung nach Tarifänderung
+    await this.recalculateAllReadingsForMeter(meterId);
+  }
+
+  async updateTariff(meterId: string, tariffId: string, changes: Partial<TariffPeriod>): Promise<void> {
+    const meter = this.getMeter(meterId);
+    if (!meter || !meter.tariffHistory) return;
+
+    const history = meter.tariffHistory.map((t) => (t.id === tariffId ? { ...t, ...changes } : t));
+
+    await this.updateMeter(meterId, { tariffHistory: history });
+    await this.recalculateAllReadingsForMeter(meterId);
   }
 
   async deleteTariffPeriod(meterId: string, periodId: string): Promise<void> {
@@ -366,27 +418,25 @@ export class EnergyService {
     });
   }
 
-  getActiveTariffForDate(
-    meter: MeterConfig,
-    date: Date,
-  ): {
-    pricePerUnit: number;
-    baseCharge: number;
-    wastewaterPrice?: number;
-    calorificValue?: number;
-    zNumber?: number;
-  } {
+  getActiveTariffForDate(meter: MeterConfig, date: Date): TariffPeriod | null {
+    const d = new Date(date);
+    d.setHours(0, 0, 0, 0);
+
     const history = (meter.tariffHistory ?? [])
-      .filter((p) => new Date(p.validFrom) <= date)
+      .filter((p) => {
+        const validFrom = new Date(p.validFrom);
+        validFrom.setHours(0, 0, 0, 0);
+        if (validFrom > d) return false;
+        if (p.validTo) {
+          const validTo = new Date(p.validTo);
+          validTo.setHours(0, 0, 0, 0);
+          if (validTo < d) return false;
+        }
+        return true;
+      })
       .sort((a, b) => new Date(b.validFrom).getTime() - new Date(a.validFrom).getTime());
-    if (history.length > 0) return history[0];
-    return {
-      pricePerUnit: meter.pricePerUnit,
-      baseCharge: meter.baseCharge,
-      wastewaterPrice: meter.wastewaterPrice,
-      calorificValue: meter.calorificValue,
-      zNumber: meter.zNumber,
-    };
+
+    return history.length > 0 ? history[0] : null;
   }
 
   // ============ METER CRUD ============
@@ -426,15 +476,24 @@ export class EnergyService {
     const consumption = prev ? reading.value - prev.value : 0;
     let kwh: number | undefined, cost = 0, wastewaterCost = 0;
 
-    if (meter.type === 'gas') {
-      kwh = consumption * (meter.calorificValue ?? 10.55) * (meter.zNumber ?? 0.9672);
-      cost = kwh * meter.pricePerUnit;
-    } else if (meter.type === 'water') {
-      cost = consumption * meter.pricePerUnit;
-      const gardenM3 = this.getGardenWaterConsumptionForPeriod(meter.id, prev?.date ?? reading.date, new Date(reading.date));
-      wastewaterCost = Math.max(0, consumption - gardenM3) * (meter.wastewaterPrice ?? 0);
-    } else {
-      cost = consumption * meter.pricePerUnit;
+    const tariff = this.getActiveTariffForDate(meter, new Date(reading.date));
+    if (tariff) {
+      if (meter.type === 'gas') {
+        const calorificValue = tariff.calorificValue ?? meter.calorificValue ?? 10.55;
+        const zNumber = tariff.zNumber ?? meter.zNumber ?? 0.9672;
+        kwh = consumption * calorificValue * zNumber;
+        cost = kwh * tariff.pricePerUnit;
+      } else if (meter.type === 'water') {
+        cost = consumption * tariff.pricePerUnit;
+        const gardenM3 = this.getGardenWaterConsumptionForPeriod(
+          meter.id,
+          prev?.date ?? reading.date,
+          new Date(reading.date),
+        );
+        wastewaterCost = Math.max(0, consumption - gardenM3) * (tariff.wastewaterPrice ?? 0);
+      } else {
+        cost = consumption * tariff.pricePerUnit;
+      }
     }
 
     const payload: Omit<MeterReading, 'id'> = {
@@ -489,12 +548,17 @@ export class EnergyService {
     return total;
   }
 
-  private calcCost(meter: MeterConfig, consumption: number): number {
+  private calcCost(meter: MeterConfig, consumption: number, date: Date): number {
+    const tariff = this.getActiveTariffForDate(meter, date);
+    if (!tariff) return 0;
+
     if (meter.type === 'gas') {
-      const kwh = consumption * (meter.calorificValue ?? 10.55) * (meter.zNumber ?? 0.9672);
-      return kwh * meter.pricePerUnit;
+      const calorificValue = tariff.calorificValue ?? meter.calorificValue ?? 10.55;
+      const zNumber = tariff.zNumber ?? meter.zNumber ?? 0.9672;
+      const kwh = consumption * calorificValue * zNumber;
+      return kwh * tariff.pricePerUnit;
     }
-    return consumption * meter.pricePerUnit;
+    return consumption * tariff.pricePerUnit;
   }
 
   // ============ PERSIST ============
@@ -527,8 +591,6 @@ export class EnergyService {
         color: '#F59E0B',
         active: true,
         createdAt: new Date(),
-        pricePerUnit: 0,
-        baseCharge: 0,
         tariffHistory: [],
         provider: '',
       },

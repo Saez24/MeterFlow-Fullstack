@@ -5,10 +5,7 @@
       <p class="dashboard-subtitle">Übersicht deiner Verbrauchsdaten</p>
     </div>
     <div class="header-actions">
-      <button mat-flat-button color="primary" routerLink="/readings/new" class="cta-button">
-        <mat-icon>add</mat-icon>
-        Ablesung erfassen
-      </button>
+      <!-- "Ablesung erfassen" button removed as per user request -->
     </div>
   </header>
 
@@ -112,7 +109,9 @@
           }
 
           <div class="meter-price">
-            {{ meter.pricePerUnit | currency: 'EUR' : 'symbol' : '1.4-4' }}/{{ meter.unit }}
+            @if (state.getActiveTariff(meter); as tariff) {
+            {{ tariff.pricePerUnit | currency: 'EUR' : 'symbol' : '1.4-4' }}/{{ meter.unit }}
+            } @else { - }
           </div>
         </div>
       </div>

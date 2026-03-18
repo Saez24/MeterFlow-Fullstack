@@ -11,7 +11,11 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { EnergyService } from '../../core/services/energy.service';
-import { ENERGY_META, MeterConfig } from '../../core/models/energy.models';
+import {
+  ENERGY_META,
+  MeterConfig,
+  TariffPeriod,
+} from '../../core/models/energy.models';
 
 @Component({
   selector: 'app-meters',
@@ -48,6 +52,10 @@ export class Meters {
     return this.energyService.latestReadings().get(meterId);
   }
 
+  getActiveTariff(meter: MeterConfig): TariffPeriod | null {
+    return this.energyService.getActiveTariffForDate(meter, new Date());
+  }
+
   toggleActive(meter: MeterConfig): void {
     this.energyService.updateMeter(meter.id, { active: !meter.active });
   }
@@ -61,12 +69,5 @@ export class Meters {
       this.energyService.deleteMeter(meter.id);
       this.snackBar.open('Zähler gelöscht', 'OK', { duration: 3000 });
     }
-  }
-
-  /** Berechnet den effektiven Preis pro kWh für Gas (pricePerUnit ist €/m³) */
-  getGasPricePerKwh(meter: MeterConfig): number {
-    const calorificValue = meter.calorificValue ?? 10.55;
-    const zNumber = meter.zNumber ?? 0.9672;
-    return meter.pricePerUnit / (calorificValue * zNumber);
   }
 }

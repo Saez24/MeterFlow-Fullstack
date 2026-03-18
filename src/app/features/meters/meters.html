@@ -50,15 +50,20 @@
             {{ reading.value | number: '1.0-3' }} {{ meter.unit }}
           </span>
         </div>
-        }
+        } @if(getActiveTariff(meter); as tariff) {
         <div class="tariff-price">
-          {{ meter.pricePerUnit | currency: 'EUR' : 'symbol' : '1.4-4' }}/{{ meter.unit }}
+          {{ tariff.pricePerUnit | currency: 'EUR' : 'symbol' : '1.4-4' }}/{{ meter.unit }}
         </div>
         <div class="tariff-base">
-          {{ meter.baseCharge | currency: 'EUR' : 'symbol' : '1.2-2' }}/Monat
+          {{ tariff.baseCharge | currency: 'EUR' : 'symbol' : '1.2-2' }}/Monat
         </div>
         @if (meter.type === 'gas') {
-        <div class="tariff-gas">H={{ meter.calorificValue }} · Z={{ meter.zNumber }}</div>
+        <div class="tariff-gas">
+          H={{ tariff.calorificValue ?? meter.calorificValue }} · Z={{ tariff.zNumber ?? meter.zNumber }}
+        </div>
+        } } @else {
+        <div class="tariff-price">-</div>
+        <div class="tariff-base">-</div>
         }
       </div>
 

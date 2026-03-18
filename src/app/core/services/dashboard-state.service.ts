@@ -2,7 +2,11 @@
 import { Injectable, inject, signal, computed } from '@angular/core';
 import { EnergyService } from './energy.service';
 import { StatsService } from './stats.service';
-import { ENERGY_META } from '../models/energy.models';
+import {
+  ENERGY_META,
+  MeterConfig,
+  TariffPeriod,
+} from '../models/energy.models';
 
 @Injectable({ providedIn: 'root' })
 export class DashboardStateService {
@@ -48,23 +52,35 @@ export class DashboardStateService {
     });
 
     readonly totalYearCostWithBase = computed(() => {
-        const stats = this.yearStats();
-        const meters = this.activeMeters();
+    const stats = this.yearStats();
+    const meters = this.activeMeters();
 
-        // Monate mit Daten pro Zähler summieren
-        const baseTotal = meters.reduce((sum, meter) => {
-            const monthsWithData = stats.months.filter(
-                (m) => m.byMeter[meter.id] !== undefined
-            ).length;
-            return sum + meter.baseCharge * monthsWithData;
-        }, 0);
+    // Monate mit Daten pro Zähler summieren
+    const baseTotal = meters.reduce((sum, meter) => {
+      const monthsWithData = stats.months.filter(
+        (m) => m.byMeter[meter.id] !== undefined,
+      );
 
-        return stats.totalCost + baseTotal;
-    });
+      const totalBaseChargeForMeter = monthsWithData.reduce((monthlySum, month) => {
+        const tariff = this.energyService.getActiveTariffForDate(
+          meter,
+          new Date(stats.year, month.month - 1),
+        );
+        return monthlySum + (tariff?.baseCharge ?? 0);
+      }, 0);
 
-    // ============ HILFSMETHODEN ============
-    getMeta(type: string) {
-        return ENERGY_META[type as keyof typeof ENERGY_META];
+      return sum + totalBaseChargeForMeter;
+    }, 0);
+
+    return stats.totalCost + baseTotal;
+  });
+
+      // ============ HILFSMETHODEN ============
+      getActiveTariff(meter: MeterConfig): TariffPeriod | null {
+        return this.energyService.getActiveTariffForDate(meter, new Date());
+      }
+    
+      getMeta(type: string) {        return ENERGY_META[type as keyof typeof ENERGY_META];
     }
 
     getMeterById(id: string) {
