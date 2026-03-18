@@ -175,7 +175,7 @@ export class Reports implements AfterViewInit, OnDestroy {
     if (!this.yearChartRef) return;
     const { gridColor, textColor } = this.chartDefaults();
     const years = this.state.availableYears();
-    const data = years.map((y) => this.state.yearStats().totalCost);
+    const data = years.map((y) => this.state.getYearTotalCost(y));
 
     this.yearChartInstance = new Chart(this.yearChartRef.nativeElement, {
       type: 'bar',

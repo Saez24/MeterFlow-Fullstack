@@ -190,37 +190,40 @@ export class ReadingsForm implements OnInit {
     return '';
   }
 
-  save(): void {
+  async save(): Promise<void> {
     if (this.form.invalid) return;
 
-    if (this.isEditMode && this.originalReading) {
-      const updatedReading: MeterReading = {
-        ...this.originalReading,
-        value: this.form.value.value!,
-        date: this.form.value.date!,
-        note: this.form.value.note ?? undefined,
-      };
-      this.energyService.updateReading(updatedReading);
-    } else {
-      const { meterId, value, date, note } = this.form.getRawValue();
-      const preview = this.consumptionPreview();
-  
-      this.energyService.addReading({
-        meterId: meterId!,
-        value: value!,
-        date: date!,
-        note: note ?? undefined,
-        consumption: preview?.consumption ?? 0,
-        cost: preview?.cost ?? 0,
-        totalCost: preview?.cost ?? 0,
+    try {
+      if (this.isEditMode && this.originalReading) {
+        const updatedReading: MeterReading = {
+          ...this.originalReading,
+          value: this.form.value.value!,
+          date: this.form.value.date!,
+          note: this.form.value.note ?? undefined,
+        };
+        await this.energyService.updateReading(updatedReading);
+      } else {
+        const { meterId, value, date, note } = this.form.getRawValue();
+        await this.energyService.addReading({
+          meterId: meterId!,
+          value: value!,
+          date: date!,
+          note: note ?? undefined,
+        });
+      }
+
+      this.snackBar.open('Ablesung gespeichert', 'OK', { duration: 3000 });
+      this.goBack();
+    } catch (error) {
+      console.error('Error saving reading:', error);
+      this.snackBar.open('Fehler beim Speichern der Ablesung', 'OK', {
+        duration: 5000,
+        panelClass: 'error-snackbar',
       });
     }
-
-    this.snackBar.open('Ablesung gespeichert', 'OK', { duration: 3000 });
-    this.goBack();
   }
 
   goBack(): void {
-    this.router.navigate([this.isEditMode ? '/readings' : '/']);
+    this.router.navigate(['/readings']);
   }
 }

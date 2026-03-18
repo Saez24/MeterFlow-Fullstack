@@ -26,7 +26,6 @@ export class DashboardStateService {
         this.energyService.getYearStats(this.selectedYear())
     );
 
-    readonly totalYearlyCost = this.energyService.totalYearlyCost;
     readonly activeCount = computed(() => this.activeMeters().length);
 
     readonly recentReadings = computed(() =>
@@ -57,6 +56,11 @@ export class DashboardStateService {
 
     // Monate mit Daten pro Zähler summieren
     const baseTotal = meters.reduce((sum, meter) => {
+      // Gekoppelte Gartenwasserzähler haben keine Grundgebühr
+      if (meter.type === 'garden_water' && meter.linkedWaterMeterId) {
+        return sum;
+      }
+      
       const monthsWithData = stats.months.filter(
         (m) => m.byMeter[meter.id] !== undefined,
       );
@@ -72,15 +76,45 @@ export class DashboardStateService {
       return sum + totalBaseChargeForMeter;
     }, 0);
 
-    return stats.totalCost + baseTotal;
-  });
-
-      // ============ HILFSMETHODEN ============
-      getActiveTariff(meter: MeterConfig): TariffPeriod | null {
-        return this.energyService.getActiveTariffForDate(meter, new Date());
-      }
+        return stats.totalCost + baseTotal;
+      });
     
-      getMeta(type: string) {        return ENERGY_META[type as keyof typeof ENERGY_META];
+      // ============ HILFSMETHODEN ============
+      getYearTotalCost(year: number): number {
+        const stats = this.energyService.getYearStats(year);
+        const meters = this.activeMeters();
+    
+        // Monate mit Daten pro Zähler summieren
+        const baseTotal = meters.reduce((sum, meter) => {
+          // Gekoppelte Gartenwasserzähler haben keine Grundgebühr
+          if (meter.type === 'garden_water' && meter.linkedWaterMeterId) {
+            return sum;
+          }
+      
+          const monthsWithData = stats.months.filter(
+            (m) => m.byMeter[meter.id] !== undefined,
+          );
+    
+          const totalBaseChargeForMeter = monthsWithData.reduce((monthlySum, month) => {
+            const tariff = this.energyService.getActiveTariffForDate(
+              meter,
+              new Date(stats.year, month.month - 1),
+            );
+            return monthlySum + (tariff?.baseCharge ?? 0);
+          }, 0);
+    
+          return sum + totalBaseChargeForMeter;
+        }, 0);
+    
+        return stats.totalCost + baseTotal;
+      }
+      
+        getActiveTariff(meter: MeterConfig): TariffPeriod | null {
+          if (meter.type === 'garden_water' && meter.linkedWaterMeterId) {
+            return null;
+          }
+          return this.energyService.getActiveTariffForDate(meter, new Date());
+        }      getMeta(type: string) {        return ENERGY_META[type as keyof typeof ENERGY_META];
     }
 
     getMeterById(id: string) {

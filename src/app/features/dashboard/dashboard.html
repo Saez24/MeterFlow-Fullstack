@@ -13,24 +13,13 @@
   <section class="summary-section">
     <div class="summary-grid">
       <div class="summary-card summary-card--total">
-        <span class="summary-label">Grundgebühren / Jahr</span>
-        <div class="summary-info">
-          <div class="summary-icon">
-            <mat-icon>account_balance_wallet</mat-icon>
-          </div>
-          <span class="summary-value">{{
-            state.totalYearlyCost() | currency: 'EUR' : 'symbol' : '1.2-2'
-            }}</span>
-        </div>
-      </div>
-      <div class="summary-card summary-card--total">
         <span class="summary-label">Gesamtkosten {{ state.selectedYear() }}</span>
         <div class="summary-info">
           <div class="summary-icon">
             <mat-icon>account_balance</mat-icon>
           </div>
           <span class="summary-value">{{
-            state.yearStats().totalCost | currency: 'EUR' : 'symbol' : '1.2-2'
+            state.totalYearCostWithBase() | currency: 'EUR' : 'symbol' : '1.2-2'
             }}</span>
         </div>
       </div>

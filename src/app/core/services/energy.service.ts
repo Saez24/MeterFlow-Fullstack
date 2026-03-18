@@ -54,13 +54,6 @@ export class EnergyService {
     return map;
   });
 
-  readonly totalYearlyCost = computed(() =>
-    this.activeMeters().reduce((sum, m) => {
-      const tariff = this.getActiveTariffForDate(m, new Date());
-      return sum + (tariff ? tariff.baseCharge * 12 : 0);
-    }, 0),
-  );
-
   // Dashboard: Verbrauch, Kosten, Trend
   readonly dashboardStats = computed(() => {
     const stats: Record<
@@ -282,9 +275,6 @@ export class EnergyService {
         totalCost += s.cost;
       }
     }
-
-    // Grundgebühren: 12 Monate × monatliche Grundgebühr
-    totalCost += this.totalYearlyCost();
 
     return { year, totalCost, byMeter, months };
   }
