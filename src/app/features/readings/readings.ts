@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed } from '@angular/core';
+import { Component, inject, signal, computed, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -25,6 +25,7 @@ import { ReadingService } from '../../core/services/reading.service';
   ],
   templateUrl: './readings.html',
   styleUrl: './readings.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Readings {
   private readonly meterService = inject(MeterService);

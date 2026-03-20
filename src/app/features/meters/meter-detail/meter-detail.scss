@@ -33,7 +33,7 @@
   margin: 0 0 4px;
 }
 .page-subtitle {
-  color: var(--color-text-secondary);
+  color: var(--text-secondary);
   margin: 0;
 }
 .header-actions {
@@ -53,9 +53,9 @@
   align-items: center;
   gap: 12px;
   padding: 14px;
-  border-radius: 14px;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
+  border-radius: 20px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
 }
 .stat-icon {
   width: 36px;
@@ -70,24 +70,24 @@
   font-size: 0.68rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--color-text-secondary);
+  color: var(--text-secondary);
   font-weight: 500;
 }
 .stat-value {
   font-weight: 700;
   font-size: 0.95rem;
-  color: var(--color-text);
+  color: var(--text-primary);
 }
 .stat-hint {
   font-size: 0.68rem;
-  color: var(--color-primary);
+  color: var(--apple-blue);
   font-weight: 500;
   margin-top: 1px;
 }
 .stat-empty {
   font-weight: 400;
   font-size: 0.8rem;
-  color: var(--color-text-secondary);
+  color: var(--text-secondary);
 }
 
 /* ── Gas Box ── */
@@ -96,12 +96,12 @@
   align-items: center;
   gap: 12px;
   padding: 12px 16px;
-  background: rgba(59, 130, 246, 0.08);
+  background: rgba(var(--apple-blue-rgb), 0.1);
   border-radius: 12px;
   margin-bottom: 24px;
   font-size: 0.85rem;
   flex-wrap: wrap;
-  color: var(--color-text);
+  color: var(--text-primary);
 }
 
 /* ── Tabs ── */
@@ -125,14 +125,14 @@
   font-size: 0.8rem;
   font-family: inherit;
   transition: all 0.2s;
-  border: 1.5px solid var(--color-border);
-  background: var(--color-surface);
-  color: var(--color-text-secondary);
+  border: 1.5px solid var(--border-color);
+  background: var(--bg-surface);
+  color: var(--text-secondary);
 }
 .toggle-btn.active {
-  border-color: var(--color-primary);
-  background: var(--color-primary-alpha);
-  color: var(--color-primary);
+  border-color: var(--apple-blue);
+  background: rgba(var(--apple-blue-rgb), 0.1);
+  color: var(--apple-blue);
   font-weight: 600;
 }
 .chart-wrapper {
@@ -142,7 +142,7 @@
 .chart-empty {
   text-align: center;
   padding: 60px 20px;
-  color: var(--color-text-secondary);
+  color: var(--text-secondary);
 }
 .chart-empty mat-icon {
   font-size: 48px;
@@ -179,20 +179,20 @@
 .timeline-line {
   width: 2px;
   flex: 1;
-  background: var(--color-border);
+  background: var(--border-color);
   margin: 4px 0;
   min-height: 20px;
 }
 .reading-card {
   flex: 1;
   padding: 14px;
-  border-radius: 14px;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
+  border-radius: 20px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
   margin-bottom: 10px;
 }
 .reading-entry--first .reading-card {
-  border-color: var(--color-primary);
+  border-color: var(--apple-blue);
 }
 .reading-card__header {
   display: flex;
@@ -209,8 +209,8 @@
   font-size: 0.68rem;
   font-weight: 600;
   text-transform: uppercase;
-  background: var(--color-primary-alpha);
-  color: var(--color-primary);
+  background: rgba(var(--apple-blue-rgb), 0.1);
+  color: var(--apple-blue);
   padding: 2px 8px;
   border-radius: 100px;
 }
@@ -218,7 +218,7 @@
   display: flex;
 }
 .photo-btn {
-  color: var(--color-primary) !important;
+  color: var(--apple-blue) !important;
 }
 .delete-btn:hover {
   color: #ef4444;
@@ -228,11 +228,11 @@
   font-weight: 700;
   letter-spacing: -0.03em;
   margin-bottom: 8px;
-  color: var(--color-text);
+  color: var(--text-primary);
 }
 .reading-main-unit {
   font-size: 0.8rem;
-  color: var(--color-text-secondary);
+  color: var(--text-secondary);
   font-weight: 400;
 }
 .reading-details-row {
@@ -258,8 +258,8 @@
   color: #3b82f6;
 }
 .cost-chip {
-  background: var(--color-primary-alpha);
-  color: var(--color-primary);
+  background: rgba(var(--apple-blue-rgb), 0.1);
+  color: var(--apple-blue);
 }
 .ww-chip {
   background: rgba(6, 182, 212, 0.12);
@@ -275,7 +275,7 @@
   gap: 6px;
   margin-top: 8px;
   font-size: 0.8rem;
-  color: var(--color-text-secondary);
+  color: var(--text-secondary);
 }
 .reading-note mat-icon {
   font-size: 14px;
@@ -285,7 +285,7 @@
 .not-found {
   text-align: center;
   padding: 80px 24px;
-  color: var(--color-text);
+  color: var(--text-primary);
 }
 
 /* ── Foto Modal ── */

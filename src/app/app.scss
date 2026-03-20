@@ -3,8 +3,8 @@
   display: flex;
   height: 100vh;
   overflow: hidden;
-  background: var(--color-bg);
-  color: var(--color-text);
+  background: var(--bg);
+  color: var(--text-primary);
   position: relative;
 }
 
@@ -14,12 +14,12 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  background: var(--color-surface);
-  border-right: 1px solid var(--color-border);
   padding: 20px 12px;
   transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   flex-shrink: 0;
   overflow: hidden;
+
+  border-right: 1px solid var(--border-color);
 }
 
 .sidebar--collapsed {
@@ -36,10 +36,10 @@
 .sidebar-toggle {
   position: fixed;
   top: 20px;
-  left: 228px; /* 240px - halbe Button-Breite */
+  left: 228px;
   z-index: 200;
-  background: var(--color-surface) !important;
-  border: 1px solid var(--color-border) !important;
+  background: var(--bg-surface) !important;
+  border: 1px solid var(--border-color) !important;
   border-radius: 50% !important;
   width: 28px !important;
   height: 28px !important;
@@ -48,6 +48,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .sidebar-toggle mat-icon {
@@ -57,9 +58,8 @@
 }
 
 /* Position anpassen wenn eingeklappt */
-:host-context(.sidebar--collapsed) .sidebar-toggle,
-.sidebar--collapsed ~ * .sidebar-toggle {
-  left: 76px;
+.sidebar--collapsed ~ .sidebar-toggle {
+  left: 64px;
 }
 
 /* Auf Mobile verstecken */
@@ -75,7 +75,7 @@
   flex-direction: column;
   gap: 4px;
   padding-bottom: 16px;
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--border-color);
   margin-bottom: 12px;
 }
 
@@ -94,7 +94,7 @@
   width: 40px;
   height: 40px;
   border-radius: 12px;
-  background: var(--color-primary);
+  background: var(--apple-blue);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -129,11 +129,6 @@
   height: 18px;
 }
 
-.status-dot {
-  font-size: 10px;
-  flex-shrink: 0;
-}
-
 /* ── Nav ── */
 .sidebar__nav {
   flex: 1;
@@ -148,7 +143,7 @@
   gap: 12px;
   padding: 10px 12px;
   border-radius: 12px;
-  color: var(--color-text-secondary);
+  color: var(--text-secondary);
   text-decoration: none;
   font-size: 0.9rem;
   font-weight: 500;
@@ -158,33 +153,33 @@
 }
 
 .nav-item:hover {
-  background: var(--color-hover);
-  color: var(--color-text);
+  background: var(--hover-bg);
+  color: var(--text-primary);
 }
 
 .nav-item--active {
-  background: var(--color-primary-alpha) !important;
-  color: var(--color-primary) !important;
+  background: rgba(var(--apple-blue-rgb), 0.15) !important;
+  color: var(--apple-blue) !important;
 }
 
 /* ── Footer (Logout) ── */
 .sidebar__footer {
   padding-top: 12px;
-  border-top: 1px solid var(--color-border);
+  border-top: 1px solid var(--border-color);
 }
 
 .logout-btn {
   width: 100%;
   border-radius: 12px !important;
   padding: 0 12px !important;
-  height: 40px;
-  justify-content: flex-start !important;
+  height: 44px;
+  // justify-content: flex-start !important;
   transition: all 0.2s;
 }
 
 .sidebar--collapsed .logout-btn {
-  width: 40px;
-  min-width: 40px !important;
+  width: 44px;
+  min-width: 44px !important;
   padding: 0 !important;
   justify-content: center !important;
 }
@@ -203,11 +198,11 @@
   align-items: center;
   justify-content: space-between;
   padding: 12px 20px;
-  background: var(--color-surface);
-  border-bottom: 1px solid var(--color-border);
   position: sticky;
   top: 0;
   z-index: 10;
+
+  border-bottom: 1px solid var(--border-color);
 }
 
 @media (max-width: 768px) {
@@ -225,7 +220,7 @@
 }
 
 .mobile-logo mat-icon {
-  color: var(--color-primary);
+  color: var(--apple-blue);
 }
 
 .mobile-header__actions {
@@ -245,10 +240,10 @@
   bottom: 0;
   left: 0;
   right: 0;
-  background: var(--color-surface);
-  border-top: 1px solid var(--color-border);
-  padding: 8px 0;
   z-index: 100;
+  padding: 8px 0;
+
+  border-top: 1px solid var(--border-color);
 }
 
 @media (max-width: 768px) {
@@ -266,7 +261,7 @@
   flex-direction: column;
   align-items: center;
   gap: 2px;
-  color: var(--color-text-secondary);
+  color: var(--text-secondary);
   text-decoration: none;
   font-size: 0.65rem;
   font-weight: 500;
@@ -280,7 +275,7 @@
   height: 22px;
 }
 .bottom-nav-item--active {
-  color: var(--color-primary);
+  color: var(--apple-blue);
 }
 
 .main-content--auth {

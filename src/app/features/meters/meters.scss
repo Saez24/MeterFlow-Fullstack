@@ -19,11 +19,11 @@
   margin: 0 0 4px;
 }
 .page-subtitle {
-  color: var(--color-text-secondary);
+  color: var(--text-secondary);
   margin: 0;
 }
 .action-btn {
-  border-radius: 100px !important;
+  border-radius: 12px !important;
   height: 44px;
 }
 .meters-list {
@@ -36,15 +36,15 @@
   align-items: center;
   gap: 16px;
   padding: 20px;
-  border-radius: 16px;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
+  border-radius: 20px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
   transition: all 0.2s;
   flex-wrap: wrap;
 }
 .meter-row:hover {
-  border-color: var(--color-primary);
-  box-shadow: 0 4px 16px var(--color-shadow);
+  border-color: var(--apple-blue);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.04);
 }
 .meter-row--inactive {
   opacity: 0.5;
@@ -78,15 +78,15 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  background: var(--color-bg);
-  border: 1px solid var(--color-border);
+  background: var(--bg);
+  border: 1px solid var(--border-color);
   padding: 2px 8px;
   border-radius: 100px;
-  color: var(--color-text-secondary);
+  color: var(--text-secondary);
 }
 .meta-text {
   font-size: 0.8rem;
-  color: var(--color-text-secondary);
+  color: var(--text-secondary);
 }
 .meter-row__tariff {
   flex: 1;
@@ -99,16 +99,16 @@
 .tariff-secondary {
   font-weight: 400;
   font-size: 0.75rem;
-  color: var(--color-text-secondary);
+  color: var(--text-secondary);
   margin-left: 2px;
 }
 .tariff-base {
   font-size: 0.8rem;
-  color: var(--color-text-secondary);
+  color: var(--text-secondary);
 }
 .tariff-gas {
   font-size: 0.75rem;
-  color: var(--color-text-secondary);
+  color: var(--text-secondary);
   font-family: monospace;
   margin-top: 2px;
 }
@@ -122,7 +122,7 @@
 }
 .readings-none {
   font-size: 0.85rem;
-  color: var(--color-text-secondary);
+  color: var(--text-secondary);
   font-style: italic;
 }
 .meter-row__actions {
@@ -136,13 +136,13 @@
 .empty-state {
   text-align: center;
   padding: 80px 24px;
-  color: var(--color-text-secondary);
+  color: var(--text-secondary);
 }
 .empty-icon {
   width: 80px;
   height: 80px;
   border-radius: 24px;
-  background: var(--color-primary-alpha);
+  background: rgba(var(--apple-blue-rgb), 0.1);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -152,12 +152,12 @@
   font-size: 40px;
   width: 40px;
   height: 40px;
-  color: var(--color-primary);
+  color: var(--apple-blue);
 }
 .empty-state h3 {
   font-size: 1.5rem;
   font-weight: 600;
-  color: var(--color-text);
+  color: var(--text-primary);
   margin: 0 0 8px;
 }
 .delete-item {
@@ -170,6 +170,6 @@
   gap: 6px;
 }
 .reading-current__value {
-  color: var(--color-primary);
+  color: var(--apple-blue);
   font-weight: 800;
 }

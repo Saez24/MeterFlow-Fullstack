@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed, OnInit, effect } from '@angular/core';
+import { Component, inject, signal, computed, OnInit, effect, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import {
@@ -42,7 +42,7 @@ import { MeterService } from '../../../core/services/meter.service';
   ],
   templateUrl: './meter-form.html',
   styleUrls: ['./meter-form.scss'],
-  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MeterForm implements OnInit {
   private readonly meterService = inject(MeterService);

@@ -1,4 +1,4 @@
-import { Component, inject, computed, signal, ViewChild, ElementRef, effect } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, computed, signal, ViewChild, ElementRef, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -29,6 +29,7 @@ import { TariffService } from '../../../core/services/tariff.service';
   ],
   templateUrl: './meter-detail.html',
   styleUrl: './meter-detail.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MeterDetail {
   private readonly meterService = inject(MeterService);
@@ -51,6 +52,7 @@ export class MeterDetail {
         meter: meter,
         tariffId: tariffId,
       },
+      panelClass: 'frosted-glass',
     });
   }
 

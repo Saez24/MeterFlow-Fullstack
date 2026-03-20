@@ -13,7 +13,11 @@
         <mat-label>Preis pro {{ meter().unit }}</mat-label>
         <input matInput type="number" formControlName="pricePerUnit" placeholder="0.30" />
         <span matSuffix>€</span>
-        <mat-error *ngIf="form.get('pricePerUnit')?.hasError('required')">Preis ist ein Pflichtfeld.</mat-error>
+        <mat-error>
+  @if (form.get('pricePerUnit')?.hasError('required')) {
+    Preis ist ein Pflichtfeld.
+  }
+</mat-error>
       </mat-form-field>
 
       @if (!isLinkedGardenWater()) {
@@ -21,7 +25,11 @@
         <mat-label>Grundgebühr pro Monat</mat-label>
         <input matInput type="number" formControlName="baseCharge" placeholder="12.50" />
         <span matSuffix>€</span>
-        <mat-error *ngIf="form.get('baseCharge')?.hasError('required')">Grundgebühr ist ein Pflichtfeld.</mat-error>
+        <mat-error>
+  @if (form.get('baseCharge')?.hasError('required')) {
+    Grundgebühr ist ein Pflichtfeld.
+  }
+</mat-error>
       </mat-form-field>
       }
     </div>
@@ -39,7 +47,11 @@
       <input matInput [matDatepicker]="picker" formControlName="validFrom" />
       <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
       <mat-datepicker #picker></mat-datepicker>
-      <mat-error *ngIf="form.get('validFrom')?.hasError('required')">Datum ist ein Pflichtfeld.</mat-error>
+      <mat-error>
+  @if (form.get('validFrom')?.hasError('required')) {
+    Datum ist ein Pflichtfeld.
+  }
+</mat-error>
     </mat-form-field>
 
     @if (isGas()) {

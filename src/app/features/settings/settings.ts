@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -16,6 +16,7 @@ import { DataSyncService } from '../../core/services/data-sync.service';
   imports: [CommonModule, MatButtonModule, MatIconModule, MatCardModule, MatSnackBarModule],
   templateUrl: './settings.html',
   styleUrl: './settings.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Settings {
   private readonly themeService = inject(ThemeService);

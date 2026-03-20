@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed, OnInit } from '@angular/core';
+import { Component, inject, signal, computed, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormsModule,
@@ -39,9 +39,9 @@ export interface TariffFormData {
     MatSnackBarModule,
     MatDividerModule,
   ],
-  standalone: true,
   templateUrl: './tariff-form.html',
   styleUrls: ['./tariff-form.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TariffFormComponent implements OnInit {
   private readonly fb = inject(FormBuilder);

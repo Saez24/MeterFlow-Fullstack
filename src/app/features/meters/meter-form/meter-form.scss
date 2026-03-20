@@ -20,11 +20,11 @@
   font-weight: 700;
   letter-spacing: -0.03em;
   margin: 0 0 4px;
-  color: var(--color-text);
+  color: var(--text-primary);
 }
 
 .page-subtitle {
-  color: var(--color-text-secondary);
+  color: var(--text-secondary);
   margin: 0;
 }
 
@@ -44,7 +44,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  color: var(--color-text);
+  color: var(--text-primary);
 }
 
 .section-divider {
@@ -65,13 +65,13 @@
   align-items: center;
   gap: 6px;
   padding: 12px 16px;
-  border-radius: 14px;
-  border: 2px solid var(--color-border);
-  background: var(--color-surface);
+  border-radius: 12px;
+  border: 2px solid var(--border-color);
+  background: var(--bg-surface);
   cursor: pointer;
   transition: all 0.2s;
   min-width: 80px;
-  color: var(--color-text-secondary);
+  color: var(--text-secondary);
   font-size: 0.75rem;
   font-weight: 500;
   font-family: inherit;
@@ -126,7 +126,7 @@
   border-radius: 12px;
   margin-bottom: 20px;
   font-size: 0.85rem;
-  color: var(--color-text);
+  color: var(--text-primary);
 }
 
 .water-price-info mat-icon {
@@ -140,15 +140,15 @@
   align-items: center;
   justify-content: space-between;
   padding: 12px 16px;
-  background: var(--color-bg);
-  border: 1px solid var(--color-border);
+  background: var(--bg);
+  border: 1px solid var(--border-color);
   border-radius: 10px;
   margin-bottom: 16px;
 }
 
 .preview-label {
   font-size: 0.8rem;
-  color: var(--color-text-secondary);
+  color: var(--text-secondary);
 }
 
 .preview-value {
@@ -163,7 +163,7 @@
   border-radius: 16px;
   padding: 20px;
   margin: 0;
-  color: var(--color-text);
+  color: var(--text-primary);
 }
 
 .garden-header {
@@ -175,7 +175,7 @@
 
 .garden-desc {
   font-size: 0.85rem;
-  color: var(--color-text-secondary);
+  color: var(--text-secondary);
   margin: 0 0 20px;
   line-height: 1.6;
 }
@@ -205,12 +205,12 @@
 
 /* ── Gas ── */
 .gas-section {
-  background: rgba(59, 130, 246, 0.06);
-  border: 1px solid rgba(59, 130, 246, 0.15);
+  background: rgba(var(--apple-blue-rgb), 0.06);
+  border: 1px solid rgba(var(--apple-blue-rgb), 0.15);
   border-radius: 16px;
   padding: 20px;
   margin: 0;
-  color: var(--color-text);
+  color: var(--text-primary);
 }
 
 .gas-header {
@@ -221,19 +221,19 @@
 }
 
 .gas-icon {
-  color: #3b82f6;
+  color: var(--apple-blue);
 }
 
 .gas-hint {
   font-size: 0.8rem;
-  color: var(--color-text-secondary);
+  color: var(--text-secondary);
 }
 
 .gas-preview {
-  background: var(--color-bg);
+  background: var(--bg);
   border-radius: 12px;
   padding: 16px;
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--border-color);
   margin-top: 16px;
   display: flex;
   justify-content: space-between;
@@ -245,7 +245,7 @@
 .formula-label,
 .example-label {
   font-size: 0.75rem;
-  color: var(--color-text-secondary);
+  color: var(--text-secondary);
   display: block;
   margin-bottom: 4px;
 }
@@ -254,12 +254,12 @@
   font-family: monospace;
   font-size: 0.9rem;
   font-weight: 600;
-  color: var(--color-text);
+  color: var(--text-primary);
 }
 
 .example-result {
   font-weight: 600;
-  color: #3b82f6;
+  color: var(--apple-blue);
 }
 
 /* ── Aktionen ── */
@@ -271,7 +271,7 @@
 }
 
 .save-btn {
-  border-radius: 100px !important;
-  padding: 0 24px !important;
+  border-radius: 12px;
+  padding: 0 24px;
   height: 44px;
 }

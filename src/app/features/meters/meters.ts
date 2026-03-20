@@ -1,5 +1,5 @@
 // src/app/features/meters/meters.ts
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
@@ -35,6 +35,7 @@ import { TariffService } from '../../core/services/tariff.service';
   ],
   templateUrl: './meters.html',
   styleUrl: './meters.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Meters {
   private readonly meterService = inject(MeterService);

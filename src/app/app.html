@@ -7,7 +7,7 @@
     <mat-icon>{{ sidebarCollapsed() ? 'chevron_right' : 'chevron_left' }}</mat-icon>
   </button>
 
-  <nav class="sidebar" [class.sidebar--collapsed]="sidebarCollapsed()">
+  <nav class="sidebar frosted-glass" [class.sidebar--collapsed]="sidebarCollapsed()">
     <div class="sidebar__top">
       <div class="sidebar__logo">
         <div class="logo-icon" [style.background]="connectionColor()" [matTooltip]="connectionTooltip()"
@@ -47,7 +47,7 @@
 
   <main class="main-content" [class.main-content--auth]="isAuthPage()">
     @if (!isAuthPage()) {
-    <header class="mobile-header">
+    <header class="mobile-header frosted-glass">
       <div class="mobile-logo">
         <div class="logo-icon" [style.background]="connectionColor()" [matTooltip]="connectionTooltip()"
           matTooltipPosition="below">
@@ -72,7 +72,7 @@
   </main>
 
   @if (!isAuthPage()) {
-  <nav class="bottom-nav">
+  <nav class="bottom-nav frosted-glass">
     @for (item of navItems; track item.path) {
     <a class="bottom-nav-item" [routerLink]="item.path" routerLinkActive="bottom-nav-item--active"
       [routerLinkActiveOptions]="{ exact: item.path === '/' }">

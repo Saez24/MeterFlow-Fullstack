@@ -7,6 +7,7 @@ import {
   ViewChild,
   ElementRef,
   effect,
+  ChangeDetectionStrategy,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
@@ -31,6 +32,7 @@ Chart.register(...registerables);
   ],
   templateUrl: './reports.html',
   styleUrl: './reports.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Reports implements AfterViewInit, OnDestroy {
   readonly state = inject(DashboardStateService);
@@ -184,10 +186,10 @@ export class Reports implements AfterViewInit, OnDestroy {
         datasets: [{
           label: 'Gesamtkosten',
           data,
-          backgroundColor: years.map((_, i) =>
-            i === 0 ? 'rgba(79,70,229,0.8)' : 'rgba(79,70,229,0.4)'
+          backgroundColor: years.map((y) =>
+            y === this.state.selectedYear() ? 'var(--apple-blue)' : 'rgba(var(--apple-blue-rgb), 0.4)'
           ),
-          borderColor: '#4F46E5',
+          borderColor: 'var(--apple-blue)',
           borderWidth: 2,
           borderRadius: 10,
         }],

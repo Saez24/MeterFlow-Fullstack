@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed, OnInit } from '@angular/core';
+import { Component, inject, signal, computed, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import {
@@ -43,6 +43,7 @@ import { maxDecimalPlaces } from '../../../core/validators/decimal-places.valida
   ],
   templateUrl: './readings-form.html',
   styleUrl: './readings-form.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ReadingsForm implements OnInit {
   private readonly meterService = inject(MeterService);
