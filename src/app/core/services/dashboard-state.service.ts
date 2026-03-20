@@ -1,35 +1,38 @@
-// src/app/core/services/dashboard-state.service.ts
 import { Injectable, inject, signal, computed } from '@angular/core';
-import { EnergyService } from './energy.service';
 import { StatsService } from './stats.service';
 import {
   ENERGY_META,
   MeterConfig,
   TariffPeriod,
 } from '../models/energy.models';
+import { MeterService } from './meter.service';
+import { ReadingService } from './reading.service';
+import { TariffService } from './tariff.service';
 
 @Injectable({ providedIn: 'root' })
 export class DashboardStateService {
-    private readonly energyService = inject(EnergyService);
+    private readonly meterService = inject(MeterService);
+    private readonly readingService = inject(ReadingService);
+    private readonly tariffService = inject(TariffService);
     readonly statsService = inject(StatsService);
 
     // ============ GEMEINSAMER STATE ============
-    readonly availableYears = this.energyService.availableYears;
-    readonly activeMeters = this.energyService.activeMeters;
-    readonly waterBills = this.energyService.waterBillStats;
+    readonly availableYears = this.statsService.availableYears;
+    readonly activeMeters = this.meterService.activeMeters;
+    readonly waterBills = this.statsService.waterBillStats;
 
     readonly selectedYear = signal(
         this.availableYears()[0] ?? new Date().getFullYear()
     );
 
     readonly yearStats = computed(() =>
-        this.energyService.getYearStats(this.selectedYear())
+        this.statsService.getYearStats(this.selectedYear())
     );
 
     readonly activeCount = computed(() => this.activeMeters().length);
 
     readonly recentReadings = computed(() =>
-        [...this.energyService.readings()]
+        [...this.readingService.readings()]
             .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
             .slice(0, 8)
     );
@@ -66,7 +69,7 @@ export class DashboardStateService {
       );
 
       const totalBaseChargeForMeter = monthsWithData.reduce((monthlySum, month) => {
-        const tariff = this.energyService.getActiveTariffForDate(
+        const tariff = this.tariffService.getActiveTariffForDate(
           meter,
           new Date(stats.year, month.month - 1),
         );
@@ -81,7 +84,7 @@ export class DashboardStateService {
     
       // ============ HILFSMETHODEN ============
       getYearTotalCost(year: number): number {
-        const stats = this.energyService.getYearStats(year);
+        const stats = this.statsService.getYearStats(year);
         const meters = this.activeMeters();
     
         // Monate mit Daten pro Zähler summieren
@@ -96,7 +99,7 @@ export class DashboardStateService {
           );
     
           const totalBaseChargeForMeter = monthsWithData.reduce((monthlySum, month) => {
-            const tariff = this.energyService.getActiveTariffForDate(
+            const tariff = this.tariffService.getActiveTariffForDate(
               meter,
               new Date(stats.year, month.month - 1),
             );
@@ -113,19 +116,22 @@ export class DashboardStateService {
           if (meter.type === 'garden_water' && meter.linkedWaterMeterId) {
             return null;
           }
-          return this.energyService.getActiveTariffForDate(meter, new Date());
-        }      getMeta(type: string) {        return ENERGY_META[type as keyof typeof ENERGY_META];
+          return this.tariffService.getActiveTariffForDate(meter, new Date());
+        }
+              
+    getMeta(type: string) {
+        return ENERGY_META[type as keyof typeof ENERGY_META];
     }
 
     getMeterById(id: string) {
-        return this.energyService.getMeter(id);
+        return this.meterService.getMeter(id);
     }
 
     latestReading(meterId: string) {
-        return this.energyService.latestReadings().get(meterId);
+        return this.readingService.latestReadings().get(meterId);
     }
 
     getMonthStats(year: number) {
-        return this.energyService.getMonthStats(year);
+        return this.statsService.getMonthStats(year);
     }
 }

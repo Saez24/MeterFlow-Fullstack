@@ -16,8 +16,9 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { EnergyService } from '../../../core/services/energy.service';
 import { ENERGY_META, TariffPeriod, MeterConfig } from '../../../core/models/energy.models';
+import { TariffService } from '../../../core/services/tariff.service';
+import { ReadingService } from '../../../core/services/reading.service';
 
 export interface TariffFormData {
   meter: MeterConfig;
@@ -44,14 +45,15 @@ export interface TariffFormData {
 })
 export class TariffFormComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
-  private readonly energyService = inject(EnergyService);
+  private readonly tariffService = inject(TariffService);
+  private readonly readingService = inject(ReadingService);
   private readonly snackBar = inject(MatSnackBar);
   public readonly dialogRef = inject(MatDialogRef<TariffFormComponent>);
   public readonly data: TariffFormData = inject(MAT_DIALOG_DATA);
 
   readonly meter = signal(this.data.meter);
   readonly isEdit = computed(() => !!this.data.tariffId);
-  private originalTariff = this.isEdit() ? this.energyService.getTariff(this.meter().id, this.data.tariffId!) : null;
+  private originalTariff = this.isEdit() ? this.tariffService.getTariff(this.meter().id, this.data.tariffId!) : null;
 
   form: FormGroup = this.fb.group({
     pricePerUnit: [0, [Validators.required, Validators.min(0)]],
@@ -84,7 +86,7 @@ export class TariffFormComponent implements OnInit {
         });
       }
       if (this.isWater()) {
-        const lastTariff = this.energyService.getActiveTariff(this.meter());
+        const lastTariff = this.tariffService.getActiveTariff(this.meter());
         this.form.patchValue({
             wastewaterPrice: lastTariff?.wastewaterPrice ?? 0,
         });
@@ -92,7 +94,7 @@ export class TariffFormComponent implements OnInit {
     }
   }
 
-  save(): void {
+  async save(): Promise<void> {
     if (this.form.invalid) {
       return;
     }
@@ -114,12 +116,14 @@ export class TariffFormComponent implements OnInit {
     }
 
     if (this.isEdit()) {
-      this.energyService.updateTariff(this.meter().id, this.data.tariffId!, tariffData);
+      await this.tariffService.updateTariff(this.meter().id, this.data.tariffId!, tariffData);
       this.snackBar.open('Tarif aktualisiert', 'OK', { duration: 3000 });
     } else {
-      this.energyService.addTariff(this.meter().id, tariffData as Omit<TariffPeriod, 'id'>);
+      await this.tariffService.addTariff(this.meter().id, tariffData as Omit<TariffPeriod, 'id'>);
       this.snackBar.open('Neuer Tarif hinzugefügt', 'OK', { duration: 3000 });
     }
+
+    await this.readingService.recalculateAllReadingsForMeter(this.meter().id);
 
     this.dialogRef.close(true);
   }

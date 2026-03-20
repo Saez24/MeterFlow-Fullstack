@@ -5,9 +5,11 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ThemeService } from '../../core/services/theme.service';
-import { EnergyService } from '../../core/services/energy.service';
 import { SupabaseService } from '../../core/services/supabse.service';
 import { Router } from '@angular/router';
+import { MeterService } from '../../core/services/meter.service';
+import { ReadingService } from '../../core/services/reading.service';
+import { DataSyncService } from '../../core/services/data-sync.service';
 
 @Component({
   selector: 'app-settings',
@@ -17,16 +19,18 @@ import { Router } from '@angular/router';
 })
 export class Settings {
   private readonly themeService = inject(ThemeService);
-  private readonly energyService = inject(EnergyService);
+  private readonly meterService = inject(MeterService);
+  private readonly readingService = inject(ReadingService);
+  private readonly dataSyncService = inject(DataSyncService);
   private readonly snackBar = inject(MatSnackBar);
 
   readonly themeMode = this.themeService.mode;
 
   meterCount() {
-    return this.energyService.meters().length;
+    return this.meterService.meters().length;
   }
   readingCount() {
-    return this.energyService.readings().length;
+    return this.readingService.readings().length;
   }
 
   setTheme(mode: 'light' | 'dark' | 'system'): void {
@@ -34,7 +38,7 @@ export class Settings {
   }
 
   exportData(): void {
-    const json = this.energyService.exportData();
+    const json = this.dataSyncService.exportData();
     const blob = new Blob([json], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -51,7 +55,7 @@ export class Settings {
     const reader = new FileReader();
     reader.onload = (e) => {
       try {
-        this.energyService.importData(e.target?.result as string);
+        this.dataSyncService.importData(e.target?.result as string);
         this.snackBar.open('Daten importiert', 'OK', { duration: 3000 });
       } catch {
         this.snackBar.open('Fehler beim Import', 'OK', { duration: 3000 });

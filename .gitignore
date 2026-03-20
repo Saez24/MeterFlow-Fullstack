@@ -29,6 +29,7 @@ yarn-error.log
 !.vscode/mcp.json
 .history/*
 agents.md
+GEMINI.md
 .gemini
 
 # Miscellaneous

@@ -21,7 +21,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { ENERGY_META, EnergyType, MeterConfig } from '../../../core/models/energy.models';
-import { EnergyService } from '../../../core/services/energy.service';
+import { MeterService } from '../../../core/services/meter.service';
 
 @Component({
   selector: 'app-meter-form',
@@ -45,7 +45,7 @@ import { EnergyService } from '../../../core/services/energy.service';
   standalone: true,
 })
 export class MeterForm implements OnInit {
-  private readonly energyService = inject(EnergyService);
+  private readonly meterService = inject(MeterService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly snackBar = inject(MatSnackBar);
@@ -92,7 +92,7 @@ export class MeterForm implements OnInit {
   });
 
   readonly waterMeters = computed(() =>
-    this.energyService.meters().filter((m) => m.type === EnergyType.Water && m.active),
+    this.meterService.meters().filter((m: MeterConfig) => m.type === EnergyType.Water && m.active),
   );
 
   // Gas-Vorschau
@@ -114,7 +114,7 @@ export class MeterForm implements OnInit {
     if (id && id !== 'new') {
       this.isEdit.set(true);
       this.editId.set(id);
-      const meter = this.energyService.getMeter(id);
+      const meter = this.meterService.getMeter(id);
       if (meter) {
         this.form.patchValue({
           ...meter,
@@ -175,10 +175,10 @@ export class MeterForm implements OnInit {
     };
 
     if (this.isEdit() && this.editId()) {
-      this.energyService.updateMeter(this.editId()!, meterData);
+      this.meterService.updateMeter(this.editId()!, meterData);
       this.snackBar.open('Zähler gespeichert', 'OK', { duration: 3000 });
     } else {
-      this.energyService.addMeter(meterData);
+      this.meterService.addMeter(meterData);
       this.snackBar.open('Zähler angelegt', 'OK', { duration: 3000 });
     }
 

@@ -10,12 +10,14 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { EnergyService } from '../../core/services/energy.service';
 import {
   ENERGY_META,
   MeterConfig,
   TariffPeriod,
 } from '../../core/models/energy.models';
+import { MeterService } from '../../core/services/meter.service';
+import { ReadingService } from '../../core/services/reading.service';
+import { TariffService } from '../../core/services/tariff.service';
 
 @Component({
   selector: 'app-meters',
@@ -35,38 +37,41 @@ import {
   styleUrl: './meters.scss',
 })
 export class Meters {
-  private readonly energyService = inject(EnergyService);
+  private readonly meterService = inject(MeterService);
+  private readonly readingService = inject(ReadingService);
+  private readonly tariffService = inject(TariffService);
   private readonly snackBar = inject(MatSnackBar);
 
-  readonly meters = this.energyService.meters;
+  readonly meters = this.meterService.meters;
 
   getMeta(type: string) {
     return ENERGY_META[type as keyof typeof ENERGY_META];
   }
 
   readingCount(meterId: string): number {
-    return this.energyService.getReadingsForMeter(meterId).length;
+    return this.readingService.getReadingsForMeter(meterId).length;
   }
 
   latestReading(meterId: string) {
-    return this.energyService.latestReadings().get(meterId);
+    return this.readingService.latestReadings().get(meterId);
   }
 
   getActiveTariff(meter: MeterConfig): TariffPeriod | null {
-    return this.energyService.getActiveTariffForDate(meter, new Date());
+    return this.tariffService.getActiveTariffForDate(meter, new Date());
   }
 
   toggleActive(meter: MeterConfig): void {
-    this.energyService.updateMeter(meter.id, { active: !meter.active });
+    this.meterService.updateMeter(meter.id, { active: !meter.active });
   }
 
-  deleteMeter(meter: MeterConfig): void {
+  async deleteMeter(meter: MeterConfig): Promise<void> {
     if (
       confirm(
         `Zähler "${meter.name}" wirklich löschen? Alle Ablesungen werden ebenfalls gelöscht.`,
       )
     ) {
-      this.energyService.deleteMeter(meter.id);
+      await this.meterService.deleteMeter(meter.id);
+      await this.readingService.deleteReadingsForMeter(meter.id);
       this.snackBar.open('Zähler gelöscht', 'OK', { duration: 3000 });
     }
   }

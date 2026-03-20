@@ -10,7 +10,6 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { EnergyService } from '../../../core/services/energy.service';
 import { MeterConfig, TariffPeriod } from '../../../core/models/energy.models';
 
 @Component({
@@ -32,7 +31,6 @@ import { MeterConfig, TariffPeriod } from '../../../core/models/energy.models';
   styleUrl: './tariff-history.scss',
 })
 export class TariffHistory {
-  private readonly energyService = inject(EnergyService);
   private readonly snackBar = inject(MatSnackBar);
 
   readonly meter = input.required<MeterConfig>();

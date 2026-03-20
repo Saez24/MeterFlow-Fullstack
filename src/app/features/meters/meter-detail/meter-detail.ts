@@ -6,12 +6,14 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { EnergyService } from '../../../core/services/energy.service';
-import { ENERGY_META, MeterConfig } from '../../../core/models/energy.models';
+import { ENERGY_META, MeterConfig, MeterReading } from '../../../core/models/energy.models';
 import { TariffHistory } from '../../../shared/components/tariff-history/tariff-history';
 import { TariffFormComponent } from '../../../shared/components/tariff-form/tariff-form';
 import { Chart } from 'chart.js';
 import { ThemeService } from '../../../core/services/theme.service';
+import { MeterService } from '../../../core/services/meter.service';
+import { ReadingService } from '../../../core/services/reading.service';
+import { TariffService } from '../../../core/services/tariff.service';
 
 @Component({
   selector: 'app-meter-detail',
@@ -29,7 +31,9 @@ import { ThemeService } from '../../../core/services/theme.service';
   styleUrl: './meter-detail.scss',
 })
 export class MeterDetail {
-  private readonly energyService = inject(EnergyService);
+  private readonly meterService = inject(MeterService);
+  private readonly readingService = inject(ReadingService);
+  private readonly tariffService = inject(TariffService);
   private readonly route = inject(ActivatedRoute);
   private readonly snackBar = inject(MatSnackBar);
   private readonly themeService = inject(ThemeService);
@@ -50,16 +54,16 @@ export class MeterDetail {
     });
   }
 
-  readonly meter = computed(() => this.energyService.getMeter(this.meterId()));
-  readonly readings = computed(() => this.energyService.getReadingsForMeter(this.meterId()));
+  readonly meter = computed(() => this.meterService.getMeter(this.meterId()));
+  readonly readings = computed(() => this.readingService.getReadingsForMeter(this.meterId()));
   readonly activeTariff = computed(() => {
     const m = this.meter();
     if (!m) return null;
-    return this.energyService.getActiveTariffForDate(m, new Date());
+    return this.tariffService.getActiveTariffForDate(m, new Date());
   });
 
   readonly latestReading = computed(() => this.readings()[0] ?? null);
-  readonly hasKwh = computed(() => this.readings().some((r) => r.kwh !== undefined));
+  readonly hasKwh = computed(() => this.readings().some((r: MeterReading) => r.kwh !== undefined));
   readonly lastConsumption = computed(() => this.readings()[0]?.consumption ?? null);
   readonly chartMode = signal<'consumption' | 'cost' | 'kwh'>('consumption');
   readonly activePhoto = signal<string | null>(null);
@@ -166,16 +170,17 @@ export class MeterDetail {
     return ENERGY_META[type as keyof typeof ENERGY_META];
   }
 
-  deleteTariff(meterId: string, periodId: string): void {
+  async deleteTariff(meterId: string, periodId: string): Promise<void> {
     if (confirm('Tarif-Periode löschen?')) {
-      this.energyService.deleteTariffPeriod(meterId, periodId);
+      await this.tariffService.deleteTariffPeriod(meterId, periodId);
+      await this.readingService.recalculateAllReadingsForMeter(meterId);
       this.snackBar.open('Tarif gelöscht', 'OK', { duration: 2000 });
     }
   }
 
   deleteReading(id: string): void {
     if (confirm('Ablesung löschen?')) {
-      this.energyService.deleteReading(id);
+      this.readingService.deleteReading(id);
       this.snackBar.open('Ablesung gelöscht', 'OK', { duration: 2000 });
     }
   }

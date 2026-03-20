@@ -7,8 +7,9 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { FormsModule } from '@angular/forms';
-import { EnergyService } from '../../core/services/energy.service';
 import { ENERGY_META } from '../../core/models/energy.models';
+import { MeterService } from '../../core/services/meter.service';
+import { ReadingService } from '../../core/services/reading.service';
 
 @Component({
   selector: 'app-readings',
@@ -26,14 +27,15 @@ import { ENERGY_META } from '../../core/models/energy.models';
   styleUrl: './readings.scss',
 })
 export class Readings {
-  private readonly energyService = inject(EnergyService);
+  private readonly meterService = inject(MeterService);
+  private readonly readingService = inject(ReadingService);
   private readonly snackBar = inject(MatSnackBar);
 
-  readonly meters = this.energyService.meters;
+  readonly meters = this.meterService.meters;
   readonly filterMeterId = signal<string>('');
 
   readonly filteredReadings = computed(() => {
-    const all = [...this.energyService.readings()].sort(
+    const all = [...this.readingService.readings()].sort(
       (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
     );
     const filter = this.filterMeterId();
@@ -42,7 +44,7 @@ export class Readings {
   });
 
   getMeter(id: string) {
-    return this.energyService.getMeter(id);
+    return this.meterService.getMeter(id);
   }
 
   getMeta(type: string) {
@@ -51,7 +53,7 @@ export class Readings {
 
   deleteReading(id: string): void {
     if (confirm('Ablesung wirklich löschen?')) {
-      this.energyService.deleteReading(id);
+      this.readingService.deleteReading(id);
       this.snackBar.open('Ablesung gelöscht', 'OK', { duration: 3000 });
     }
   }

@@ -62,7 +62,7 @@
       <div class="form-row form-row--2">
         <mat-form-field appearance="outline" class="form-field value-field">
           <mat-label>Zählerstand</mat-label>
-          <input matInput type="number" formControlName="value" step="0.001" [min]="minValue()" placeholder="0.000"
+          <input matInput type="text" inputmode="decimal" formControlName="value" placeholder="0.000"
             class="reading-input" />
           <span matSuffix class="unit-suffix">{{ meter.unit }}</span>
           <mat-error>{{ getValueError() }}</mat-error>
