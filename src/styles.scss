@@ -197,3 +197,7 @@ $dark-theme: mat.define-theme(
 .mat-mdc-form-field-flex {
   border-radius: 12px !important;
 }
+
+.mat-mdc-form-field-has-icon-suffix .mat-mdc-text-field-wrapper {
+  padding-right: 12px !important;
+}
