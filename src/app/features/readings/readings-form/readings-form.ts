@@ -148,15 +148,17 @@ export class ReadingsForm implements OnInit {
     const readings = this.readingService.getReadingsForMeter(meter.id);
     const selected = new Date(selectedDate).getTime();
 
-    // Alle Ablesungen die vor dem gewählten Datum liegen, neueste zuerst
     const before = readings
-      .filter((r) => new Date(r.date).getTime() < selected)
+      .filter((r) => {
+        // Im Edit-Modus den eigenen Eintrag ausschließen
+        if (this.isEditMode && r.id === this.originalReading?.id) return false;
+        return new Date(r.date).getTime() < selected;
+      })
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
     return before[0] ?? null;
   });
 
-  // Findet den zeitlich nächsten Eintrag nach dem gewählten Datum
   readonly nextReading = computed(() => {
     const meter = this.selectedMeter();
     const selectedDate = this.formSignal().date;
@@ -165,9 +167,12 @@ export class ReadingsForm implements OnInit {
     const readings = this.readingService.getReadingsForMeter(meter.id);
     const selected = new Date(selectedDate).getTime();
 
-    // Alle Ablesungen die nach dem gewählten Datum liegen, älteste zuerst
     const after = readings
-      .filter((r) => new Date(r.date).getTime() > selected)
+      .filter((r) => {
+        // Im Edit-Modus den eigenen Eintrag ausschließen
+        if (this.isEditMode && r.id === this.originalReading?.id) return false;
+        return new Date(r.date).getTime() > selected;
+      })
       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
     return after[0] ?? null;
