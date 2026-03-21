@@ -37,11 +37,11 @@ export class StatsService {
         cost = 0,
         trend = 0;
       if (recent.length >= 2) {
-        consumption = recent[0].value - recent[1].value;
-        cost = this.calcCost(meter, consumption, recent[0].date);
+        consumption = recent[0].consumption ?? 0;
+        cost = recent[0].totalCost ?? 0;
         if (readings.length >= 4) {
-          const prev = readings[2].value - readings[3].value;
-          trend = prev > 0 ? ((consumption - prev) / prev) * 100 : 0;
+          const prevConsumption = readings[2].consumption ?? 0;
+          trend = prevConsumption > 0 ? ((consumption - prevConsumption) / prevConsumption) * 100 : 0;
         }
       }
       stats[meter.id] = { consumption, cost, unit: ENERGY_META[meter.type].unit, trend };
@@ -199,7 +199,7 @@ export class StatsService {
         if (readings.length >= 1) {
           const consumption =
             readings[0].consumption ?? readings[0].value - (readings[1]?.value ?? 0);
-          const cost = readings[0].cost ?? this.calcCost(meter, consumption, readings[0].date);
+          const cost = readings[0].totalCost ?? this.calcCost(meter, consumption, readings[0].date);
           stats.byMeter[meter.id] = { consumption, cost, unit: ENERGY_META[meter.type].unit };
           stats.totalCost += cost;
         }
