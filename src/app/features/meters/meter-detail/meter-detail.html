@@ -240,6 +240,15 @@
           ></app-tariff-history>
         </div>
       </mat-tab>
+
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <ng-container><mat-icon>price_check</mat-icon>&nbsp;Kostenvorschau</ng-container>
+        </ng-template>
+        <div class="tab-content">
+          <app-cost-preview [meter]="m"></app-cost-preview>
+        </div>
+      </mat-tab>
 </mat-tab-group>
 
 } @else {

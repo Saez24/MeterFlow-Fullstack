@@ -14,6 +14,7 @@ import { ThemeService } from '../../../core/services/theme.service';
 import { MeterService } from '../../../core/services/meter.service';
 import { ReadingService } from '../../../core/services/reading.service';
 import { TariffService } from '../../../core/services/tariff.service';
+import { CostPreview } from '../cost-preview/cost-preview';
 
 @Component({
   selector: 'app-meter-detail',
@@ -26,6 +27,7 @@ import { TariffService } from '../../../core/services/tariff.service';
     TariffHistory,
     MatTabsModule,
     MatDialogModule,
+    CostPreview,
   ],
   templateUrl: './meter-detail.html',
   styleUrl: './meter-detail.scss',

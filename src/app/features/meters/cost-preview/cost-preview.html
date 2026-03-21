@@ -1,0 +1,68 @@
+<div class="cost-preview-form">
+  <mat-form-field appearance="outline">
+    @if (meter().type === 'gas') {
+      <mat-label>Geschätzter Jahresverbrauch (kWh)</mat-label>
+    } @else {
+      <mat-label>Geschätzter Jahresverbrauch ({{ meter().unit }})</mat-label>
+    }
+    <input matInput type="number" [(ngModel)]="estimatedConsumption" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Monatlicher Abschlag (€)</mat-label>
+    <input matInput type="number" [(ngModel)]="monthlyPayment" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Anzahl der Abschlagszahlungen</mat-label>
+    <input matInput type="number" [(ngModel)]="paymentCount" />
+  </mat-form-field>
+
+  <button mat-flat-button color="primary" (click)="calculatePreview()">
+    <mat-icon>calculate</mat-icon>
+    Vorschau berechnen
+  </button>
+</div>
+
+@if (result(); as res) {
+<div class="result-container">
+  @if (res.error) {
+  <div class="error-card">{{ res.error }}</div>
+  } @else {
+  <div class="summary-card">
+    <div class="summary-item">
+      <span class="label">Gesamtkosten</span>
+      <span class="value">{{ res.totalCost | currency:'EUR' }}</span>
+    </div>
+    <div class="summary-item">
+      <span class="label">Gezahlt</span>
+      <span class="value">{{ res.totalPayment | currency:'EUR' }}</span>
+    </div>
+    <div class="summary-item balance" [class.refund]="res.balance > 0" [class.due]="res.balance < 0">
+      <span class="label">{{ res.balance > 0 ? 'Guthaben' : 'Nachzahlung' }}</span>
+      <span class="value">{{ res.balance | currency:'EUR' }}</span>
+    </div>
+  </div>
+
+  <div class="periods-grid">
+    @for (period of res.periods; track period.name) {
+    <div class="period-card">
+      <h3 class="period-title">{{ period.name }}</h3>
+      <div class="period-detail">
+        <p>Zeitraum: {{ period.startDate | date:'dd.MM.yy' }} - {{ period.endDate | date:'dd.MM.yy' }} ({{
+          period.days }} Tage)</p>
+        @if (meter().type === 'gas') {
+          <p>Verbrauch: {{ period.consumption | number:'1.2-2' }} kWh</p>
+        } @else {
+          <p>Verbrauch: {{ period.consumption | number:'1.2-2' }} {{ meter().unit }}</p>
+        }
+        <p>Arbeitspreis: {{ period.pricePerUnit | currency:'EUR':'symbol':'1.4-4' }}</p>
+        <p>Grundgebühr: {{ period.baseCharge | currency:'EUR' }}</p>
+        <h4>Kosten: {{ period.cost | currency:'EUR' }}</h4>
+      </div>
+    </div>
+    }
+  </div>
+  }
+</div>
+}
