@@ -151,6 +151,8 @@ export class StatsService {
         const billableWastewater = Math.max(0, consumption - gardenConsumption);
         const freshwaterCost = consumption * (tariff ? tariff.pricePerUnit : 0);
         const wastewaterCost = billableWastewater * (tariff ? tariff.wastewaterPrice ?? 0 : 0);
+        const baseCharge = tariff?.baseCharge ?? 0;
+        const totalCost = freshwaterCost + wastewaterCost + baseCharge;
 
         result.push({
           meterId: mainMeter.id,
@@ -161,7 +163,8 @@ export class StatsService {
           billableWastewater,
           freshwaterCost,
           wastewaterCost,
-          totalCost: freshwaterCost + wastewaterCost,
+          baseCharge,
+          totalCost,
         });
       }
     }

@@ -1,47 +1,24 @@
-# MeterFlow Application Blueprint
+# Blueprint: MeterFlow
 
 ## 1. Overview
 
-This document tracks the refactoring of the MeterFlow application to align with the principles outlined in `GEMINI.md`. The goal is to create a high-performance, accessible, and visually stunning application using Zoneless Angular, Signals, and an Apple-inspired design aesthetic.
+MeterFlow is an application for tracking energy and water consumption. It helps users to monitor their usage, costs, and budgets for different meters like electricity, gas, and water. It features a dashboard with statistics, detailed reports, and management for meters and tariffs.
 
-**Technology Stack:**
-- **Framework:** Angular (Zoneless, Standalone Components)
-- **State Management:** Angular Signals
-- **Styling:** SCSS with Apple Design Principles
-- **UI:** Angular Material (styled to match Apple Aesthetics)
-- **Testing:** Vitest
-
-**Key Features:**
-- Energy consumption tracking
-- Meter and reading management
-- Cost calculation based on tariffs
-- Reporting and statistics
+### Technology Stack
+- **Framework:** Angular
+- **State Management:** Signals
+- **Build System:** Vite + esbuild
+- **Test Runner:** Vitest
 
 ## 2. Features Log
 
-*This section will be updated as features are refactored or added.*
+### 2026-03-21: Fix Water Bill Calculation
 
-## 3. Current Plan
-
-*This is the task breakdown for the refactoring effort.*
-- [x] **Phase 1: Project Setup & Global Styling**
-    - [x] Create `blueprint.md` file.
-    - [x] Implement global theme (light/dark modes) based on Apple design principles in `styles.scss`.
-    - [x] Add base styles for typography, layout, and accessibility (e.g., focus rings).
-- [x] **Phase 2: Architectural Refactoring**
-    - [x] Update `app.config.ts` to use Zoneless Change Detection.
-    - [x] Systematically refactor each component:
-        -   Rename component files to the "ultra-lean" convention. (Already done)
-        -   Convert constructor injection to `inject()`. (Already done)
-        -   Migrate state management from RxJS to Signals. (Already done)
-        -   Update component I/O to use `input()`/`output()`/`model()`. (Not applicable yet)
-        -   Convert templates to use `@if`/`@for`/`@switch` control flow. (Already done)
-- [ ] **Phase 3: UI & Style Refactoring**
-    - [ ] Restyle core components (Buttons, Cards, Inputs, Modals) to match the Apple aesthetic.
-    - [ ] Apply "Frosted Glass" effect to appropriate surfaces.
-    - [ ] Ensure all interactive elements meet the `44x44px` target and have correct micro-interactions.
-- [ ] **Phase 4: Accessibility & Verification**
-    - [ ] Audit all components for semantic HTML and ARIA attributes.
-    - [ ] Verify keyboard navigation and focus management.
-    - [ ] Run `ng build` continuously to check for compilation errors.
-    - [ ] Perform final review.
+- **Feature:** Corrected the annual water bill calculation in the reports section.
+- **Change:** The calculation for the total water bill was incorrect because it did not include the monthly base charge (`Grundgebühr`).
+- **Implementation:**
+  - Modified the `WaterBill` data model to include a `baseCharge` property.
+  - Updated the `StatsService` to fetch the `baseCharge` from the active tariff and include it in the monthly bill calculation.
+  - The yearly total in the `DashboardStateService` now correctly sums up these base charges.
+  - The UI in the `reports` component was updated to display the base charge in a separate column for transparency, making the final sum correct and easy to understand.
+- **Rationale:** This change fixes a critical bug in the core functionality of the app, ensuring that users see a correct and complete summary of their water costs for the year, as requested by the user.

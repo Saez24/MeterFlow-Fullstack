@@ -103,7 +103,8 @@ export interface WaterBill {
   billableWastewater: number; // totalConsumption - gardenConsumption
   freshwaterCost: number; // €/m³ * totalConsumption
   wastewaterCost: number;
-  totalCost: number; // freshwaterCost + wastewaterCost
+  baseCharge: number; // Grundgebühr für diesen Monat
+  totalCost: number; // freshwaterCost + wastewaterCost + baseCharge
 }
 
 // ------------------------

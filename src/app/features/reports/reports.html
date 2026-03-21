@@ -105,6 +105,7 @@
         <span>Abw.-pflichtig</span>
         <span>Frischwasser</span>
         <span>Abwasser</span>
+        <span>Grundgebühr</span>
         <span>Gesamt</span>
       </div>
       @for (bill of state.waterBillsForYear(); track bill.month) {
@@ -123,6 +124,7 @@
         <span>{{ bill.billableWastewater | number: '1.0-2' }} m³</span>
         <span>{{ bill.freshwaterCost | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
         <span>{{ bill.wastewaterCost | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
+        <span>{{ bill.baseCharge | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
         <span class="total-col">{{
           bill.totalCost | currency: 'EUR' : 'symbol' : '1.2-2'
           }}</span>
@@ -137,6 +139,7 @@
         <span>{{ state.waterTotals().billableM3 | number: '1.0-2' }} m³</span>
         <span>{{ state.waterTotals().freshCost | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
         <span>{{ state.waterTotals().wasteCost | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
+        <span>{{ state.waterTotals().baseCharge | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
         <span class="total-col">{{
           state.waterTotals().total | currency: 'EUR' : 'symbol' : '1.2-2'
           }}</span>

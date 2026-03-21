@@ -49,6 +49,7 @@ export class DashboardStateService {
             billableM3: bills.reduce((s, b) => s + b.billableWastewater, 0),
             freshCost: bills.reduce((s, b) => s + b.freshwaterCost, 0),
             wasteCost: bills.reduce((s, b) => s + b.wastewaterCost, 0),
+            baseCharge: bills.reduce((s, b) => s + b.baseCharge, 0),
             total: bills.reduce((s, b) => s + b.totalCost, 0),
         };
     });
