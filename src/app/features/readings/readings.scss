@@ -58,7 +58,7 @@
 
 .reading-row:hover {
   border-color: var(--apple-blue);
-  box-shadow: 0 8px 30px rgba(0,0,0,0.04);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
 }
 
 .reading-meter-col {
@@ -208,4 +208,15 @@
   font-weight: 600;
   color: var(--text-primary);
   margin: 0 0 8px;
+}
+
+@media (max-width: 768px) {
+  .page-header {
+    justify-content: center !important;
+    text-align: center;
+  }
+
+  .filter-bar {
+    text-align: center;
+  }
 }

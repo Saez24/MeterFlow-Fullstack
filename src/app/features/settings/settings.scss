@@ -196,3 +196,19 @@
   opacity: 0.6;
   margin: 0;
 }
+
+.logout-btn {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .logout-btn {
+    display: block;
+    width: 100%;
+  }
+
+  .page-header {
+    justify-content: center;
+    text-align: center;
+  }
+}

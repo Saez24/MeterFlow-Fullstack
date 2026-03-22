@@ -24,6 +24,8 @@ export class Settings {
   private readonly readingService = inject(ReadingService);
   private readonly dataSyncService = inject(DataSyncService);
   private readonly snackBar = inject(MatSnackBar);
+  private readonly router = inject(Router);
+  private readonly supabase = inject(SupabaseService);
 
   readonly themeMode = this.themeService.mode;
 
@@ -72,5 +74,10 @@ export class Settings {
       localStorage.clear();
       window.location.reload();
     }
+  }
+
+  async logout(): Promise<void> {
+    await this.supabase.signOut();
+    this.router.navigate(['/auth']);
   }
 }

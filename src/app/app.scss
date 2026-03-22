@@ -208,6 +208,7 @@
 @media (max-width: 768px) {
   .mobile-header {
     display: flex;
+    justify-content: center;
   }
 }
 
@@ -224,7 +225,7 @@
 }
 
 .mobile-header__actions {
-  display: flex;
+  display: none;
   align-items: center;
   gap: 4px;
 }

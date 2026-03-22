@@ -346,6 +346,30 @@
     gap: 20px;
   }
 
+  .back-btn {
+    position: fixed !important;
+    top: 10px !important;
+    z-index: 999 !important;
+  }
+
+  .edit-btn {
+    position: fixed;
+    top: 10px;
+    right: 20px;
+    z-index: 999;
+  }
+
+  .header-main {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-direction: column;
+    align-content: center;
+    align-items: center;
+    width: 100%;
+    text-align: center;
+  }
+
   .header-actions {
     width: 100%;
     display: grid;

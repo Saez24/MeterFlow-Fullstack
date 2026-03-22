@@ -1,8 +1,9 @@
 <div class="page-container">
+  <button class="back-btn" mat-icon-button (click)="goBack()">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
   <div class="page-header">
-    <button mat-icon-button (click)="goBack()" class="back-btn">
-      <mat-icon>arrow_back</mat-icon>
-    </button>
+
     <div>
       <h1 class="page-title">{{ isEditMode ? 'Ablesung bearbeiten' : 'Ablesung erfassen' }}</h1>
       <p class="page-subtitle">{{ isEditMode ? 'Zählerstand korrigieren' : 'Aktuellen Zählerstand eintragen' }}</p>

@@ -11,10 +11,6 @@
   margin-bottom: 32px;
 }
 
-.back-btn {
-  margin-top: 4px;
-}
-
 .page-title {
   font-size: 2rem;
   font-weight: 700;
@@ -72,11 +68,7 @@
 
 .meter-select-btn--active {
   border-color: var(--meter-color, var(--apple-blue)) !important;
-  background: color-mix(
-    in srgb,
-    var(--meter-color, var(--apple-blue)) 8%,
-    transparent
-  ) !important;
+  background: color-mix(in srgb, var(--meter-color, var(--apple-blue)) 8%, transparent) !important;
 }
 
 .meter-select-icon {
@@ -153,6 +145,26 @@
 .form-row--2 {
   display: grid;
   grid-template-columns: 1fr 1fr;
+}
+
+@media (max-width: 768px) {
+  .back-btn {
+    position: fixed !important;
+    top: 10px !important;
+    z-index: 999 !important;
+  }
+
+  .edit-btn {
+    position: fixed;
+    top: 10px;
+    right: 20px;
+    z-index: 999;
+  }
+
+  .page-header {
+    justify-content: center;
+    text-align: center;
+  }
 }
 
 @media (max-width: 600px) {

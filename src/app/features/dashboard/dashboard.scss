@@ -65,7 +65,7 @@
 
 .summary-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 30px rgba(0,0,0,0.04);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
 }
 
 .summary-icon {
@@ -161,7 +161,7 @@
 
 .meter-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 8px 30px rgba(0,0,0,0.04);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
   border-color: var(--meter-color, var(--apple-blue));
 }
 
@@ -433,3 +433,10 @@
 //   opacity: 0.5;
 //   margin-left: 4px;
 // }
+
+@media (max-width: 768px) {
+  .dashboard-header {
+    justify-content: center !important;
+    text-align: center;
+  }
+}

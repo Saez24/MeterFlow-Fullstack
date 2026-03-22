@@ -2,23 +2,25 @@
   @if (meter(); as m) {
 
   <div class="page-header">
-    <button mat-icon-button routerLink="/meters">
+    <button class="back-btn" mat-icon-button routerLink="/meters">
       <mat-icon>arrow_back</mat-icon>
     </button>
-    <div class="header-icon" [style.background]="m.color + '22'">
-      <mat-icon [style.color]="m.color">{{ m.icon }}</mat-icon>
-    </div>
-    <div class="header-info">
-      <h1 class="page-title">{{ m.name }}</h1>
-      <p class="page-subtitle">
-        {{ getMeta(m.type).label }}{{ m.provider ? ' · ' + m.provider : '' }}
-      </p>
+    <div class="header-main">
+      <div class="header-icon" [style.background]="m.color + '22'">
+        <mat-icon [style.color]="m.color">{{ m.icon }}</mat-icon>
+      </div>
+      <div class="header-info">
+        <h1 class="page-title">{{ m.name }}</h1>
+        <p class="page-subtitle">
+          {{ getMeta(m.type).label }}{{ m.provider ? ' · ' + m.provider : '' }}
+        </p>
+      </div>
     </div>
     <div class="header-actions">
       <button mat-stroked-button [routerLink]="['/readings/new']" [queryParams]="{ meterId: m.id }">
         <mat-icon>add</mat-icon>Ablesung
       </button>
-      <button mat-icon-button [routerLink]="['edit']">
+      <button class="edit-btn" mat-icon-button [routerLink]="['edit']">
         <mat-icon>edit</mat-icon>
       </button>
     </div>
