@@ -113,6 +113,32 @@ a {
   transition: box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+// 7. Custom Scrollbar
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 100px;
+  transition: background 0.2s ease;
+
+  &:hover {
+    background: var(--text-secondary);
+  }
+}
+
+// Firefox
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-color) transparent;
+}
+
 // 8. Layout & Utilities
 .card {
   background-color: var(--bg-surface);
@@ -200,4 +226,28 @@ $dark-theme: mat.define-theme(
 
 .mat-mdc-form-field-has-icon-suffix .mat-mdc-text-field-wrapper {
   padding-right: 12px !important;
+}
+
+// Mat Tabs – Mobile Scroll Fix
+.mat-mdc-tab-header {
+  overflow-x: auto !important;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.mat-mdc-tab-list {
+  flex-shrink: 0 !important;
+  transform: none !important; // verhindert dass Angular die Scroll-Position per transform setzt
+}
+
+.mat-mdc-tab {
+  flex-shrink: 0 !important;
+  min-width: 80px;
+
+  @media (max-width: 480px) {
+    min-width: 60px;
+    padding: 0 10px;
+  }
 }

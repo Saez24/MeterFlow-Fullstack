@@ -18,6 +18,7 @@ import { Chart, registerables } from 'chart.js';
 import { ThemeService } from '../../core/services/theme.service';
 import { ENERGY_META, MONTH_NAMES } from '../../core/models/energy.models';
 import { DashboardStateService } from '../../core/services/dashboard-state.service';
+import { ReadingService } from '../../core/services/reading.service';
 
 Chart.register(...registerables);
 
@@ -36,6 +37,8 @@ Chart.register(...registerables);
 })
 export class Reports implements AfterViewInit, OnDestroy {
   readonly state = inject(DashboardStateService);
+  // In reports.ts – oben bei den injects hinzufügen:
+  private readonly readingService = inject(ReadingService);
   private readonly themeService = inject(ThemeService);
 
   @ViewChild('costChart') costChartRef!: ElementRef<HTMLCanvasElement>;
@@ -136,8 +139,24 @@ export class Reports implements AfterViewInit, OnDestroy {
     if (!meter) return;
 
     const months = this.state.getMonthStats(this.state.selectedYear());
-    const data = months.map((m) => m.byMeter[meterId]?.consumption ?? 0);
-    const unit = ENERGY_META[meter.type].unit;
+    const isGas = meter.type === 'gas';
+
+    const data = months.map((m) => {
+      if (isGas) {
+        // kWh aus den Readings summieren statt m³
+        const year = this.state.selectedYear();
+        return this.readingService
+          .getReadingsForMeter(meterId)
+          .filter((r) => {
+            const d = new Date(r.date);
+            return d.getFullYear() === year && d.getMonth() + 1 === m.month;
+          })
+          .reduce((sum, r) => sum + (r.kwh ?? 0), 0);
+      }
+      return m.byMeter[meterId]?.consumption ?? 0;
+    });
+
+    const unit = isGas ? 'kWh' : ENERGY_META[meter.type].unit;
 
     this.consumptionChartInstance = new Chart(this.consumptionChartRef.nativeElement, {
       type: 'bar',
@@ -179,6 +198,11 @@ export class Reports implements AfterViewInit, OnDestroy {
     const years = this.state.availableYears();
     const data = years.map((y) => this.state.getYearTotalCost(y));
 
+    // CSS-Variable zur Laufzeit auflösen
+    const blueColor = getComputedStyle(document.documentElement)
+      .getPropertyValue('--apple-blue')
+      .trim();
+
     this.yearChartInstance = new Chart(this.yearChartRef.nativeElement, {
       type: 'bar',
       data: {
@@ -187,9 +211,11 @@ export class Reports implements AfterViewInit, OnDestroy {
           label: 'Gesamtkosten',
           data,
           backgroundColor: years.map((y) =>
-            y === this.state.selectedYear() ? 'var(--apple-blue)' : 'rgba(var(--apple-blue-rgb), 0.4)'
+            y === this.state.selectedYear()
+              ? blueColor
+              : blueColor + '66' // 40% Transparenz als Hex
           ),
-          borderColor: 'var(--apple-blue)',
+          borderColor: blueColor,
           borderWidth: 2,
           borderRadius: 10,
         }],
