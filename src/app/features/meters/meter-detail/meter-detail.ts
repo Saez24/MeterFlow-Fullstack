@@ -44,7 +44,7 @@ export class MeterDetail {
 
   @ViewChild('detailChart') detailChartRef!: ElementRef<HTMLCanvasElement>;
   private readonly meterId = signal(this.route.snapshot.paramMap.get('id') ?? '');
-  
+
   openTariffDialog(tariffId?: string): void {
     const meter = this.meter();
     if (!meter) return;
@@ -56,10 +56,51 @@ export class MeterDetail {
       },
       panelClass: 'frosted-glass',
     });
-  }
+  };
+
+  readonly availableYears = computed(() => {
+    const allReadings = this.readingService.getReadingsForMeter(this.meterId());
+
+    const years = new Set(
+      allReadings.map(r => new Date(r.date).getFullYear())
+    );
+
+    return [...years]
+      .filter(year => {
+        const yearReadings = allReadings.filter(
+          r => new Date(r.date).getFullYear() === year
+        );
+        const hasPrev = allReadings.some(
+          r => new Date(r.date).getFullYear() < year
+        );
+        return yearReadings.length >= 2 || (yearReadings.length === 1 && hasPrev);
+      })
+      .sort((a, b) => b - a);
+  });
+
+  readonly selectedYear = signal<number>(
+    this.availableYears()[0] ?? new Date().getFullYear()
+  );
 
   readonly meter = computed(() => this.meterService.getMeter(this.meterId()));
-  readonly readings = computed(() => this.readingService.getReadingsForMeter(this.meterId()));
+  readonly readings = computed(() => {
+    const allReadings = this.readingService.getReadingsForMeter(this.meterId());
+    const year = this.selectedYear();
+
+    const yearReadings = allReadings
+      .filter(r => new Date(r.date).getFullYear() === year)
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+    if (yearReadings.length < 2) {
+      const prevYearLast = allReadings
+        .filter(r => new Date(r.date).getFullYear() < year)
+        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
+
+      if (prevYearLast) return [...yearReadings, prevYearLast];
+    }
+
+    return yearReadings;
+  });
   readonly activeTariff = computed(() => {
     const m = this.meter();
     if (!m) return null;
@@ -76,7 +117,9 @@ export class MeterDetail {
 
   constructor() {
     effect(() => {
-      this.chartMode(); // Signal tracken
+      this.chartMode();
+      this.selectedYear(); // Signal tracken
+      this.readings();     // Signal tracken
       if (this.detailChartRef) {
         setTimeout(() => this.buildChart(), 50);
       }

@@ -103,12 +103,10 @@
     Brennwert: <strong>{{ activeTariff()?.calorificValue ?? m.calorificValue }} kWh/m³</strong> ·
     Z-Zahl: <strong>{{ activeTariff()?.zNumber ?? m.zNumber }}</strong> ·
     Faktor:
-    <strong
-      >{{
-        ((activeTariff()?.calorificValue ?? m.calorificValue) ?? 0) *
-          ((activeTariff()?.zNumber ?? m.zNumber) ?? 0) | number: '1.4-4'
-      }}</strong
-    >
+    <strong>{{
+      ((activeTariff()?.calorificValue ?? m.calorificValue) ?? 0) *
+      ((activeTariff()?.zNumber ?? m.zNumber) ?? 0) | number: '1.4-4'
+      }}</strong>
   </div>
   }
 
@@ -120,16 +118,27 @@
         <ng-container><mat-icon>bar_chart</mat-icon>&nbsp;Verlauf</ng-container>
       </ng-template>
       <div class="tab-content">
+
         @if (readings().length >= 2) {
         <div class="chart-toggle">
-          <button class="toggle-btn" [class.active]="chartMode() === 'consumption'"
-            (click)="chartMode.set('consumption')">Verbrauch</button>
-          <button class="toggle-btn" [class.active]="chartMode() === 'cost'"
-            (click)="chartMode.set('cost')">Kosten</button>
-          @if (hasKwh()) {
-          <button class="toggle-btn" [class.active]="chartMode() === 'kwh'" (click)="chartMode.set('kwh')">kWh</button>
-          }
+          <div class="chart-toggle--modes">
+            <button class="toggle-btn" [class.active]="chartMode() === 'consumption'"
+              (click)="chartMode.set('consumption')">Verbrauch</button>
+            @if (m.type === 'gas') {
+            <button class="toggle-btn" [class.active]="chartMode() === 'kwh'"
+              (click)="chartMode.set('kwh')">kWh</button>
+            }
+            <button class="toggle-btn" [class.active]="chartMode() === 'cost'"
+              (click)="chartMode.set('cost')">Kosten</button>
+          </div>
+          <div class="chart-toggle chart-toggle--years">
+            @for (year of availableYears(); track year) {
+            <button class="toggle-btn" [class.active]="selectedYear() === year" (click)="selectedYear.set(year)">{{ year
+              }}</button>
+            }
+          </div>
         </div>
+
         <div class="chart-wrapper"><canvas #detailChart></canvas></div>
         } @else {
         <div class="chart-empty">
@@ -228,27 +237,23 @@
 </mat-tab>
 
 <mat-tab>
-    <ng-template mat-tab-label>
-          <ng-container><mat-icon>receipt_long</mat-icon>&nbsp;Tarife</ng-container>
-        </ng-template>
-        <div class="tab-content">
-          <app-tariff-history 
-            [meter]="m"
-            (addTariff)="openTariffDialog()"
-            (editTariff)="openTariffDialog($event)"
-            (deleteTariff)="deleteTariff(m.id, $event.id)"
-          ></app-tariff-history>
-        </div>
-      </mat-tab>
+  <ng-template mat-tab-label>
+    <ng-container><mat-icon>receipt_long</mat-icon>&nbsp;Tarife</ng-container>
+  </ng-template>
+  <div class="tab-content">
+    <app-tariff-history [meter]="m" (addTariff)="openTariffDialog()" (editTariff)="openTariffDialog($event)"
+      (deleteTariff)="deleteTariff(m.id, $event.id)"></app-tariff-history>
+  </div>
+</mat-tab>
 
-      <mat-tab>
-        <ng-template mat-tab-label>
-          <ng-container><mat-icon>price_check</mat-icon>&nbsp;Kostenvorschau</ng-container>
-        </ng-template>
-        <div class="tab-content">
-          <app-cost-preview [meter]="m"></app-cost-preview>
-        </div>
-      </mat-tab>
+<mat-tab>
+  <ng-template mat-tab-label>
+    <ng-container><mat-icon>price_check</mat-icon>&nbsp;Kostenvorschau</ng-container>
+  </ng-template>
+  <div class="tab-content">
+    <app-cost-preview [meter]="m"></app-cost-preview>
+  </div>
+</mat-tab>
 </mat-tab-group>
 
 } @else {
