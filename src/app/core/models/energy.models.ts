@@ -10,6 +10,11 @@ export enum EnergyType {
   Solar = 'solar',
 }
 
+export interface ReadingRow {
+  reading: MeterReading;
+  gardenWaterCost: number | null;
+}
+
 export interface TariffPeriod {
   id: string;
   validFrom: Date;

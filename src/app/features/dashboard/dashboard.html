@@ -108,8 +108,6 @@
     </div>
   </section>
 
-  <!-- Recent Readings -->
-  @if (state.recentReadings().length > 0) {
   <section class="recent-section">
     <div class="section-header">
       <h2>Letzte Ablesungen</h2>
@@ -117,36 +115,6 @@
         Alle anzeigen <mat-icon>arrow_forward</mat-icon>
       </button>
     </div>
-    <div class="readings-list">
-      @for (reading of state.recentReadings(); track reading.id) {
-      <div class="reading-item">
-        @if (state.getMeterById(reading.meterId); as meter) {
-        <div class="reading-meter-icon" [style.background]="meter.color + '22'">
-          <mat-icon [style.color]="meter.color">{{ meter.icon }}</mat-icon>
-        </div>
-        <div class="reading-details">
-          <span class="reading-meter-name">{{ meter.name }}</span>
-          <span class="reading-date-small">{{ reading.date | date: 'dd.MM.yyyy' }}</span>
-        </div>
-        <div class="reading-values">
-          <span class="reading-val">
-            {{ reading.value | number: '1.0-3' }} {{ meter.unit }}
-          </span>
-          @if (reading.consumption && reading.consumption > 0) {
-          <span class="reading-consumption">
-            +{{ reading.consumption | number: '1.0-2' }}
-          </span>
-          }
-        </div>
-        @if (reading.cost && reading.cost > 0) {
-        <div class="reading-cost">
-          {{ reading.cost | currency: 'EUR' : 'symbol' : '1.2-2' }}
-        </div>
-        }
-        }
-      </div>
-      }
-    </div>
+    <app-readings-list [rows]="state.recentReadings()" />
   </section>
-  }
 </div>

@@ -7,6 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatRippleModule } from '@angular/material/core';
 import { DashboardStateService } from '../../core/services/dashboard-state.service';
+import { ReadingsList } from '../../shared/components/readings-list/readings-list';
 
 @Component({
   selector: 'app-dashboard',
@@ -18,6 +19,7 @@ import { DashboardStateService } from '../../core/services/dashboard-state.servi
     MatIconModule,
     MatChipsModule,
     MatRippleModule,
+    ReadingsList
   ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',

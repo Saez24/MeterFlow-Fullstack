@@ -50,7 +50,7 @@ export class ReadingService {
   getReadingsForMeter(meterId: string): MeterReading[] {
     return this.readingsByMeter().get(meterId) ?? [];
   }
-  
+
   async addReading(reading: Omit<MeterReading, 'id'>): Promise<MeterReading> {
     const meter = this.meterService.getMeter(reading.meterId);
     if (!meter) throw new Error('Meter not found');
@@ -96,7 +96,7 @@ export class ReadingService {
 
   async updateReading(id: string, changes: Partial<MeterReading>): Promise<void> {
     await this.supabase.updateReading(id, changes);
-    
+
     const oldReading = this.getReading(id);
     if (!oldReading) return;
 
@@ -197,5 +197,26 @@ export class ReadingService {
       }
     }
     return total;
+  }
+
+  getGardenWaterCost(reading: any): number | null {
+    const meter = this.getMeter(reading.meterId);
+    if (!meter || meter.type !== 'garden_water') return null;
+    if (!reading.consumption || reading.consumption <= 0) return null;
+
+    // Verlinkten Wasserzähler finden
+    const linkedMeter = meter.linkedWaterMeterId
+      ? this.meterService.getMeter(meter.linkedWaterMeterId)
+      : null;
+    const tariffMeter = linkedMeter ?? meter;
+
+    const tariff = this.tariffService.getActiveTariffForDate(tariffMeter, new Date(reading.date));
+    if (!tariff?.wastewaterPrice) return null;
+
+    return reading.consumption * tariff.wastewaterPrice;
+  }
+
+  getMeter(id: string): MeterConfig | undefined {
+    return this.meterService.getMeter(id);
   }
 }

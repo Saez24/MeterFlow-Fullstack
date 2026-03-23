@@ -7,9 +7,11 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { FormsModule } from '@angular/forms';
-import { ENERGY_META } from '../../core/models/energy.models';
+import { ENERGY_META, ReadingRow } from '../../core/models/energy.models';
 import { MeterService } from '../../core/services/meter.service';
 import { ReadingService } from '../../core/services/reading.service';
+import { ReadingsList } from '../../shared/components/readings-list/readings-list';
+
 
 @Component({
   selector: 'app-readings',
@@ -22,6 +24,7 @@ import { ReadingService } from '../../core/services/reading.service';
     MatFormFieldModule,
     MatSnackBarModule,
     FormsModule,
+    ReadingsList
   ],
   templateUrl: './readings.html',
   styleUrl: './readings.scss',
@@ -29,19 +32,23 @@ import { ReadingService } from '../../core/services/reading.service';
 })
 export class Readings {
   private readonly meterService = inject(MeterService);
-  private readonly readingService = inject(ReadingService);
+  readonly readingService = inject(ReadingService);
   private readonly snackBar = inject(MatSnackBar);
 
   readonly meters = this.meterService.meters;
   readonly filterMeterId = signal<string>('');
 
-  readonly filteredReadings = computed(() => {
+  readonly filteredReadings = computed((): ReadingRow[] => {
     const all = [...this.readingService.readings()].sort(
       (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
     );
     const filter = this.filterMeterId();
-    if (!filter) return all;
-    return all.filter((r) => r.meterId === filter);
+    const filtered = filter ? all.filter((r) => r.meterId === filter) : all;
+
+    return filtered.map((reading) => ({
+      reading,
+      gardenWaterCost: this.readingService.getGardenWaterCost(reading),
+    }));
   });
 
   getMeter(id: string) {
