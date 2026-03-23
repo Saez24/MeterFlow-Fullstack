@@ -49,9 +49,9 @@
       </div>
       <div>
         <div class="stat-label">Letzter Verbrauch</div>
-        @if (latestReading()) {
+        @if (lastConsumption()) {
         <div class="stat-value">
-          {{ latestReading()!.consumption ?? 0 | number:'1.0-3' }} {{ m.unit }}
+          {{ lastConsumption() ?? 0 | number:'1.0-3' }} {{ m.unit }}
         </div>
         } @else {
         <div class="stat-value"><span class="stat-empty">—</span></div>
@@ -113,167 +113,34 @@
   }
 
   <!-- Tabs -->
-  <mat-tab-group class="detail-tabs" dynamicHeight [disablePagination]="true" (animationDone)="onTabChange()">
+  <nav class="detail-nav">
+    <a class="detail-nav-link" routerLink="chart" routerLinkActive="active">
+      <mat-icon>bar_chart</mat-icon>
+      <span>Verlauf</span>
+    </a>
+    <a class="detail-nav-link" routerLink="readings" routerLinkActive="active">
+      <mat-icon>history</mat-icon>
+      <span>Ablesungen</span>
+    </a>
+    <a class="detail-nav-link" routerLink="tariffs" routerLinkActive="active">
+      <mat-icon>receipt_long</mat-icon>
+      <span>Tarife</span>
+    </a>
+    <a class="detail-nav-link" routerLink="costs" routerLinkActive="active">
+      <mat-icon>price_check</mat-icon>
+      <span>Kostenvorschau</span>
+    </a>
+  </nav>
 
-    <mat-tab>
-      <ng-template mat-tab-label>
-        <ng-container><mat-icon>bar_chart</mat-icon>&nbsp;Verlauf</ng-container>
-      </ng-template>
-      <div class="tab-content">
-
-        @if (readings().length >= 2) {
-        <div class="chart-toggle">
-          <div class="chart-toggle--modes">
-            <button class="toggle-btn" [class.active]="chartMode() === 'consumption'"
-              (click)="chartMode.set('consumption')">Verbrauch</button>
-            @if (m.type === 'gas') {
-            <button class="toggle-btn" [class.active]="chartMode() === 'kwh'"
-              (click)="chartMode.set('kwh')">kWh</button>
-            }
-            <button class="toggle-btn" [class.active]="chartMode() === 'cost'"
-              (click)="chartMode.set('cost')">Kosten</button>
-          </div>
-          <div class="chart-toggle chart-toggle--years">
-            @for (year of availableYears(); track year) {
-            <button class="toggle-btn" [class.active]="selectedYear() === year" (click)="selectedYear.set(year)">{{ year
-              }}</button>
-            }
-          </div>
-        </div>
-
-        <div class="chart-wrapper"><canvas #detailChart></canvas></div>
-        } @else {
-        <div class="chart-empty">
-          <mat-icon>bar_chart</mat-icon>
-          <p>Mindestens 2 Ablesungen für Chart-Anzeige nötig</p>
-        </div>
-        }
-      </div>
-    </mat-tab>
-
-    <mat-tab>
-      <ng-template mat-tab-label>
-        <ng-container><mat-icon>history</mat-icon>&nbsp;Ablesungen ({{ readings().length }})</ng-container>
-      </ng-template>
-      <div class="tab-content">
-        @if (readings().length === 0) {
-        <div class="chart-empty">
-          <mat-icon>history</mat-icon>
-          <p>Noch keine Ablesungen vorhanden</p>
-        </div>
-        } @else {
-        <div class="readings-list">
-          @for (reading of readings(); track reading.id; let i = $index) {
-          <div class="reading-entry" [class.reading-entry--first]="i === 0">
-            <div class="reading-timeline">
-              <div class="timeline-dot" [style.background]="i === 0 ? m.color : 'var(--color-border)'">
-              </div>
-              @if (i < readings().length - 1) { <div class="timeline-line">
-            </div>
-            }
-          </div>
-          <div class="reading-card">
-            <div class="reading-card__header">
-              <span class="reading-date-label">
-                {{ reading.date | date:'dd. MMMM yyyy' }}
-              </span>
-              @if (i === 0) {
-              <span class="latest-badge">Aktuell</span>
-              }
-              <div class="reading-card-actions">
-                @if (reading.photo) {
-                <button mat-icon-button (click)="activePhoto.set(reading.photo!)" class="photo-btn">
-                  <mat-icon>photo</mat-icon>
-                </button>
-                }
-                <button mat-icon-button [routerLink]="['/readings', reading.id, 'edit']">
-                  <mat-icon>edit</mat-icon>
-                </button>
-                <button mat-icon-button (click)="deleteReading(reading.id)" class="delete-btn">
-                  <mat-icon>delete_outline</mat-icon>
-                </button>
-              </div>
-            </div>
-            <div class="reading-main-value">
-              {{ reading.value | number:'1.0-3' }}
-              <span class="reading-main-unit"> {{ m.unit }}</span>
-            </div>
-            @if (reading.consumption && reading.consumption > 0) {
-            <div class="reading-details-row">
-              <div class="detail-chip consumption-chip">
-                +{{ reading.consumption | number:'1.0-3' }} {{ m.unit }}
-              </div>
-              @if (reading.kwh) {
-              <div class="detail-chip kwh-chip">
-                {{ reading.kwh | number:'1.0-2' }} kWh
-              </div>
-              }
-              @if (reading.cost) {
-              <div class="detail-chip cost-chip">
-                FW: {{ reading.cost | currency:'EUR':'symbol':'1.2-2' }}
-              </div>
-              }
-              @if (reading.wastewaterCost) {
-              <div class="detail-chip ww-chip">
-                AW: {{ reading.wastewaterCost | currency:'EUR':'symbol':'1.2-2' }}
-              </div>
-              }
-              @if (reading.totalCost && reading.totalCost !== reading.cost) {
-              <div class="detail-chip total-chip">
-                Gesamt: {{ reading.totalCost | currency:'EUR':'symbol':'1.2-2' }}
-              </div>
-              }
-            </div>
-            }
-            @if (reading.note) {
-            <div class="reading-note">
-              <mat-icon>notes</mat-icon>{{ reading.note }}
-            </div>
-            }
-          </div>
-        </div>
-        }
-      </div>
-      }
-</div>
-</mat-tab>
-
-<mat-tab>
-  <ng-template mat-tab-label>
-    <ng-container><mat-icon>receipt_long</mat-icon>&nbsp;Tarife</ng-container>
-  </ng-template>
   <div class="tab-content">
-    <app-tariff-history [meter]="m" (addTariff)="openTariffDialog()" (editTariff)="openTariffDialog($event)"
-      (deleteTariff)="deleteTariff(m.id, $event.id)"></app-tariff-history>
+    <router-outlet></router-outlet>
   </div>
-</mat-tab>
 
-<mat-tab>
-  <ng-template mat-tab-label>
-    <ng-container><mat-icon>price_check</mat-icon>&nbsp;Kostenvorschau</ng-container>
-  </ng-template>
-  <div class="tab-content">
-    <app-cost-preview [meter]="m"></app-cost-preview>
+  } @else {
+  <div class="not-found">
+    <mat-icon>search_off</mat-icon>
+    <h3>Zähler nicht gefunden</h3>
+    <button mat-flat-button color="primary" routerLink="/meters">Zurück</button>
   </div>
-</mat-tab>
-</mat-tab-group>
-
-} @else {
-<div class="not-found">
-  <mat-icon>search_off</mat-icon>
-  <h3>Zähler nicht gefunden</h3>
-  <button mat-flat-button color="primary" routerLink="/meters">Zurück</button>
+  }
 </div>
-}
-</div>
-
-@if (activePhoto()) {
-<div class="photo-modal-backdrop" (click)="activePhoto.set(null)">
-  <div class="photo-modal" (click)="$event.stopPropagation()">
-    <button mat-icon-button class="photo-modal-close" (click)="activePhoto.set(null)">
-      <mat-icon>close</mat-icon>
-    </button>
-    <img [src]="activePhoto()!" class="photo-modal-img" alt="Zählerfoto" />
-  </div>
-</div>
-}
