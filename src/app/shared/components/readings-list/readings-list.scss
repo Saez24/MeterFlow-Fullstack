@@ -166,3 +166,13 @@
     color: var(--text-primary);
   }
 }
+
+@media (max-width: 768px) {
+  .reading-actions {
+    display: none;
+  }
+
+  .reading-item {
+    flex-wrap: nowrap;
+  }
+}
