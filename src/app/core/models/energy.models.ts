@@ -8,6 +8,7 @@ export enum EnergyType {
   GardenWater = 'garden_water',
   HeatingOil = 'heating_oil',
   Solar = 'solar',
+  Fernwärme = 'fernwarme',
 }
 
 export interface ReadingRow {
@@ -25,6 +26,8 @@ export interface TariffPeriod {
   calorificValue?: number;
   zNumber?: number;
   note?: string;
+  emissionPrice?: number;
+  basePricePerKw?: number; // For Fernwärme
 }
 
 export interface BudgetConfig {
@@ -41,6 +44,7 @@ export type UnitByEnergyType = {
   [EnergyType.GardenWater]: 'm³';
   [EnergyType.HeatingOil]: 'Liter';
   [EnergyType.Solar]: 'kWh';
+  [EnergyType.Fernwärme]: 'kWh';
 };
 
 export type MaterialIcon =
@@ -66,6 +70,7 @@ export interface MeterConfig<T extends EnergyType = EnergyType> {
   active: boolean;
   createdAt: Date;
   budget?: BudgetConfig;
+  connectedLoadKw?: number; // Fernwärme: Anschlussleistung in kW
 
   // Tariff
   tariffHistory?: TariffPeriod[];
@@ -155,6 +160,7 @@ export const ENERGY_META: Record<
   [EnergyType.GardenWater]: { label: 'Gartenwasser', icon: 'yard', color: '#10B981', unit: 'm³' },
   [EnergyType.HeatingOil]: { label: 'Heizöl', icon: 'oil_barrel', color: '#F97316', unit: 'Liter' },
   [EnergyType.Solar]: { label: 'Solar', icon: 'wb_sunny', color: '#EAB308', unit: 'kWh' },
+  [EnergyType.Fernwärme]: { label: 'Fernwärme', icon: 'local_fire_department', color: '#EAB308', unit: 'kWh' },
 };
 
 export const MONTH_NAMES = [

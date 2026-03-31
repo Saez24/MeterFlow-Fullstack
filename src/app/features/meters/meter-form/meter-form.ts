@@ -84,6 +84,9 @@ export class MeterForm implements OnInit {
   readonly isWater = computed(() =>
     [EnergyType.Water, EnergyType.GardenWater].includes(this.typeValue()),
   );
+  readonly isHeatingOil = computed(() => this.typeValue() === EnergyType.HeatingOil);
+  readonly isFernwärme = computed(() => this.typeValue() === EnergyType.Fernwärme);
+  readonly isElectricity = computed(() => this.typeValue() === EnergyType.Electricity);
   readonly isGardenWater = computed(() => this.typeValue() === EnergyType.GardenWater);
   readonly isSolar = computed(() => this.typeValue() === EnergyType.Solar);
 

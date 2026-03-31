@@ -110,9 +110,9 @@
       </div>
       @for (bill of state.waterBillsForYear(); track bill.month) {
       <div class="water-table-row" [class.water-table-row--has-garden]="bill.gardenConsumption > 0">
-        <span class="month-label">{{ MONTH_NAMES[bill.month - 1] }}</span>
-        <span>{{ bill.totalConsumption | number: '1.0-2' }} m³</span>
-        <span class="garden-col">
+        <span class="month-label" data-label="Monat">{{ MONTH_NAMES[bill.month - 1] }}</span>
+        <span data-label="Gesamt m³">{{ bill.totalConsumption | number: '1.0-2' }} m³</span>
+        <span class="garden-col" data-label="Garten m³">
           @if (bill.gardenConsumption > 0) {
           <span class="garden-badge">
             -{{ bill.gardenConsumption | number: '1.0-2' }} m³
@@ -121,26 +121,26 @@
           <span class="no-garden">–</span>
           }
         </span>
-        <span>{{ bill.billableWastewater | number: '1.0-2' }} m³</span>
-        <span>{{ bill.freshwaterCost | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
-        <span>{{ bill.wastewaterCost | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
-        <span>{{ bill.baseCharge | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
-        <span class="total-col">{{
+        <span data-label="Abw.-pflichtig">{{ bill.billableWastewater | number: '1.0-2' }} m³</span>
+        <span data-label="Frischwasser">{{ bill.freshwaterCost | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
+        <span data-label="Abwasser">{{ bill.wastewaterCost | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
+        <span data-label="Grundgebühr">{{ bill.baseCharge | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
+        <span class="total-col" data-label="Gesamt">{{
           bill.totalCost | currency: 'EUR' : 'symbol' : '1.2-2'
           }}</span>
       </div>
       }
       <div class="water-table-footer">
-        <span>Jahresgesamt</span>
-        <span>{{ state.waterTotals().totalM3 | number: '1.0-2' }} m³</span>
-        <span class="garden-col">
+        <span data-label="Jahresgesamt">Jahresgesamt</span>
+        <span data-label="Gesamt m³">{{ state.waterTotals().totalM3 | number: '1.0-2' }} m³</span>
+        <span class="garden-col" data-label="Garten m³">
           -{{ state.waterTotals().gardenM3 | number: '1.0-2' }} m³
         </span>
-        <span>{{ state.waterTotals().billableM3 | number: '1.0-2' }} m³</span>
-        <span>{{ state.waterTotals().freshCost | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
-        <span>{{ state.waterTotals().wasteCost | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
-        <span>{{ state.waterTotals().baseCharge | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
-        <span class="total-col">{{
+        <span data-label="Abw.-pflichtig">{{ state.waterTotals().billableM3 | number: '1.0-2' }} m³</span>
+        <span data-label="Frischwasser">{{ state.waterTotals().freshCost | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
+        <span data-label="Abwasser">{{ state.waterTotals().wasteCost | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
+        <span data-label="Grundgebühr">{{ state.waterTotals().baseCharge | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
+        <span class="total-col" data-label="Gesamt">{{
           state.waterTotals().total | currency: 'EUR' : 'symbol' : '1.2-2'
           }}</span>
       </div>

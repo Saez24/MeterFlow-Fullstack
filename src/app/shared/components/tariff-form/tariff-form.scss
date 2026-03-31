@@ -30,7 +30,7 @@
 }
 
 .dialog-content {
-  padding: 0 24px;
+  padding: 12px 24px;
   max-height: 70vh;
   overflow-y: auto;
 }
@@ -54,10 +54,10 @@
 }
 
 .section-title {
-    font-size: 1rem;
-    font-weight: 500;
-    margin-bottom: 16px;
-    color: var(--text-secondary);
+  font-size: 1rem;
+  font-weight: 500;
+  margin-bottom: 16px;
+  color: var(--text-secondary);
 }
 
 .dialog-actions {
