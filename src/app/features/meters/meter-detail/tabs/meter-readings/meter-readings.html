@@ -25,7 +25,7 @@
       }
       <div class="reading-card-actions">
         @if (reading.photo) {
-        <button mat-icon-button (click)="activePhoto.set(reading.photo!)" class="photo-btn"
+        <button mat-icon-button (click)="showPhoto(reading.photo!)" class="photo-btn"
           [attr.aria-label]="'Foto vom ' + (reading.date | date:'dd.MM.yyyy') + ' anzeigen'">
           <mat-icon>photo</mat-icon>
         </button>
@@ -85,13 +85,17 @@
 
 
 @if (activePhoto()) {
-<div class="photo-modal-backdrop" (click)="activePhoto.set(null)">
+<div class="photo-modal-backdrop" (click)="closePhoto()">
   <div class="photo-modal" (click)="$event.stopPropagation()">
-    <button mat-icon-button class="photo-modal-close" (click)="activePhoto.set(null)" aria-label="Foto schließen"
+    <button mat-icon-button class="photo-modal-close" (click)="closePhoto()" aria-label="Foto schließen"
       i18n-aria-label="@@meterReadings.photo.close">
       <mat-icon>close</mat-icon>
     </button>
-    <img [src]="activePhoto()!" class="photo-modal-img" [attr.alt]="photoAltText()" />
+    @if (isPhotoLoading()) {
+    <div class="photo-loading"><mat-icon class="photo-loading-icon">hourglass_top</mat-icon></div>
+    } @else {
+    <img [src]="activePhotoUrl()!" class="photo-modal-img" [attr.alt]="photoAltText()" />
+    }
   </div>
 </div>
 }

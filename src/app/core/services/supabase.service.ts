@@ -178,6 +178,34 @@ export class SupabaseService {
     ...(r.photo !== undefined && { photo: r.photo }),
   });
 
+  // ── Fotos (Storage) ───────────────────────────────
+  async uploadPhoto(file: File): Promise<string> {
+    const user = this.currentUser();
+    if (!user) throw new Error('Not authenticated');
+    const ext = file.name.split('.').pop() ?? 'jpg';
+    const path = `${user.id}/${crypto.randomUUID()}.${ext}`;
+    const { error } = await this.client.storage
+      .from('meter-photos')
+      .upload(path, file, { contentType: file.type, upsert: false });
+    if (error) throw error;
+    return path;
+  }
+
+  async getSignedPhotoUrl(path: string, expiresInSeconds = 3600): Promise<string> {
+    const { data, error } = await this.client.storage
+      .from('meter-photos')
+      .createSignedUrl(path, expiresInSeconds);
+    if (error) throw error;
+    return data.signedUrl;
+  }
+
+  async deletePhoto(path: string): Promise<void> {
+    const { error } = await this.client.storage
+      .from('meter-photos')
+      .remove([path]);
+    if (error) throw error;
+  }
+
   async checkConnection(): Promise<void> {
     this.connectionStatus.set('checking');
     try {

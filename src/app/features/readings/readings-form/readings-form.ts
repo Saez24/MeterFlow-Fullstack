@@ -21,6 +21,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MeterService } from '../../../core/services/meter.service';
 import { ReadingService } from '../../../core/services/reading.service';
 import { TariffService } from '../../../core/services/tariff.service';
+import { SupabaseService } from '../../../core/services/supabase.service';
 import { GAS_DEFAULTS } from '../../../core/constants/gas.constants';
 
 import { maxDecimalPlaces } from '../../../core/validators/decimal-places.validator';
@@ -50,10 +51,23 @@ export class ReadingsForm {
   private readonly meterService = inject(MeterService);
   private readonly readingService = inject(ReadingService);
   private readonly tariffService = inject(TariffService);
+  private readonly supabaseService = inject(SupabaseService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly snackBar = inject(MatSnackBar);
   private readonly fb = inject(FormBuilder);
+
+  // ── Foto-State ──────────────────────────────────────────────────────
+  private readonly existingPhotoPath = signal<string | null>(null);
+  readonly existingPhotoSignedUrl = signal<string | null>(null);
+  readonly existingPhotoRemoved = signal(false);
+  readonly selectedPhotoFile = signal<File | null>(null);
+  readonly photoPreviewUrl = signal<string | null>(null);
+  readonly isUploading = signal(false);
+
+  readonly hasExistingPhoto = computed(
+    () => !!this.existingPhotoPath() && !this.existingPhotoRemoved()
+  );
 
   readonly activeMeters = this.meterService.activeMeters;
 
@@ -93,6 +107,17 @@ export class ReadingsForm {
       this.form.patchValue(this.originalReading);
       this.formSignal.set(this.form.getRawValue());
       this.form.controls.meterId.disable();
+      if (this.originalReading.photo) {
+        this.existingPhotoPath.set(this.originalReading.photo);
+        const isStoragePath = !this.originalReading.photo.startsWith('http');
+        if (isStoragePath) {
+          this.supabaseService.getSignedPhotoUrl(this.originalReading.photo)
+            .then(url => this.existingPhotoSignedUrl.set(url))
+            .catch(() => { });
+        } else {
+          this.existingPhotoSignedUrl.set(this.originalReading.photo);
+        }
+      }
     } else {
       const meterId = this.route.snapshot.queryParamMap.get('meterId');
       if (meterId) {
@@ -207,6 +232,26 @@ export class ReadingsForm {
     this.form.patchValue({ meterId: id });
   }
 
+  onPhotoSelected(event: Event): void {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+    const prev = this.photoPreviewUrl();
+    if (prev) URL.revokeObjectURL(prev);
+    this.selectedPhotoFile.set(file);
+    this.photoPreviewUrl.set(URL.createObjectURL(file));
+  }
+
+  clearPhoto(): void {
+    const prev = this.photoPreviewUrl();
+    if (prev) URL.revokeObjectURL(prev);
+    this.selectedPhotoFile.set(null);
+    this.photoPreviewUrl.set(null);
+  }
+
+  removeExistingPhoto(): void {
+    this.existingPhotoRemoved.set(true);
+  }
+
   getMeta(type: string) {
     return ENERGY_META[type as keyof typeof ENERGY_META];
   }
@@ -239,11 +284,34 @@ export class ReadingsForm {
     }
 
     try {
+      // ── Foto verarbeiten ──────────────────────────────────────
+      let photoPath: string | null | undefined = undefined; // undefined = keine Änderung
+
+      if (this.selectedPhotoFile()) {
+        this.isUploading.set(true);
+        // Altes Foto aus Storage löschen (nur Pfade, keine alten URLs)
+        const oldPath = this.existingPhotoPath();
+        if (oldPath && !oldPath.startsWith('http')) {
+          try { await this.supabaseService.deletePhoto(oldPath); } catch { /* ignorieren */ }
+        }
+        photoPath = await this.supabaseService.uploadPhoto(this.selectedPhotoFile()!);
+        this.isUploading.set(false);
+      } else if (this.existingPhotoRemoved()) {
+        const oldPath = this.existingPhotoPath();
+        if (oldPath && !oldPath.startsWith('http')) {
+          try { await this.supabaseService.deletePhoto(oldPath); } catch { /* ignorieren */ }
+        }
+        photoPath = null; // explizit auf null setzen = Foto entfernen
+      } else if (this.hasExistingPhoto()) {
+        photoPath = this.existingPhotoPath(); // unverändert übernehmen
+      }
+
       if (this.isEditMode && this.originalReading) {
         const changes: Partial<MeterReading> = {
           value: numericValue,
           date: rawValue.date!,
           note: rawValue.note ?? undefined,
+          ...(photoPath !== undefined && { photo: photoPath ?? undefined }),
         };
         await this.readingService.updateReading(
           this.originalReading.id,
@@ -255,6 +323,7 @@ export class ReadingsForm {
           value: numericValue,
           date: rawValue.date!,
           note: rawValue.note ?? undefined,
+          ...(photoPath ? { photo: photoPath } : {}),
         });
       }
 

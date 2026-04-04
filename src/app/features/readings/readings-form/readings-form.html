@@ -135,6 +135,47 @@
         <mat-icon matSuffix>notes</mat-icon>
       </mat-form-field>
     </div>
+    <mat-divider class="section-divider"></mat-divider>
+
+    <!-- Foto -->
+    <div class="form-section">
+      <h3 class="section-title" i18n="@@readingsForm.photo.title">Foto (optional)</h3>
+
+      @if (hasExistingPhoto() && existingPhotoSignedUrl()) {
+      <!-- Bestehendes Foto im Edit-Modus -->
+      <div class="photo-preview">
+        <img [src]="existingPhotoSignedUrl()!" class="photo-thumbnail" alt="Bestehendes Zählerfoto"
+          i18n-alt="@@readingsForm.photo.existingAlt" />
+        <button type="button" mat-button color="warn" (click)="removeExistingPhoto()" class="photo-remove-btn"
+          i18n="@@readingsForm.photo.remove">
+          <mat-icon>delete_outline</mat-icon> Foto entfernen
+        </button>
+      </div>
+      } @else if (photoPreviewUrl()) {
+      <!-- Neu gewähltes Foto -->
+      <div class="photo-preview">
+        <img [src]="photoPreviewUrl()!" class="photo-thumbnail" alt="Vorschau"
+          i18n-alt="@@readingsForm.photo.previewAlt" />
+        <button type="button" mat-button color="warn" (click)="clearPhoto()" class="photo-remove-btn"
+          i18n="@@readingsForm.photo.clear">
+          <mat-icon>close</mat-icon> Auswahl aufheben
+        </button>
+      </div>
+      } @else {
+      <!-- Datei-Auswahl -->
+      <label class="photo-upload-label" [class.photo-upload-label--uploading]="isUploading()">
+        <input type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif" hidden
+          (change)="onPhotoSelected($event)" aria-label="Foto hochladen"
+          i18n-aria-label="@@readingsForm.photo.inputLabel" />
+        <mat-icon>add_a_photo</mat-icon>
+        <span i18n="@@readingsForm.photo.upload">Foto hinzufügen</span>
+      </label>
+      }
+
+      @if (isUploading()) {
+      <p class="photo-uploading-hint" i18n="@@readingsForm.photo.uploading">Foto wird hochgeladen…</p>
+      }
+    </div>
     }
 
     <!-- Actions -->
