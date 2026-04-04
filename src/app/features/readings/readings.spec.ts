@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideExperimentalZonelessChangeDetection } from '@angular/core';
+import { provideZonelessChangeDetection } from '@angular/core';
 import { Readings } from './readings';
 import { provideRouter, ActivatedRoute } from '@angular/router';
 import { vi } from 'vitest';
@@ -29,7 +29,7 @@ describe('Readings', () => {
     await TestBed.configureTestingModule({
       imports: [Readings, NoopAnimationsModule],
       providers: [
-        provideExperimentalZonelessChangeDetection(),
+        provideZonelessChangeDetection(),
         provideRouter([]),
         SupabaseService,
         EnergyService,

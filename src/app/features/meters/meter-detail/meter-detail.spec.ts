@@ -1,11 +1,12 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideExperimentalZonelessChangeDetection } from '@angular/core';
+import { provideZonelessChangeDetection } from '@angular/core';
 import { MeterDetail } from './meter-detail';
 import { provideRouter, ActivatedRoute } from '@angular/router';
 import { vi } from 'vitest';
 import { SupabaseService } from '../../../core/services/supabase.service';
 import { EnergyService } from '../../../core/services/energy.service';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { of } from 'rxjs';
 
 describe('MeterDetail', () => {
   let component: MeterDetail;
@@ -29,7 +30,7 @@ describe('MeterDetail', () => {
     await TestBed.configureTestingModule({
       imports: [MeterDetail, NoopAnimationsModule],
       providers: [
-        provideExperimentalZonelessChangeDetection(),
+        provideZonelessChangeDetection(),
         provideRouter([]),
         SupabaseService,
         EnergyService,
@@ -44,6 +45,8 @@ describe('MeterDetail', () => {
                 get: () => null,
               },
             },
+            params: of({ id: '1' }),
+            queryParams: of({}),
           },
         },
       ],

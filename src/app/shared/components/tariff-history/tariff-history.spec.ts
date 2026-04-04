@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideExperimentalZonelessChangeDetection } from '@angular/core';
+import { provideZonelessChangeDetection } from '@angular/core';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { TariffHistory } from './tariff-history';
 import { MeterConfig, EnergyType } from '../../../core/models/energy.models';
@@ -17,7 +17,7 @@ describe('TariffHistory', () => {
     color: '#ff0000',
     icon: 'bolt',
     active: true,
-    archived: false,
+    createdAt: new Date('2024-01-01'),
     tariffHistory: [],
   };
 
@@ -38,12 +38,12 @@ describe('TariffHistory', () => {
 
     await TestBed.configureTestingModule({
       imports: [TariffHistory, NoopAnimationsModule],
-      providers: [provideExperimentalZonelessChangeDetection()],
+      providers: [provideZonelessChangeDetection()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(TariffHistory);
     component = fixture.componentInstance;
-    component.meter = mockMeter;
+    fixture.componentRef.setInput('meter', mockMeter);
     fixture.detectChanges();
   });
 

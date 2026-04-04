@@ -6,10 +6,12 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { routes } from './app.routes';
 import { registerLocaleData } from '@angular/common';
 import localeDe from '@angular/common/locales/de';
+import localeEn from '@angular/common/locales/en';
 import { LOCALE_ID } from '@angular/core';
 
 
 registerLocaleData(localeDe);
+registerLocaleData(localeEn);
 
 export const appConfig: ApplicationConfig = {
   providers: [

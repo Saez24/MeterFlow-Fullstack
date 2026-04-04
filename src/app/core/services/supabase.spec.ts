@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { provideExperimentalZonelessChangeDetection } from '@angular/core';
+import { provideZonelessChangeDetection } from '@angular/core';
 import { SupabaseService } from './supabase.service';
 
 
@@ -8,7 +8,7 @@ describe('Supabse', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [provideExperimentalZonelessChangeDetection()],
+      providers: [provideZonelessChangeDetection()],
     });
     service = TestBed.inject(SupabaseService);
   });

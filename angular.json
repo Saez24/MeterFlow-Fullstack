@@ -17,6 +17,18 @@
       "root": "",
       "sourceRoot": "src",
       "prefix": "app",
+      "i18n": {
+        "sourceLocale": {
+          "code": "de",
+          "baseHref": "/"
+        },
+        "locales": {
+          "en": {
+            "translation": "src/locale/messages.en.xlf",
+            "baseHref": "/en/"
+          }
+        }
+      },
       "architect": {
         "build": {
           "builder": "@angular/build:application",
@@ -31,7 +43,8 @@
               }
             ],
             "styles": ["src/styles.scss"],
-            "polyfills": ["@angular/localize/init"]
+            "polyfills": ["@angular/localize/init"],
+            "localize": ["de", "en"]
           },
           "configurations": {
             "production": {
@@ -53,6 +66,7 @@
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true,
+              "localize": false,
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
@@ -71,12 +85,20 @@
             },
             "development": {
               "buildTarget": "MeterFlow:build:development"
+            },
+            "de": {
+              "buildTarget": "MeterFlow:build:development",
+              "forceEsbuild": true
             }
           },
           "defaultConfiguration": "development"
         },
         "test": {
-          "builder": "@angular/build:unit-test"
+          "builder": "@angular/build:unit-test",
+          "options": {
+            "tsConfig": "tsconfig.spec.json",
+            "setupFiles": ["src/test-setup.ts"]
+          }
         }
       }
     }

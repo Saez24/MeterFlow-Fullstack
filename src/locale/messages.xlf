@@ -338,32 +338,67 @@
           <context context-type="linenumber">115</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="meterReadings.empty" datatype="html">
+        <source>Noch keine Ablesungen vorhanden</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/meters/meter-detail/tabs/meter-readings/meter-readings.html</context>
+          <context context-type="linenumber">5,8</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="meterReadings.current" datatype="html">
+        <source>Aktuell</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/meters/meter-detail/tabs/meter-readings/meter-readings.html</context>
+          <context context-type="linenumber">24,26</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="meterReadings.photo.close" datatype="html">
+        <source>Foto schließen</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/meters/meter-detail/tabs/meter-readings/meter-readings.html</context>
+          <context context-type="linenumber">90,91</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="meterReadings.photo.alt" datatype="html">
+        <source>Zählerfoto</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/meters/meter-detail/tabs/meter-readings/meter-readings.ts</context>
+          <context context-type="linenumber">42</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="meterReadings.photo.altDynamic" datatype="html">
+        <source><x id="meterName" equiv-text="meter.name"/> – Ablesung vom <x id="date" equiv-text="dateStr"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/meters/meter-detail/tabs/meter-readings/meter-readings.ts</context>
+          <context context-type="linenumber">44</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="meterReadings.delete.title" datatype="html">
         <source>Ablesung löschen</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/meters/meter-detail/tabs/meter-readings/meter-readings.ts</context>
-          <context context-type="linenumber">34</context>
+          <context context-type="linenumber">73</context>
         </context-group>
       </trans-unit>
       <trans-unit id="meterReadings.delete.message" datatype="html">
         <source>Ablesung wirklich löschen?</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/meters/meter-detail/tabs/meter-readings/meter-readings.ts</context>
-          <context context-type="linenumber">35</context>
+          <context context-type="linenumber">74</context>
         </context-group>
       </trans-unit>
       <trans-unit id="meterReadings.delete.confirm" datatype="html">
         <source>Löschen</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/meters/meter-detail/tabs/meter-readings/meter-readings.ts</context>
-          <context context-type="linenumber">36</context>
+          <context context-type="linenumber">75</context>
         </context-group>
       </trans-unit>
       <trans-unit id="meterReadings.deleted" datatype="html">
         <source>Ablesung gelöscht</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/meters/meter-detail/tabs/meter-readings/meter-readings.ts</context>
-          <context context-type="linenumber">42</context>
+          <context context-type="linenumber">86</context>
         </context-group>
       </trans-unit>
       <trans-unit id="tariff.delete.title" datatype="html">
@@ -863,39 +898,95 @@
           <context context-type="linenumber">133,134</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="readingsForm.photo.title" datatype="html">
+        <source>Foto (optional)</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/readings/readings-form/readings-form.html</context>
+          <context context-type="linenumber">142,144</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="readingsForm.photo.existingAlt" datatype="html">
+        <source>Bestehendes Zählerfoto</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/readings/readings-form/readings-form.html</context>
+          <context context-type="linenumber">147,148</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="readingsForm.photo.remove" datatype="html">
+        <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>delete_outline<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/> Foto entfernen </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/readings/readings-form/readings-form.html</context>
+          <context context-type="linenumber">151,153</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="readingsForm.photo.previewAlt" datatype="html">
+        <source>Vorschau</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/readings/readings-form/readings-form.html</context>
+          <context context-type="linenumber">157,158</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="readingsForm.photo.clear" datatype="html">
+        <source><x id="START_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;mat-icon&gt;"/>close<x id="CLOSE_TAG_MAT_ICON" ctype="x-mat_icon" equiv-text="&lt;/mat-icon&gt;"/> Auswahl aufheben </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/readings/readings-form/readings-form.html</context>
+          <context context-type="linenumber">161,163</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="readingsForm.photo.inputLabel" datatype="html">
+        <source>Foto hochladen</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/readings/readings-form/readings-form.html</context>
+          <context context-type="linenumber">168,169</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="readingsForm.photo.upload" datatype="html">
+        <source>Foto hinzufügen</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/readings/readings-form/readings-form.html</context>
+          <context context-type="linenumber">171,175</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="readingsForm.photo.uploading" datatype="html">
+        <source>Foto wird hochgeladen…</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/readings/readings-form/readings-form.html</context>
+          <context context-type="linenumber">176,181</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="readingsForm.cancel" datatype="html">
         <source>Abbrechen</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/readings/readings-form/readings-form.html</context>
-          <context context-type="linenumber">142,143</context>
+          <context context-type="linenumber">183,184</context>
         </context-group>
       </trans-unit>
       <trans-unit id="readingsForm.save" datatype="html">
         <source>Ablesung speichern</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/readings/readings-form/readings-form.html</context>
-          <context context-type="linenumber">145,147</context>
+          <context context-type="linenumber">186,188</context>
         </context-group>
       </trans-unit>
       <trans-unit id="readingsForm.invalidValue" datatype="html">
         <source>Ungültiger Wert für Zählerstand.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/readings/readings-form/readings-form.ts</context>
-          <context context-type="linenumber">236</context>
+          <context context-type="linenumber">279</context>
         </context-group>
       </trans-unit>
       <trans-unit id="readingsForm.saved" datatype="html">
         <source>Ablesung gespeichert</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/readings/readings-form/readings-form.ts</context>
-          <context context-type="linenumber">263</context>
+          <context context-type="linenumber">330</context>
         </context-group>
       </trans-unit>
       <trans-unit id="readingsForm.saveError" datatype="html">
         <source>Fehler beim Speichern der Ablesung</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/readings/readings-form/readings-form.ts</context>
-          <context context-type="linenumber">267</context>
+          <context context-type="linenumber">334</context>
         </context-group>
       </trans-unit>
       <trans-unit id="readings.title" datatype="html">
