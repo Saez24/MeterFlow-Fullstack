@@ -1,8 +1,9 @@
 import { Injectable, signal, computed, inject } from '@angular/core';
 import { MeterReading, MeterConfig } from '../models/energy.models';
-import { SupabaseService } from './supabse.service';
+import { SupabaseService } from './supabase.service';
 import { MeterService } from './meter.service';
 import { TariffService } from './tariff.service';
+import { GAS_DEFAULTS } from '../constants/gas.constants';
 
 @Injectable({ providedIn: 'root' })
 export class ReadingService {
@@ -140,8 +141,8 @@ export class ReadingService {
       const tariff = this.tariffService.getActiveTariffForDate(meter, current.date);
       if (tariff) {
         if (meter.type === 'gas') {
-          const calorificValue = tariff.calorificValue ?? meter.calorificValue ?? 10.55;
-          const zNumber = tariff.zNumber ?? meter.zNumber ?? 0.9672;
+          const calorificValue = tariff.calorificValue ?? meter.calorificValue ?? GAS_DEFAULTS.CALORIFIC_VALUE;
+          const zNumber = tariff.zNumber ?? meter.zNumber ?? GAS_DEFAULTS.Z_NUMBER;
           kwh = consumption * calorificValue * zNumber;
           cost = kwh * tariff.pricePerUnit;
         } else if (meter.type === 'water') {

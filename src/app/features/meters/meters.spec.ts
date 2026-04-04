@@ -3,7 +3,7 @@ import { provideExperimentalZonelessChangeDetection } from '@angular/core';
 import { Meters } from './meters';
 import { provideRouter, ActivatedRoute } from '@angular/router';
 import { vi } from 'vitest';
-import { SupabaseService } from '../../core/services/supabse.service';
+import { SupabaseService } from '../../core/services/supabase.service';
 import { EnergyService } from '../../core/services/energy.service';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 

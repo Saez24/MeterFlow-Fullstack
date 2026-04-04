@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { MeterService } from './meter.service';
 import { ReadingService } from './reading.service';
-import { SupabaseService } from './supabse.service';
+import { SupabaseService } from './supabase.service';
 
 @Injectable({ providedIn: 'root' })
 export class DataSyncService {

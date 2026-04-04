@@ -1,5 +1,5 @@
 import { Injectable, signal, effect, inject } from '@angular/core';
-import { SupabaseService } from './supabse.service';
+import { SupabaseService } from './supabase.service';
 import { MeterService } from './meter.service';
 import { ReadingService } from './reading.service';
 

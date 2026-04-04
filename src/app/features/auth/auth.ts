@@ -8,7 +8,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { SupabaseService } from '../../core/services/supabse.service';
+import { SupabaseService } from '../../core/services/supabase.service';
 
 type AuthMode = 'login' | 'register';
 

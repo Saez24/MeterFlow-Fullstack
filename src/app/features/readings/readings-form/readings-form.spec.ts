@@ -5,7 +5,7 @@ import { importProvidersFrom } from '@angular/core';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ReadingsForm } from './readings-form';
 import { EnergyService } from '../../../core/services/energy.service';
-import { SupabaseService } from '../../../core/services/supabse.service';
+import { SupabaseService } from '../../../core/services/supabase.service';
 import { of } from 'rxjs';
 import { vi } from 'vitest';
 

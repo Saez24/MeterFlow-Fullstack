@@ -1,6 +1,6 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
-import { SupabaseService } from '../services/supabse.service';
+import { SupabaseService } from '../services/supabase.service';
 import { from } from 'rxjs';
 import { map } from 'rxjs/operators';
 

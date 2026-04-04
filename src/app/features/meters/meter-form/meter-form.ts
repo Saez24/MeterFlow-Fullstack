@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed, OnInit, effect, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, signal, computed, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import {
@@ -22,6 +22,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { ENERGY_META, EnergyType, MeterConfig } from '../../../core/models/energy.models';
 import { MeterService } from '../../../core/services/meter.service';
+import { GAS_DEFAULTS } from '../../../core/constants/gas.constants';
 
 @Component({
   selector: 'app-meter-form',
@@ -44,7 +45,7 @@ import { MeterService } from '../../../core/services/meter.service';
   styleUrls: ['./meter-form.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MeterForm implements OnInit {
+export class MeterForm {
   private readonly meterService = inject(MeterService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
@@ -100,19 +101,12 @@ export class MeterForm implements OnInit {
 
   // Gas-Vorschau
   readonly gasPreview = computed(() => {
-    const cv = this.form.get('calorificValue')?.value ?? 10.55;
-    const z = this.form.get('zNumber')?.value ?? 0.9672;
+    const cv = this.form.get('calorificValue')?.value ?? GAS_DEFAULTS.CALORIFIC_VALUE;
+    const z = this.form.get('zNumber')?.value ?? GAS_DEFAULTS.Z_NUMBER;
     return 100 * cv * z;
   });
 
   constructor() {
-    effect(() => {
-      // Optional: Debug-Logs
-      // console.log('🔄 Typ:', this.typeValue(), '| Wasser?', this.isWater());
-    });
-  }
-
-  ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
     if (id && id !== 'new') {
       this.isEdit.set(true);
@@ -121,7 +115,6 @@ export class MeterForm implements OnInit {
       if (meter) {
         this.form.patchValue({
           ...meter,
-          // Sicherstellen, dass undefined-Felder korrekt gesetzt werden
           calorificValue: meter.calorificValue ?? undefined,
           zNumber: meter.zNumber ?? undefined,
         });
@@ -132,8 +125,8 @@ export class MeterForm implements OnInit {
   selectType(type: EnergyType): void {
     this.form.patchValue({
       type,
-      calorificValue: type === 'gas' ? 10.55 : undefined,
-      zNumber: type === 'gas' ? 0.9672 : undefined,
+      calorificValue: type === 'gas' ? GAS_DEFAULTS.CALORIFIC_VALUE : undefined,
+      zNumber: type === 'gas' ? GAS_DEFAULTS.Z_NUMBER : undefined,
       linkedWaterMeterId: '',
     });
   }

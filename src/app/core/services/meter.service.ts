@@ -1,6 +1,6 @@
 import { Injectable, signal, computed, inject } from '@angular/core';
 import { MeterConfig, TariffPeriod } from '../models/energy.models';
-import { SupabaseService } from './supabse.service';
+import { SupabaseService } from './supabase.service';
 
 @Injectable({ providedIn: 'root' })
 export class MeterService {

@@ -3,7 +3,7 @@ import { provideExperimentalZonelessChangeDetection } from '@angular/core';
 import { App } from './app';
 import { provideRouter, ActivatedRoute, NavigationEnd } from '@angular/router';
 import { vi } from 'vitest';
-import { SupabaseService } from './core/services/supabse.service';
+import { SupabaseService } from './core/services/supabase.service';
 import { of } from 'rxjs';
 
 describe('App', () => {

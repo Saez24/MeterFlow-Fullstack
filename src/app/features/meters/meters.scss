@@ -41,6 +41,9 @@
   border: 1px solid var(--border-color);
   transition: all 0.2s;
   flex-wrap: wrap;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
 }
 .meter-row:hover {
   border-color: var(--apple-blue);

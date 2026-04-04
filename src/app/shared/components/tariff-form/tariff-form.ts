@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, signal, computed, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormsModule,
@@ -43,7 +43,7 @@ export interface TariffFormData {
   styleUrls: ['./tariff-form.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TariffFormComponent implements OnInit {
+export class TariffFormComponent {
   private readonly fb = inject(FormBuilder);
   private readonly tariffService = inject(TariffService);
   private readonly readingService = inject(ReadingService);
@@ -74,7 +74,7 @@ export class TariffFormComponent implements OnInit {
   readonly isElectricity = computed(() => this.meter().type === 'electricity');
   readonly isSolar = computed(() => this.meter().type === 'solar');
 
-  ngOnInit(): void {
+  constructor() {
     if (this.isLinkedGardenWater() || this.isDistrictHeating()) {
       this.form.controls['baseCharge'].disable();
       this.form.patchValue({ baseCharge: 0 });

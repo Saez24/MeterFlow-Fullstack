@@ -23,8 +23,8 @@
 
   <div class="meters-list">
     @for (meter of meters(); track meter.id) {
-    <div class="meter-row" [class.meter-row--inactive]="!meter.active" [routerLink]="[meter.id]"
-      style="cursor: pointer">
+    <a class="meter-row" [class.meter-row--inactive]="!meter.active" [routerLink]="[meter.id]"
+      [attr.aria-label]="meter.name + ' – Details anzeigen'">
       <div class="meter-row__icon" [style.background]="meter.color + '22'">
         <mat-icon [style.color]="meter.color">{{ meter.icon }}</mat-icon>
       </div>
@@ -103,7 +103,7 @@
           </button>
         </mat-menu>
       </div>
-    </div>
+    </a>
     }
   </div>
 </div>

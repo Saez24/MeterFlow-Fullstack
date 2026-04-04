@@ -10,6 +10,7 @@ import {
 } from '../models/energy.models';
 import { MeterService } from './meter.service';
 import { ReadingService } from './reading.service';
+import { GAS_DEFAULTS } from '../constants/gas.constants';
 import { TariffService } from './tariff.service';
 
 export interface MeterSummary {
@@ -176,7 +177,7 @@ export class StatsService {
     for (const r of this.readingService.readings()) years.add(new Date(r.date).getFullYear());
     return [...years].sort((a, b) => b - a);
   });
-  
+
   getMonthStats(year: number): MonthStats[] {
     const result: MonthStats[] = [];
     for (let month = 1; month <= 12; month++) {
@@ -271,8 +272,8 @@ export class StatsService {
     if (!tariff) return 0;
 
     if (meter.type === 'gas') {
-      const calorificValue = tariff.calorificValue ?? meter.calorificValue ?? 10.55;
-      const zNumber = tariff.zNumber ?? meter.zNumber ?? 0.9672;
+      const calorificValue = tariff.calorificValue ?? meter.calorificValue ?? GAS_DEFAULTS.CALORIFIC_VALUE;
+      const zNumber = tariff.zNumber ?? meter.zNumber ?? GAS_DEFAULTS.Z_NUMBER;
       const kwh = consumption * calorificValue * zNumber;
       return kwh * tariff.pricePerUnit;
     }

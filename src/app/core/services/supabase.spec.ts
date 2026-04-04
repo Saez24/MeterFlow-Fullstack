@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { provideExperimentalZonelessChangeDetection } from '@angular/core';
-import { SupabaseService } from './supabse.service';
+import { SupabaseService } from './supabase.service';
 
 
 describe('Supabse', () => {

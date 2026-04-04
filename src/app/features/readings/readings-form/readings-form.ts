@@ -21,6 +21,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MeterService } from '../../../core/services/meter.service';
 import { ReadingService } from '../../../core/services/reading.service';
 import { TariffService } from '../../../core/services/tariff.service';
+import { GAS_DEFAULTS } from '../../../core/constants/gas.constants';
 
 import { maxDecimalPlaces } from '../../../core/validators/decimal-places.validator';
 
@@ -130,8 +131,8 @@ export class ReadingsForm implements OnInit {
 
     if (meter.type === 'gas') {
       const calorificValue =
-        tariff.calorificValue ?? meter.calorificValue ?? 10.55;
-      const zNumber = tariff.zNumber ?? meter.zNumber ?? 0.9672;
+        tariff.calorificValue ?? meter.calorificValue ?? GAS_DEFAULTS.CALORIFIC_VALUE;
+      const zNumber = tariff.zNumber ?? meter.zNumber ?? GAS_DEFAULTS.Z_NUMBER;
       kwh = consumption * calorificValue * zNumber;
       cost = kwh * tariff.pricePerUnit;
     } else {

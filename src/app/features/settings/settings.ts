@@ -6,7 +6,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ThemeService } from '../../core/services/theme.service';
-import { SupabaseService } from '../../core/services/supabse.service';
+import { SupabaseService } from '../../core/services/supabase.service';
 import { Router } from '@angular/router';
 import { MeterService } from '../../core/services/meter.service';
 import { ReadingService } from '../../core/services/reading.service';
