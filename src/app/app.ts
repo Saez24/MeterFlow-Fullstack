@@ -46,11 +46,11 @@ export class App {
   );
 
   readonly navItems: NavItem[] = [
-    { path: '/', icon: 'dashboard', label: 'Dashboard' },
-    { path: '/meters', icon: 'speed', label: 'Zähler' },
-    { path: '/readings', icon: 'history', label: 'Ablesungen' },
-    { path: '/reports', icon: 'bar_chart', label: 'Auswertungen' },
-    { path: '/settings', icon: 'settings', label: 'Einstellungen' },
+    { path: '/', icon: 'dashboard', label: $localize`:@@nav.dashboard:Dashboard` },
+    { path: '/meters', icon: 'speed', label: $localize`:@@nav.meters:Zähler` },
+    { path: '/readings', icon: 'history', label: $localize`:@@nav.readings:Ablesungen` },
+    { path: '/reports', icon: 'bar_chart', label: $localize`:@@nav.reports:Auswertungen` },
+    { path: '/settings', icon: 'settings', label: $localize`:@@nav.settings:Einstellungen` },
   ];
 
   readonly toggleBtnLeft = computed(() =>
@@ -67,9 +67,9 @@ export class App {
 
   readonly connectionTooltip = computed(() => {
     switch (this.supabaseService.connectionStatus()) {
-      case 'connected': return 'Verbunden';
-      case 'error': return 'Keine Verbindung';
-      case 'checking': return 'Verbinde...';
+      case 'connected': return $localize`:@@connection.connected:Verbunden`;
+      case 'error': return $localize`:@@connection.error:Keine Verbindung`;
+      case 'checking': return $localize`:@@connection.checking:Verbinde...`;
     }
   });
 

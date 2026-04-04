@@ -5,13 +5,7 @@
   "compilerOptions": {
     "outDir": "./out-tsc/spec",
     "rootDir": "src",
-    "types": [
-      "vitest/globals"
-    ]
+    "types": ["vitest/globals", "@angular/localize"]
   },
-  "include": [
-    "src/test-setup.ts",
-    "src/**/*.d.ts",
-    "src/**/*.spec.ts"
-  ]
+  "include": ["src/test-setup.ts", "src/**/*.d.ts", "src/**/*.spec.ts"]
 }

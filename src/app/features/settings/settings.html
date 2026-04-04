@@ -1,63 +1,65 @@
 <div class="page-container">
   <div class="page-header">
-    <h1 class="page-title">Einstellungen</h1>
-    <p class="page-subtitle">App-Konfiguration und Datenverwaltung</p>
+    <h1 class="page-title" i18n="@@settings.title">Einstellungen</h1>
+    <p class="page-subtitle" i18n="@@settings.subtitle">App-Konfiguration und Datenverwaltung</p>
   </div>
 
   <!-- Theme -->
   <div class="settings-section">
-    <h3 class="section-title">Erscheinungsbild</h3>
+    <h3 class="section-title" i18n="@@settings.appearance">Erscheinungsbild</h3>
     <div class="theme-options">
       <button class="theme-btn" [class.theme-btn--active]="themeMode() === 'light'" (click)="setTheme('light')">
         <mat-icon>light_mode</mat-icon>
-        <span>Hell</span>
+        <span i18n="@@settings.theme.light">Hell</span>
       </button>
       <button class="theme-btn" [class.theme-btn--active]="themeMode() === 'dark'" (click)="setTheme('dark')">
         <mat-icon>dark_mode</mat-icon>
-        <span>Dunkel</span>
+        <span i18n="@@settings.theme.dark">Dunkel</span>
       </button>
       <button class="theme-btn" [class.theme-btn--active]="themeMode() === 'system'" (click)="setTheme('system')">
         <mat-icon>brightness_auto</mat-icon>
-        <span>System</span>
+        <span i18n="@@settings.theme.system">System</span>
       </button>
     </div>
   </div>
 
   <!-- Data -->
   <div class="settings-section">
-    <h3 class="section-title">Datenverwaltung</h3>
+    <h3 class="section-title" i18n="@@settings.dataManagement">Datenverwaltung</h3>
     <div class="data-actions">
       <div class="data-action-item">
         <div class="data-action-info">
-          <div class="data-action-title">Daten exportieren</div>
-          <div class="data-action-desc">Alle Zähler und Ablesungen als JSON-Datei exportieren</div>
+          <div class="data-action-title" i18n="@@settings.export.title">Daten exportieren</div>
+          <div class="data-action-desc" i18n="@@settings.export.desc">Alle Zähler und Ablesungen als JSON-Datei
+            exportieren</div>
         </div>
         <button (click)="exportData()" class="import-export-btn">
           <mat-icon>download</mat-icon>
-          Exportieren
+          <span i18n="@@settings.exportBtn">Exportieren</span>
         </button>
       </div>
 
       <div class="data-action-item">
         <div class="data-action-info">
-          <div class="data-action-title">Daten importieren</div>
-          <div class="data-action-desc">Zuvor exportierte Daten wiederherstellen</div>
+          <div class="data-action-title" i18n="@@settings.import.title">Daten importieren</div>
+          <div class="data-action-desc" i18n="@@settings.import.desc">Zuvor exportierte Daten wiederherstellen</div>
         </div>
         <label class="import-export-btn">
           <input type="file" accept=".json" (change)="importData($event)" hidden />
           <mat-icon>upload</mat-icon>
-          Importieren
+          <span i18n="@@settings.importBtn">Importieren</span>
         </label>
       </div>
 
       <div class="data-action-item danger-item">
         <div class="data-action-info">
-          <div class="data-action-title">Alle Daten löschen</div>
-          <div class="data-action-desc">Alle Zähler und Ablesungen unwiderruflich löschen</div>
+          <div class="data-action-title" i18n="@@settings.delete.title">Alle Daten löschen</div>
+          <div class="data-action-desc" i18n="@@settings.delete.desc">Alle Zähler und Ablesungen unwiderruflich löschen
+          </div>
         </div>
         <button mat-stroked-button color="warn" (click)="clearAll()">
           <mat-icon>delete_forever</mat-icon>
-          Löschen
+          <span i18n="@@settings.deleteBtn">Löschen</span>
         </button>
       </div>
     </div>
@@ -65,15 +67,15 @@
 
   <!-- Stats -->
   <div class="settings-section">
-    <h3 class="section-title">Statistiken</h3>
+    <h3 class="section-title" i18n="@@settings.stats">Statistiken</h3>
     <div class="stats-grid">
       <div class="stat-box">
         <div class="stat-number">{{ meterCount() }}</div>
-        <div class="stat-label">Zähler</div>
+        <div class="stat-label" i18n="@@settings.stats.meters">Zähler</div>
       </div>
       <div class="stat-box">
         <div class="stat-number">{{ readingCount() }}</div>
-        <div class="stat-label">Ablesungen</div>
+        <div class="stat-label" i18n="@@settings.stats.readings">Ablesungen</div>
       </div>
     </div>
   </div>
@@ -84,12 +86,12 @@
       <mat-icon>electric_bolt</mat-icon>
     </div>
     <h2 class="about-title">MeterFlow</h2>
-    <p class="about-desc">Dein persönlicher Energie- und Verbrauchsrechner</p>
-    <p class="about-version">Version 1.0</p>
+    <p class="about-desc" i18n="@@settings.about.desc">Dein persönlicher Energie- und Verbrauchsrechner</p>
+    <p class="about-version" i18n="@@settings.version">Version 1.0</p>
   </div>
 
   <button mat-stroked-button color="warn" (click)="logout()" class="logout-btn">
     <mat-icon>logout</mat-icon>
-    <span>Abmelden</span>
+    <span i18n="@@settings.logout">Abmelden</span>
   </button>
 </div>

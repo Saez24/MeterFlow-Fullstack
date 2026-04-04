@@ -73,9 +73,9 @@ export class Meters {
       this.dialog
         .open(ConfirmDialogComponent, {
           data: {
-            title: 'Zähler löschen',
-            message: `Zähler "${meter.name}" wirklich löschen? Alle Ablesungen werden ebenfalls gelöscht.`,
-            confirmLabel: 'Löschen',
+            title: $localize`:@@meters.delete.title:Zähler löschen`,
+            message: $localize`:@@meters.delete.message:Zähler "${meter.name}" wirklich löschen? Alle Ablesungen werden ebenfalls gelöscht.`,
+            confirmLabel: $localize`:@@meters.delete.confirm:Löschen`,
           },
         })
         .afterClosed(),
@@ -83,6 +83,6 @@ export class Meters {
     if (!confirmed) return;
     await this.meterService.deleteMeter(meter.id);
     await this.readingService.deleteReadingsForMeter(meter.id);
-    this.snackBar.open('Zähler gelöscht', 'OK', { duration: 3000 });
+    this.snackBar.open($localize`:@@meters.deleted:Zähler gelöscht`, 'OK', { duration: 3000 });
   }
 }

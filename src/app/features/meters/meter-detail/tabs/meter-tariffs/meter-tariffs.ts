@@ -47,9 +47,9 @@ export class MeterTariffs {
       this.dialog
         .open(ConfirmDialogComponent, {
           data: {
-            title: 'Tarif-Periode löschen',
-            message: 'Tarif-Periode löschen?',
-            confirmLabel: 'Löschen',
+            title: $localize`:@@tariff.delete.title:Tarif-Periode löschen`,
+            message: $localize`:@@tariff.delete.message:Tarif-Periode löschen?`,
+            confirmLabel: $localize`:@@tariff.delete.confirm:Löschen`,
           },
         })
         .afterClosed(),
@@ -57,6 +57,6 @@ export class MeterTariffs {
     if (!confirmed) return;
     await this.tariffService.deleteTariffPeriod(meter.id, periodId);
     await this.readingService.recalculateAllReadingsForMeter(meter.id);
-    this.snackBar.open('Tarif gelöscht', 'OK', { duration: 2000 });
+    this.snackBar.open($localize`:@@tariff.deleted:Tarif gelöscht`, 'OK', { duration: 2000 });
   }
 }

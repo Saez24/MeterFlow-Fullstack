@@ -66,16 +66,16 @@ export class Readings {
     this.dialog
       .open(ConfirmDialogComponent, {
         data: {
-          title: 'Ablesung löschen',
-          message: 'Ablesung wirklich löschen?',
-          confirmLabel: 'Löschen',
+          title: $localize`:@@readings.delete.title:Ablesung löschen`,
+          message: $localize`:@@readings.delete.message:Ablesung wirklich löschen?`,
+          confirmLabel: $localize`:@@readings.delete.confirm:Löschen`,
         },
       })
       .afterClosed()
       .subscribe((confirmed: boolean) => {
         if (!confirmed) return;
         this.readingService.deleteReading(id);
-        this.snackBar.open('Ablesung gelöscht', 'OK', { duration: 3000 });
+        this.snackBar.open($localize`:@@readings.deleted:Ablesung gelöscht`, 'OK', { duration: 3000 });
       });
   }
 }

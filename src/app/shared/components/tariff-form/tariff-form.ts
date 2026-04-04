@@ -133,10 +133,10 @@ export class TariffFormComponent {
 
     if (this.isEdit()) {
       await this.tariffService.updateTariff(this.meter().id, this.data.tariffId!, tariffData);
-      this.snackBar.open('Tarif aktualisiert', 'OK', { duration: 3000 });
+      this.snackBar.open($localize`:@@tariffForm.updated:Tarif aktualisiert`, 'OK', { duration: 3000 });
     } else {
       await this.tariffService.addTariff(this.meter().id, tariffData as Omit<TariffPeriod, 'id'>);
-      this.snackBar.open('Neuer Tarif hinzugefügt', 'OK', { duration: 3000 });
+      this.snackBar.open($localize`:@@tariffForm.added:Neuer Tarif hinzugefügt`, 'OK', { duration: 3000 });
     }
 
     await this.readingService.recalculateAllReadingsForMeter(this.meter().id);

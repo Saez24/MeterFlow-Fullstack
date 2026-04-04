@@ -1,12 +1,12 @@
 <div class="page-container">
   <div class="page-header">
     <div>
-      <h1 class="page-title">Zähler</h1>
-      <p class="page-subtitle">Verwalte deine Energie- und Wasserzähler</p>
+      <h1 class="page-title" i18n="@@meters.title">Zähler</h1>
+      <p class="page-subtitle" i18n="@@meters.subtitle">Verwalte deine Energie- und Wasserzähler</p>
     </div>
     <button mat-flat-button color="primary" routerLink="new" class="action-btn">
       <mat-icon>add</mat-icon>
-      Neuer Zähler
+      <span i18n="@@meters.newMeter">Neuer Zähler</span>
     </button>
   </div>
 
@@ -15,9 +15,10 @@
     <div class="empty-icon">
       <mat-icon>speed</mat-icon>
     </div>
-    <h3>Noch keine Zähler</h3>
-    <p>Füge deinen ersten Zähler hinzu, um Ablesungen zu erfassen.</p>
-    <button mat-flat-button color="primary" routerLink="new">Ersten Zähler hinzufügen</button>
+    <h3 i18n="@@meters.empty.title">Noch keine Zähler</h3>
+    <p i18n="@@meters.empty.desc">Füge deinen ersten Zähler hinzu, um Ablesungen zu erfassen.</p>
+    <button mat-flat-button color="primary" routerLink="new"><span i18n="@@meters.empty.btn">Ersten Zähler
+        hinzufügen</span></button>
   </div>
   }
 
@@ -69,9 +70,9 @@
 
       <div class="meter-row__readings">
         @if (readingCount(meter.id) > 0) {
-        <span class="readings-count">{{ readingCount(meter.id) }} Ablesungen</span>
+        <span class="readings-count" i18n="@@meters.readingCount">{{ readingCount(meter.id) }} Ablesungen</span>
         } @else {
-        <span class="readings-none">Keine Ablesungen</span>
+        <span class="readings-none" i18n="@@meters.noReadings">Keine Ablesungen</span>
         }
       </div>
 
@@ -86,20 +87,20 @@
         <mat-menu #meterMenu="matMenu">
           <button mat-menu-item [routerLink]="[meter.id]">
             <mat-icon>bar_chart</mat-icon>
-            <span>Details & Verlauf</span>
+            <span i18n="@@meters.menu.details">Details &amp; Verlauf</span>
           </button>
           <button mat-menu-item [routerLink]="[meter.id, 'edit']">
             <mat-icon>edit</mat-icon>
-            <span>Bearbeiten</span>
+            <span i18n="@@meters.menu.edit">Bearbeiten</span>
           </button>
           <button mat-menu-item [routerLink]="['/readings/new']" [queryParams]="{ meterId: meter.id }">
             <mat-icon>add_circle</mat-icon>
-            <span>Ablesung hinzufügen</span>
+            <span i18n="@@meters.menu.addReading">Ablesung hinzufügen</span>
           </button>
           <mat-divider></mat-divider>
           <button mat-menu-item (click)="deleteMeter(meter)" class="delete-item">
             <mat-icon color="warn">delete</mat-icon>
-            <span>Löschen</span>
+            <span i18n="@@meters.menu.delete">Löschen</span>
           </button>
         </mat-menu>
       </div>

@@ -52,7 +52,7 @@ export class Settings {
     a.download = `meterflow-export-${new Date().toISOString().slice(0, 10)}.json`;
     a.click();
     URL.revokeObjectURL(url);
-    this.snackBar.open('Daten exportiert', 'OK', { duration: 3000 });
+    this.snackBar.open($localize`:@@settings.exported:Daten exportiert`, 'OK', { duration: 3000 });
   }
 
   importData(event: Event): void {
@@ -62,9 +62,9 @@ export class Settings {
     reader.onload = (e) => {
       try {
         this.dataSyncService.importData(e.target?.result as string);
-        this.snackBar.open('Daten importiert', 'OK', { duration: 3000 });
+        this.snackBar.open($localize`:@@settings.imported:Daten importiert`, 'OK', { duration: 3000 });
       } catch {
-        this.snackBar.open('Fehler beim Import', 'OK', { duration: 3000 });
+        this.snackBar.open($localize`:@@settings.importError:Fehler beim Import`, 'OK', { duration: 3000 });
       }
     };
     reader.readAsText(file);
@@ -74,10 +74,9 @@ export class Settings {
     this.dialog
       .open(ConfirmDialogComponent, {
         data: {
-          title: 'Alle Daten löschen',
-          message:
-            'Alle Daten wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden!',
-          confirmLabel: 'Alles löschen',
+          title: $localize`:@@settings.deleteAll.title:Alle Daten löschen`,
+          message: $localize`:@@settings.deleteAll.message:Alle Daten wirklich löschen? Diese Aktion kann nicht rükgängig gemacht werden!`,
+          confirmLabel: $localize`:@@settings.deleteAll.confirm:Alles löschen`,
         },
       })
       .afterClosed()

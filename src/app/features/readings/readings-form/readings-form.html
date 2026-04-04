@@ -5,8 +5,20 @@
   <div class="page-header">
 
     <div>
-      <h1 class="page-title">{{ isEditMode ? 'Ablesung bearbeiten' : 'Ablesung erfassen' }}</h1>
-      <p class="page-subtitle">{{ isEditMode ? 'Zählerstand korrigieren' : 'Aktuellen Zählerstand eintragen' }}</p>
+      <h1 class="page-title">
+        @if (isEditMode) {
+        <span i18n="@@readingsForm.title.edit">Ablesung bearbeiten</span>
+        } @else {
+        <span i18n="@@readingsForm.title.new">Ablesung erfassen</span>
+        }
+      </h1>
+      <p class="page-subtitle">
+        @if (isEditMode) {
+        <span i18n="@@readingsForm.subtitle.edit">Zählerstand korrigieren</span>
+        } @else {
+        <span i18n="@@readingsForm.subtitle.new">Aktuellen Zählerstand eintragen</span>
+        }
+      </p>
     </div>
   </div>
 
@@ -14,7 +26,7 @@
     <!-- Meter Selection -->
     @if (!isEditMode) {
     <div class="form-section">
-      <h3 class="section-title">Zähler wählen</h3>
+      <h3 class="section-title" i18n="@@readingsForm.selectMeter">Zähler wählen</h3>
       <div class="meter-selector">
         @for (meter of activeMeters(); track meter.id) {
         <button type="button" class="meter-select-btn"
@@ -41,7 +53,7 @@
 
     <!-- Reading Value -->
     <div class="form-section">
-      <h3 class="section-title">Zählerstand</h3>
+      <h3 class="section-title" i18n="@@readingsForm.readingValue">Zählerstand</h3>
 
       <div class="current-meter-info">
         <div class="meter-badge-large" [style.background]="meter.color + '22'">
@@ -50,19 +62,19 @@
         <div>
           <div class="current-meter-name">{{ meter.name }}</div>
           @if (previousReading(); as lr) {
-          <div class="last-reading-info">
+          <div class="last-reading-info" i18n="@@readingsForm.previousReading">
             Vorheriger Stand: <strong>{{ lr.value | number: '1.0-3' }} {{ meter.unit }}</strong> am
             {{ lr.date | date: 'dd.MM.yyyy' }}
           </div>
           } @else {
-          <div class="last-reading-info">Erste Ablesung für diesen Zeitraum</div>
+          <div class="last-reading-info" i18n="@@readingsForm.firstReading">Erste Ablesung für diesen Zeitraum</div>
           }
         </div>
       </div>
 
       <div class="form-row form-row--2">
         <mat-form-field appearance="outline" class="form-field value-field">
-          <mat-label>Zählerstand</mat-label>
+          <mat-label i18n="@@readingsForm.field.value">Zählerstand</mat-label>
           <input matInput type="text" inputmode="decimal" formControlName="value" placeholder="0.000"
             class="reading-input" />
           <span matSuffix class="unit-suffix">{{ meter.unit }}</span>
@@ -70,7 +82,7 @@
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="form-field">
-          <mat-label>Datum</mat-label>
+          <mat-label i18n="@@readingsForm.field.date">Datum</mat-label>
           <input matInput [matDatepicker]="datePicker" formControlName="date" />
           <mat-datepicker-toggle matIconSuffix [for]="datePicker"></mat-datepicker-toggle>
           <mat-datepicker #datePicker></mat-datepicker>
@@ -81,17 +93,17 @@
       @if (consumptionPreview(); as preview) {
       <div class="consumption-preview">
         <div class="preview-item">
-          <span class="preview-label">Verbrauch</span>
+          <span class="preview-label" i18n="@@readingsForm.preview.consumption">Verbrauch</span>
           <span class="preview-value">{{ preview.consumption | number: '1.0-3' }} {{ meter.unit }}</span>
         </div>
         @if (meter.type === 'gas') {
         <div class="preview-item">
-          <span class="preview-label">Kilowattstunden</span>
+          <span class="preview-label" i18n="@@readingsForm.preview.kwh">Kilowattstunden</span>
           <span class="preview-value highlight">{{ preview.kwh | number: '1.0-2' }} kWh</span>
         </div>
         }
         <div class="preview-item">
-          <span class="preview-label">Kosten (ca.)</span>
+          <span class="preview-label" i18n="@@readingsForm.preview.cost">Kosten (ca.)</span>
           <span class="preview-value cost">{{
             preview.cost | currency: 'EUR' : 'symbol' : '1.2-2'
             }}</span>
@@ -103,7 +115,7 @@
       @if (meter.type === 'gas') {
       <div class="gas-info-box">
         <mat-icon>info</mat-icon>
-        <span>
+        <span i18n="@@readingsForm.gasInfo">
           Brennwert: <strong>{{ meter.calorificValue }} kWh/m³</strong> · Z-Zahl:
           <strong>{{ meter.zNumber }}</strong>
         </span>
@@ -115,11 +127,11 @@
 
     <!-- Note -->
     <div class="form-section">
-      <h3 class="section-title">Notiz (optional)</h3>
+      <h3 class="section-title" i18n="@@readingsForm.note.title">Notiz (optional)</h3>
       <mat-form-field appearance="outline" class="form-field form-field--full">
-        <mat-label>Anmerkung zur Ablesung</mat-label>
-        <textarea matInput formControlName="note" rows="2"
-          placeholder="z.B. Zähler abgelesen nach Urlaub..."></textarea>
+        <mat-label i18n="@@readingsForm.note.label">Anmerkung zur Ablesung</mat-label>
+        <textarea matInput formControlName="note" rows="2" placeholder="z.B. Zähler abgelesen nach Urlaub..."
+          i18n-placeholder="@@readingsForm.note.placeholder"></textarea>
         <mat-icon matSuffix>notes</mat-icon>
       </mat-form-field>
     </div>
@@ -127,10 +139,10 @@
 
     <!-- Actions -->
     <div class="form-actions">
-      <button type="button" mat-button (click)="goBack()">Abbrechen</button>
+      <button type="button" mat-button (click)="goBack()" i18n="@@readingsForm.cancel">Abbrechen</button>
       <button type="submit" mat-flat-button color="primary" [disabled]="isSaveDisabled()" class="save-btn">
         <mat-icon>check</mat-icon>
-        Ablesung speichern
+        <span i18n="@@readingsForm.save">Ablesung speichern</span>
       </button>
     </div>
   </form>

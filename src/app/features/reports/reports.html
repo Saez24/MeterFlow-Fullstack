@@ -1,11 +1,11 @@
 <div class="page-container">
   <div class="page-header">
     <div>
-      <h1 class="page-title">Auswertungen</h1>
-      <p class="page-subtitle">Monats- und Jahresübersichten deiner Verbräuche</p>
+      <h1 class="page-title" i18n="@@reports.title">Auswertungen</h1>
+      <p class="page-subtitle" i18n="@@reports.subtitle">Monats- und Jahresübersichten deiner Verbräuche</p>
     </div>
     <mat-form-field appearance="outline" class="year-select">
-      <mat-label>Jahr</mat-label>
+      <mat-label i18n="@@reports.yearLabel">Jahr</mat-label>
       <mat-select [value]="state.selectedYear()" (selectionChange)="state.selectedYear.set($event.value)">
         @for (y of state.availableYears(); track y) {
         <mat-option [value]="y">{{ y }}</mat-option>
@@ -20,7 +20,7 @@
       <div class="kpi-card kpi-card--total">
         <div class="kpi-icon"><mat-icon>euro</mat-icon></div>
         <div class="kpi-info">
-          <span class="kpi-label">Gesamtkosten {{ state.selectedYear() }}</span>
+          <span class="kpi-label" i18n="@@reports.totalCosts">Gesamtkosten {{ state.selectedYear() }}</span>
           <span class="kpi-value">{{
             state.totalYearCostWithBase() | currency: 'EUR' : 'symbol' : '1.2-2'
             }}</span>
@@ -53,7 +53,7 @@
   <!-- Monats-Balkendiagramm Kosten -->
   <section class="chart-section">
     <div class="chart-header">
-      <h2>Monatliche Kosten {{ state.selectedYear() }}</h2>
+      <h2 i18n="@@reports.monthlyCosts">Monatliche Kosten {{ state.selectedYear() }}</h2>
       <div class="chart-legend">
         @for (meter of state.activeMeters(); track meter.id) {
         <div class="legend-item">
@@ -71,7 +71,7 @@
   <!-- Verbrauch Balkendiagramm -->
   <section class="chart-section">
     <div class="chart-header">
-      <h2>Monatlicher Verbrauch</h2>
+      <h2 i18n="@@reports.monthlyConsumption">Monatlicher Verbrauch</h2>
       <div class="meter-toggle">
         @for (meter of state.activeMeters(); track meter.id) {
         <button class="toggle-btn" [class.toggle-btn--active]="selectedMeterChart() === meter.id"
@@ -92,21 +92,21 @@
   <section class="water-section">
     <h2 class="section-title">
       <mat-icon style="color: #06b6d4">water_drop</mat-icon>
-      Wasserabrechnung {{ state.selectedYear() }}
+      <span i18n="@@reports.waterBilling">Wasserabrechnung</span> {{ state.selectedYear() }}
     </h2>
-    <p class="water-desc">
+    <p class="water-desc" i18n="@@reports.waterBillingDesc">
       Abwasserkosten werden automatisch um den Gartenwasserverbrauch reduziert.
     </p>
     <div class="water-table">
       <div class="water-table-header">
-        <span>Monat</span>
-        <span>Gesamt m³</span>
-        <span>Garten m³</span>
-        <span>Abw.-pflichtig</span>
-        <span>Frischwasser</span>
-        <span>Abwasser</span>
-        <span>Grundgebühr</span>
-        <span>Gesamt</span>
+        <span i18n="@@reports.water.month">Monat</span>
+        <span i18n="@@reports.water.totalM3">Gesamt m³</span>
+        <span i18n="@@reports.water.gardenM3">Garten m³</span>
+        <span i18n="@@reports.water.billable">Abw.-pflichtig</span>
+        <span i18n="@@reports.water.freshwater">Frischwasser</span>
+        <span i18n="@@reports.water.wastewater">Abwasser</span>
+        <span i18n="@@reports.water.baseCharge">Grundgebühr</span>
+        <span i18n="@@reports.water.total">Gesamt</span>
       </div>
       @for (bill of state.waterBillsForYear(); track bill.month) {
       <div class="water-table-row" [class.water-table-row--has-garden]="bill.gardenConsumption > 0">
@@ -131,15 +131,17 @@
       </div>
       }
       <div class="water-table-footer">
-        <span data-label="Jahresgesamt">Jahresgesamt</span>
+        <span data-label="Jahresgesamt" i18n="@@reports.water.yearTotal">Jahresgesamt</span>
         <span data-label="Gesamt m³">{{ state.waterTotals().totalM3 | number: '1.0-2' }} m³</span>
         <span class="garden-col" data-label="Garten m³">
           -{{ state.waterTotals().gardenM3 | number: '1.0-2' }} m³
         </span>
         <span data-label="Abw.-pflichtig">{{ state.waterTotals().billableM3 | number: '1.0-2' }} m³</span>
-        <span data-label="Frischwasser">{{ state.waterTotals().freshCost | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
+        <span data-label="Frischwasser">{{ state.waterTotals().freshCost | currency: 'EUR' : 'symbol' : '1.2-2'
+          }}</span>
         <span data-label="Abwasser">{{ state.waterTotals().wasteCost | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
-        <span data-label="Grundgebühr">{{ state.waterTotals().baseCharge | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
+        <span data-label="Grundgebühr">{{ state.waterTotals().baseCharge | currency: 'EUR' : 'symbol' : '1.2-2'
+          }}</span>
         <span class="total-col" data-label="Gesamt">{{
           state.waterTotals().total | currency: 'EUR' : 'symbol' : '1.2-2'
           }}</span>
@@ -151,7 +153,7 @@
   <!-- Jahresvergleich -->
   @if (state.availableYears().length > 1) {
   <section class="chart-section">
-    <h2>Jahresvergleich Gesamtkosten</h2>
+    <h2 i18n="@@reports.yearlyComparison">Jahresvergleich Gesamtkosten</h2>
     <div class="chart-wrapper chart-wrapper--small">
       <canvas #yearChart></canvas>
     </div>

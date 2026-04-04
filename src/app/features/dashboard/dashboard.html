@@ -2,7 +2,7 @@
   <header class="dashboard-header">
     <div class="header-content">
       <h1 class="dashboard-title"><span class="title-accent">Energie</span>Monitor</h1>
-      <p class="dashboard-subtitle">Übersicht deiner Verbrauchsdaten</p>
+      <p class="dashboard-subtitle" i18n="@@dashboard.subtitle">Übersicht deiner Verbrauchsdaten</p>
     </div>
     <div class="header-actions">
       <!-- "Ablesung erfassen" button removed as per user request -->
@@ -13,7 +13,7 @@
   <section class="summary-section">
     <div class="summary-grid">
       <div class="summary-card summary-card--total">
-        <span class="summary-label">Gesamtkosten {{ state.selectedYear() }}</span>
+        <span class="summary-label" i18n="@@dashboard.totalCosts">Gesamtkosten {{ state.selectedYear() }}</span>
         <div class="summary-info">
           <div class="summary-icon">
             <mat-icon>account_balance</mat-icon>
@@ -24,7 +24,7 @@
         </div>
       </div>
       <div class="summary-card summary-card--meters">
-        <span class="summary-label">Aktive Zähler</span>
+        <span class="summary-label" i18n="@@dashboard.activeMeters">Aktive Zähler</span>
         <div class="summary-info">
           <div class="summary-icon">
             <mat-icon>speed</mat-icon>
@@ -38,19 +38,19 @@
   <!-- Meter Cards -->
   <section class="meters-section">
     <div class="section-header">
-      <h2>Deine Zähler</h2>
+      <h2 i18n="@@dashboard.yourMeters">Deine Zähler</h2>
       <button mat-button routerLink="/meters" class="see-all-btn">
-        Alle verwalten <mat-icon>arrow_forward</mat-icon>
+        <span i18n="@@dashboard.manageAll">Alle verwalten</span> <mat-icon>arrow_forward</mat-icon>
       </button>
     </div>
 
     @if (state.activeMeters().length === 0) {
     <div class="empty-state">
       <mat-icon>add_circle_outline</mat-icon>
-      <h3>Noch keine Zähler angelegt</h3>
-      <p>Füge deinen ersten Zähler hinzu, um zu beginnen.</p>
+      <h3 i18n="@@dashboard.empty.title">Noch keine Zähler angelegt</h3>
+      <p i18n="@@dashboard.empty.desc">Füge deinen ersten Zähler hinzu, um zu beginnen.</p>
       <button mat-flat-button color="primary" routerLink="/meters/new">
-        Zähler hinzufügen
+        <span i18n="@@dashboard.addMeter">Zähler hinzufügen</span>
       </button>
     </div>
     }
@@ -81,12 +81,12 @@
             <span class="reading-unit">{{ summary.unit }}</span>
             }
           </div>
-          <div class="reading-date">Verbrauch {{ state.selectedYear() }}</div>
+          <div class="reading-date" i18n="@@dashboard.consumption">Verbrauch {{ state.selectedYear() }}</div>
 
           <div class="meter-card__footer">
             <div class="meter-stats">
               <div class="stat">
-                <span class="stat-label">Aktuelle Kosten</span>
+                <span class="stat-label" i18n="@@dashboard.currentCosts">Aktuelle Kosten</span>
                 <span class="stat-value cost" [style.color]="meter.color">
                   {{ summary.cost | currency: 'EUR' : 'symbol' : '1.2-2' }}
                 </span>
@@ -94,7 +94,7 @@
             </div>
           </div>
           } @else {
-          <div class="no-reading">Keine Daten für {{ state.selectedYear() }}</div>
+          <div class="no-reading" i18n="@@dashboard.noData">Keine Daten für {{ state.selectedYear() }}</div>
           }
 
           <div class="meter-price">
@@ -110,9 +110,9 @@
 
   <section class="recent-section">
     <div class="section-header">
-      <h2>Letzte Ablesungen</h2>
+      <h2 i18n="@@dashboard.recentReadings">Letzte Ablesungen</h2>
       <button mat-button routerLink="/readings" class="see-all-btn">
-        Alle anzeigen <mat-icon>arrow_forward</mat-icon>
+        <span i18n="@@dashboard.showAll">Alle anzeigen</span> <mat-icon>arrow_forward</mat-icon>
       </button>
     </div>
     <app-readings-list [rows]="state.recentReadings()" />

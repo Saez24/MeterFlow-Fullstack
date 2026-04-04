@@ -53,8 +53,7 @@ export class Auth {
     const { email, password, confirmPassword } = this.form.value;
 
     if (this.mode() === 'register' && password !== confirmPassword) {
-      this.errorMessage.set('Passwörter stimmen nicht überein');
-      return;
+      this.errorMessage.set($localize`:@@auth.error.passwordMismatch:Passwörter stimmen nicht überein`);
     }
 
     this.loading.set(true);
@@ -69,7 +68,7 @@ export class Auth {
         const { error } = await this.supabase.signUp(email!, password!);
         if (error) throw error;
         this.snackBar.open(
-          'Konto erstellt! Bitte bestätige deine E-Mail.',
+          $localize`:@@auth.accountCreated:Konto erstellt! Bitte bestätige deine E-Mail.`,
           'OK',
           { duration: 6000 }
         );
@@ -83,10 +82,10 @@ export class Auth {
   }
 
   private translateError(msg: string): string {
-    if (msg.includes('Invalid login credentials')) return 'E-Mail oder Passwort falsch';
-    if (msg.includes('Email not confirmed')) return 'Bitte bestätige zuerst deine E-Mail';
-    if (msg.includes('User already registered')) return 'Diese E-Mail ist bereits registriert';
-    if (msg.includes('Password should be')) return 'Passwort muss mindestens 6 Zeichen haben';
-    return 'Ein Fehler ist aufgetreten. Bitte versuche es erneut.';
+    if (msg.includes('Invalid login credentials')) return $localize`:@@auth.error.invalidCredentials:E-Mail oder Passwort falsch`;
+    if (msg.includes('Email not confirmed')) return $localize`:@@auth.error.emailNotConfirmed:Bitte bestätige zuerst deine E-Mail`;
+    if (msg.includes('User already registered')) return $localize`:@@auth.error.alreadyRegistered:Diese E-Mail ist bereits registriert`;
+    if (msg.includes('Password should be')) return $localize`:@@auth.error.passwordTooShort:Passwort muss mindestens 6 Zeichen haben`;
+    return $localize`:@@auth.error.generic:Ein Fehler ist aufgetreten. Bitte versuche es erneut.`;
   }
 }

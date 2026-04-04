@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, signal, computed, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import {
@@ -46,7 +46,7 @@ import { maxDecimalPlaces } from '../../../core/validators/decimal-places.valida
   styleUrl: './readings-form.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ReadingsForm implements OnInit {
+export class ReadingsForm {
   private readonly meterService = inject(MeterService);
   private readonly readingService = inject(ReadingService);
   private readonly tariffService = inject(TariffService);
@@ -88,6 +88,21 @@ export class ReadingsForm implements OnInit {
     this.form.valueChanges.pipe(takeUntilDestroyed()).subscribe(() => {
       this.formSignal.set(this.form.getRawValue());
     });
+
+    if (this.isEditMode && this.originalReading) {
+      this.form.patchValue(this.originalReading);
+      this.formSignal.set(this.form.getRawValue());
+      this.form.controls.meterId.disable();
+    } else {
+      const meterId = this.route.snapshot.queryParamMap.get('meterId');
+      if (meterId) {
+        this.form.patchValue({ meterId });
+        this.formSignal.set(this.form.getRawValue());
+      } else if (this.activeMeters().length === 1) {
+        this.form.patchValue({ meterId: this.activeMeters()[0].id });
+        this.formSignal.set(this.form.getRawValue());
+      }
+    }
   }
 
   readonly isSaveDisabled = computed(() => {
@@ -188,23 +203,6 @@ export class ReadingsForm implements OnInit {
     return this.nextReading()?.value ?? null;
   });
 
-  ngOnInit(): void {
-    if (this.isEditMode && this.originalReading) {
-      this.form.patchValue(this.originalReading);
-      this.formSignal.set(this.form.getRawValue());
-      this.form.controls.meterId.disable();
-    } else {
-      const meterId = this.route.snapshot.queryParamMap.get('meterId');
-      if (meterId) {
-        this.form.patchValue({ meterId });
-        this.formSignal.set(this.form.getRawValue());
-      } else if (this.activeMeters().length === 1) {
-        this.form.patchValue({ meterId: this.activeMeters()[0].id });
-        this.formSignal.set(this.form.getRawValue());
-      }
-    }
-  }
-
   selectMeter(id: string): void {
     this.form.patchValue({ meterId: id });
   }
@@ -233,7 +231,7 @@ export class ReadingsForm implements OnInit {
     const numericValue = this.numericFormValue();
 
     if (numericValue === null) {
-      this.snackBar.open('Ungültiger Wert für Zählerstand.', 'OK', {
+      this.snackBar.open($localize`:@@readingsForm.invalidValue:Ungültiger Wert für Zählerstand.`, 'OK', {
         duration: 5000,
         panelClass: 'error-snackbar',
       });
@@ -260,11 +258,11 @@ export class ReadingsForm implements OnInit {
         });
       }
 
-      this.snackBar.open('Ablesung gespeichert', 'OK', { duration: 3000 });
+      this.snackBar.open($localize`:@@readingsForm.saved:Ablesung gespeichert`, 'OK', { duration: 3000 });
       this.goBack();
     } catch (error) {
       console.error('Error saving reading:', error);
-      this.snackBar.open('Fehler beim Speichern der Ablesung', 'OK', {
+      this.snackBar.open($localize`:@@readingsForm.saveError:Fehler beim Speichern der Ablesung`, 'OK', {
         duration: 5000,
         panelClass: 'error-snackbar',
       });
