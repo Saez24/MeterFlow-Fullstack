@@ -59,8 +59,8 @@ export class StatsService {
     for (const meter of this.meterService.activeMeters()) {
       if (!meter.budget) continue;
       const { budget } = meter;
-      const monthStats = this.getMonthStats(thisYear).find((m) => m.month === thisMonth);
       const yearStats = this.getYearStats(thisYear);
+      const monthStats = yearStats.months.find((m) => m.month === thisMonth);
       const ms = monthStats?.byMeter[meter.id];
       const ys = yearStats.byMeter[meter.id];
 
