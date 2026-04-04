@@ -6,11 +6,13 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
 import { FormsModule } from '@angular/forms';
 import { ENERGY_META, ReadingRow } from '../../core/models/energy.models';
 import { MeterService } from '../../core/services/meter.service';
 import { ReadingService } from '../../core/services/reading.service';
 import { ReadingsList } from '../../shared/components/readings-list/readings-list';
+import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/confirm-dialog';
 
 
 @Component({
@@ -34,6 +36,7 @@ export class Readings {
   private readonly meterService = inject(MeterService);
   readonly readingService = inject(ReadingService);
   private readonly snackBar = inject(MatSnackBar);
+  private readonly dialog = inject(MatDialog);
 
   readonly meters = this.meterService.meters;
   readonly filterMeterId = signal<string>('');
@@ -60,9 +63,19 @@ export class Readings {
   }
 
   deleteReading(id: string): void {
-    if (confirm('Ablesung wirklich löschen?')) {
-      this.readingService.deleteReading(id);
-      this.snackBar.open('Ablesung gelöscht', 'OK', { duration: 3000 });
-    }
+    this.dialog
+      .open(ConfirmDialogComponent, {
+        data: {
+          title: 'Ablesung löschen',
+          message: 'Ablesung wirklich löschen?',
+          confirmLabel: 'Löschen',
+        },
+      })
+      .afterClosed()
+      .subscribe((confirmed: boolean) => {
+        if (!confirmed) return;
+        this.readingService.deleteReading(id);
+        this.snackBar.open('Ablesung gelöscht', 'OK', { duration: 3000 });
+      });
   }
 }

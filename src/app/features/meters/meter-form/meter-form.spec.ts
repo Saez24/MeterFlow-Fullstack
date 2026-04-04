@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideExperimentalZonelessChangeDetection } from '@angular/core';
 import { provideRouter, ActivatedRoute } from '@angular/router';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -43,6 +44,7 @@ describe('MeterForm', () => {
     await TestBed.configureTestingModule({
       imports: [MeterForm, NoopAnimationsModule],
       providers: [
+        provideExperimentalZonelessChangeDetection(),
         provideRouter([]),
         {
           provide: ActivatedRoute,

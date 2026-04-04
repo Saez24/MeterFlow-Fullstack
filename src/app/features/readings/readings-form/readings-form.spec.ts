@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideExperimentalZonelessChangeDetection } from '@angular/core';
 import { provideRouter, Router, ActivatedRoute } from '@angular/router';
 import { importProvidersFrom } from '@angular/core';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
@@ -26,10 +27,11 @@ describe('ReadingsForm', () => {
         dispatchEvent: vi.fn(),
       })),
     });
-    
+
     await TestBed.configureTestingModule({
       imports: [ReadingsForm, NoopAnimationsModule],
       providers: [
+        provideExperimentalZonelessChangeDetection(),
         provideRouter([]),
         EnergyService,
         SupabaseService,

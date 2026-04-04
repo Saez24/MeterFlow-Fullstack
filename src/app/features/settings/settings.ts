@@ -4,16 +4,18 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ThemeService } from '../../core/services/theme.service';
 import { SupabaseService } from '../../core/services/supabse.service';
 import { Router } from '@angular/router';
 import { MeterService } from '../../core/services/meter.service';
 import { ReadingService } from '../../core/services/reading.service';
 import { DataSyncService } from '../../core/services/data-sync.service';
+import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/confirm-dialog';
 
 @Component({
   selector: 'app-settings',
-  imports: [CommonModule, MatButtonModule, MatIconModule, MatCardModule, MatSnackBarModule],
+  imports: [CommonModule, MatButtonModule, MatIconModule, MatCardModule, MatSnackBarModule, MatDialogModule],
   templateUrl: './settings.html',
   styleUrl: './settings.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -26,6 +28,7 @@ export class Settings {
   private readonly snackBar = inject(MatSnackBar);
   private readonly router = inject(Router);
   private readonly supabase = inject(SupabaseService);
+  private readonly dialog = inject(MatDialog);
 
   readonly themeMode = this.themeService.mode;
 
@@ -68,12 +71,21 @@ export class Settings {
   }
 
   clearAll(): void {
-    if (
-      confirm('Alle Daten wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden!')
-    ) {
-      localStorage.clear();
-      window.location.reload();
-    }
+    this.dialog
+      .open(ConfirmDialogComponent, {
+        data: {
+          title: 'Alle Daten löschen',
+          message:
+            'Alle Daten wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden!',
+          confirmLabel: 'Alles löschen',
+        },
+      })
+      .afterClosed()
+      .subscribe((confirmed: boolean) => {
+        if (!confirmed) return;
+        localStorage.clear();
+        window.location.reload();
+      });
   }
 
   async logout(): Promise<void> {

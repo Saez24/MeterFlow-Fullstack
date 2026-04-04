@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideExperimentalZonelessChangeDetection } from '@angular/core';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { TariffHistory } from './tariff-history';
 import { MeterConfig, EnergyType } from '../../../core/models/energy.models';
@@ -34,9 +35,10 @@ describe('TariffHistory', () => {
         dispatchEvent: vi.fn(),
       })),
     });
-    
+
     await TestBed.configureTestingModule({
       imports: [TariffHistory, NoopAnimationsModule],
+      providers: [provideExperimentalZonelessChangeDetection()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(TariffHistory);

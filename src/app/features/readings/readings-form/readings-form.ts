@@ -17,7 +17,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDividerModule } from '@angular/material/divider';
 import { ENERGY_META, MeterReading } from '../../../core/models/energy.models';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MeterService } from '../../../core/services/meter.service';
 import { ReadingService } from '../../../core/services/reading.service';
 import { TariffService } from '../../../core/services/tariff.service';
@@ -84,7 +84,7 @@ export class ReadingsForm implements OnInit {
   });
 
   constructor() {
-    this.form.valueChanges.subscribe(() => {
+    this.form.valueChanges.pipe(takeUntilDestroyed()).subscribe(() => {
       this.formSignal.set(this.form.getRawValue());
     });
   }

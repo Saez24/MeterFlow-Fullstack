@@ -36,7 +36,6 @@ export class App {
   readonly sidebarCollapsed = signal(false);
 
   private readonly router = inject(Router);
-  private readonly supabase = inject(SupabaseService);
 
   readonly isAuthPage = toSignal(
     this.router.events.pipe(
@@ -75,7 +74,7 @@ export class App {
   });
 
   async logout(): Promise<void> {
-    await this.supabase.signOut();
+    await this.supabaseService.signOut();
     this.router.navigate(['/auth']);
   }
 }

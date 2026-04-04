@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { provideExperimentalZonelessChangeDetection } from '@angular/core';
 import { App } from './app';
 import { provideRouter, ActivatedRoute, NavigationEnd } from '@angular/router';
 import { vi } from 'vitest';
@@ -24,6 +25,7 @@ describe('App', () => {
     await TestBed.configureTestingModule({
       imports: [App],
       providers: [
+        provideExperimentalZonelessChangeDetection(),
         provideRouter([{ path: '', component: App }]),
         SupabaseService,
         {

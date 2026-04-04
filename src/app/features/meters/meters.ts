@@ -6,10 +6,11 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
-import { MatDialogModule } from '@angular/material/dialog';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { firstValueFrom } from 'rxjs';
 import {
   ENERGY_META,
   MeterConfig,
@@ -18,6 +19,7 @@ import {
 import { MeterService } from '../../core/services/meter.service';
 import { ReadingService } from '../../core/services/reading.service';
 import { TariffService } from '../../core/services/tariff.service';
+import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/confirm-dialog';
 
 @Component({
   selector: 'app-meters',
@@ -42,6 +44,7 @@ export class Meters {
   private readonly readingService = inject(ReadingService);
   private readonly tariffService = inject(TariffService);
   private readonly snackBar = inject(MatSnackBar);
+  private readonly dialog = inject(MatDialog);
 
   readonly meters = this.meterService.meters;
 
@@ -66,14 +69,20 @@ export class Meters {
   }
 
   async deleteMeter(meter: MeterConfig): Promise<void> {
-    if (
-      confirm(
-        `Zähler "${meter.name}" wirklich löschen? Alle Ablesungen werden ebenfalls gelöscht.`,
-      )
-    ) {
-      await this.meterService.deleteMeter(meter.id);
-      await this.readingService.deleteReadingsForMeter(meter.id);
-      this.snackBar.open('Zähler gelöscht', 'OK', { duration: 3000 });
-    }
+    const confirmed = await firstValueFrom(
+      this.dialog
+        .open(ConfirmDialogComponent, {
+          data: {
+            title: 'Zähler löschen',
+            message: `Zähler "${meter.name}" wirklich löschen? Alle Ablesungen werden ebenfalls gelöscht.`,
+            confirmLabel: 'Löschen',
+          },
+        })
+        .afterClosed(),
+    );
+    if (!confirmed) return;
+    await this.meterService.deleteMeter(meter.id);
+    await this.readingService.deleteReadingsForMeter(meter.id);
+    this.snackBar.open('Zähler gelöscht', 'OK', { duration: 3000 });
   }
 }

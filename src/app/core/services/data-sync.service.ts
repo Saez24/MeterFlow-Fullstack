@@ -22,21 +22,31 @@ export class DataSyncService {
   }
 
   async importData(json: string): Promise<void> {
-    const data = JSON.parse(json);
-    if (data.meters) {
-      for (const m of data.meters) {
-        await this.supabase.addMeter(m);
+    let parsed: unknown;
+    try {
+      parsed = JSON.parse(json);
+    } catch {
+      throw new Error('Ungültiges JSON-Format');
+    }
+    if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+      throw new Error('Ungültige Datenstruktur');
+    }
+    const data = parsed as Record<string, unknown>;
+    if (Array.isArray(data['meters'])) {
+      for (const m of data['meters']) {
+        await this.supabase.addMeter(m as never);
       }
     }
-    if (data.readings) {
-      for (const r of data.readings) {
-        await this.supabase.addReading({ ...r, date: new Date(r.date) });
+    if (Array.isArray(data['readings'])) {
+      for (const r of data['readings'] as Record<string, unknown>[]) {
+        const reading = r as Omit<Parameters<typeof this.supabase.addReading>[0], 'date'> & { date: unknown };
+        await this.supabase.addReading({ ...reading, date: new Date(reading.date as string) });
       }
     }
     // Reload all data after import
     await Promise.all([
-        this.meterService.loadMeters(),
-        this.readingService.loadReadings()
+      this.meterService.loadMeters(),
+      this.readingService.loadReadings()
     ]);
   }
 }

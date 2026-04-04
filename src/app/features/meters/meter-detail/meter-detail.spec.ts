@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideExperimentalZonelessChangeDetection } from '@angular/core';
 import { MeterDetail } from './meter-detail';
 import { provideRouter, ActivatedRoute } from '@angular/router';
 import { vi } from 'vitest';
@@ -28,6 +29,7 @@ describe('MeterDetail', () => {
     await TestBed.configureTestingModule({
       imports: [MeterDetail, NoopAnimationsModule],
       providers: [
+        provideExperimentalZonelessChangeDetection(),
         provideRouter([]),
         SupabaseService,
         EnergyService,

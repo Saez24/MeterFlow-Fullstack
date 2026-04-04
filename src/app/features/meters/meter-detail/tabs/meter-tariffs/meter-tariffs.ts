@@ -2,11 +2,13 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { firstValueFrom } from 'rxjs';
 import { TariffHistory } from '../../../../../shared/components/tariff-history/tariff-history';
 import { TariffFormComponent } from '../../../../../shared/components/tariff-form/tariff-form';
 import { TariffService } from '../../../../../core/services/tariff.service';
 import { ReadingService } from '../../../../../core/services/reading.service';
 import { MeterDetailStateService } from '../../../../../core/services/meter-detail-state.service';
+import { ConfirmDialogComponent } from '../../../../../shared/components/confirm-dialog/confirm-dialog';
 
 @Component({
   selector: 'app-meter-tariffs',
@@ -41,10 +43,20 @@ export class MeterTariffs {
     const meter = this.meter();
     if (!meter) return;
 
-    if (confirm('Tarif-Periode löschen?')) {
-      await this.tariffService.deleteTariffPeriod(meter.id, periodId);
-      await this.readingService.recalculateAllReadingsForMeter(meter.id);
-      this.snackBar.open('Tarif gelöscht', 'OK', { duration: 2000 });
-    }
+    const confirmed = await firstValueFrom(
+      this.dialog
+        .open(ConfirmDialogComponent, {
+          data: {
+            title: 'Tarif-Periode löschen',
+            message: 'Tarif-Periode löschen?',
+            confirmLabel: 'Löschen',
+          },
+        })
+        .afterClosed(),
+    );
+    if (!confirmed) return;
+    await this.tariffService.deleteTariffPeriod(meter.id, periodId);
+    await this.readingService.recalculateAllReadingsForMeter(meter.id);
+    this.snackBar.open('Tarif gelöscht', 'OK', { duration: 2000 });
   }
 }
