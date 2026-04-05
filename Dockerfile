@@ -16,7 +16,10 @@ RUN ./node_modules/.bin/ng build --configuration=production
 FROM nginx:alpine
 RUN rm -rf /usr/share/nginx/html/*
 COPY nginx.conf /etc/nginx/conf.d/default.conf
-COPY --from=builder /app/dist/MeterFlow/browser /usr/share/nginx/html/
+# DE (baseHref: "/") → nginx-Root
+COPY --from=builder /app/dist/MeterFlow/browser/de /usr/share/nginx/html/
+# EN (baseHref: "/en/") → /en/ Unterordner
+COPY --from=builder /app/dist/MeterFlow/browser/en /usr/share/nginx/html/en/
 
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
