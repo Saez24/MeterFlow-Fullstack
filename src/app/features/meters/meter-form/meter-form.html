@@ -140,6 +140,28 @@
 
     <!-- Notizen -->
     <mat-divider class="section-divider"></mat-divider>
+
+    <!-- Fernwärme -->
+    @if (isFernwarme()) {
+    <mat-divider class="section-divider"></mat-divider>
+    <div class="form-section">
+      <div class="gas-header">
+        <h3 class="section-title">
+          <mat-icon class="gas-icon">heat</mat-icon>
+          <span i18n="@@meterForm.fernwarme.title">Fernwärme-Parameter</span>
+        </h3>
+        <span class="gas-hint" i18n="@@meterForm.fernwarme.hint">Anschlussleistung laut Versorgungsvertrag</span>
+      </div>
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label i18n="@@meterForm.fernwarme.connectedLoad">Bereitstellungsleistung</mat-label>
+        <input matInput type="number" formControlName="connectedLoadKw" step="0.01" min="0" placeholder="7.99"
+          i18n-placeholder="@@meterForm.fernwarme.connectedLoadPlaceholder" />
+        <span matSuffix>kW</span>
+        <mat-hint i18n="@@meterForm.fernwarme.connectedLoadHint">Festgeschriebene Leistung je Zähler</mat-hint>
+      </mat-form-field>
+    </div>
+    }
+
     <div class="form-section">
       <h3 class="section-title" i18n="@@meterForm.notes.title">Notizen</h3>
       <mat-form-field appearance="outline" class="form-field form-field--full">

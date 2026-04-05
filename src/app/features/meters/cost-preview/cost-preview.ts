@@ -64,25 +64,40 @@ export class CostPreview {
       if (validFrom > yearEnd) continue;
 
       const startDate = validFrom > lastDate ? validFrom : lastDate;
-      
+
       let endDate: Date;
       if (i + 1 < sortedTariffs.length) {
-        const nextValidFrom = new Date(sortedTariffs[i+1].validFrom);
+        const nextValidFrom = new Date(sortedTariffs[i + 1].validFrom);
         endDate = new Date(nextValidFrom.getTime() - 1);
-        if(endDate > yearEnd) endDate = yearEnd;
+        if (endDate > yearEnd) endDate = yearEnd;
       } else {
         endDate = yearEnd;
       }
 
-      if(startDate > endDate) continue;
-      
+      if (startDate > endDate) continue;
+
       const days = (endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24) + 1;
       const periodConsumption = (consumption / 365) * days;
-      const baseChargePerDay = (tariff.baseCharge * 12) / 365;
-      const periodBaseCharge = baseChargePerDay * days;
-      const consumptionCost = periodConsumption * tariff.pricePerUnit;
+
+      let periodBaseCharge: number;
+      let consumptionCost: number;
+
+      if (meter.type === 'fernwarme') {
+        const connectedKw = meter.connectedLoadKw ?? 0;
+        const thresholdKw = tariff.capacityThresholdKw ?? 15;
+        const annualFixed =
+          (tariff.annualBasePrice ?? 0) +
+          Math.max(0, connectedKw - thresholdKw) * (tariff.basePricePerKw ?? 0);
+        periodBaseCharge = (annualFixed / 365) * days;
+        consumptionCost = periodConsumption * tariff.pricePerUnit;
+      } else {
+        const baseChargePerDay = (tariff.baseCharge * 12) / 365;
+        periodBaseCharge = baseChargePerDay * days;
+        consumptionCost = periodConsumption * tariff.pricePerUnit;
+      }
+
       const totalCost = periodBaseCharge + consumptionCost;
-      
+
       calculationPeriods.push({
         name: `Tarif vom ${validFrom.toLocaleDateString()}`,
         startDate: startDate,
@@ -95,7 +110,7 @@ export class CostPreview {
       });
 
       lastDate = new Date(endDate.getTime() + (1000 * 3600 * 24));
-      if(lastDate > yearEnd) break;
+      if (lastDate > yearEnd) break;
     }
 
     const totalCost = calculationPeriods.reduce((sum, p) => sum + p.cost, 0);

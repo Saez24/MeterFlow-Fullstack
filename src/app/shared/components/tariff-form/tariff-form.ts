@@ -61,6 +61,8 @@ export class TariffFormComponent {
     validFrom: [new Date(), Validators.required],
     emissionPrice: [undefined as number | undefined],
     basePricePerKw: [undefined as number | undefined],
+    annualBasePrice: [undefined as number | undefined],
+    capacityThresholdKw: [15 as number | undefined],
     wastewaterPrice: [undefined as number | undefined],
     calorificValue: [undefined as number | undefined],
     zNumber: [undefined as number | undefined],
@@ -95,6 +97,8 @@ export class TariffFormComponent {
         this.form.patchValue({
           emissionPrice: lastTariff?.emissionPrice ?? 0,
           basePricePerKw: lastTariff?.basePricePerKw ?? 0,
+          annualBasePrice: lastTariff?.annualBasePrice ?? 0,
+          capacityThresholdKw: lastTariff?.capacityThresholdKw ?? 15,
         });
       }
       if (this.isWater()) {
@@ -129,6 +133,8 @@ export class TariffFormComponent {
     if (this.isDistrictHeating()) {
       tariffData.emissionPrice = formValue.emissionPrice;
       tariffData.basePricePerKw = formValue.basePricePerKw;
+      tariffData.annualBasePrice = formValue.annualBasePrice;
+      tariffData.capacityThresholdKw = formValue.capacityThresholdKw ?? 15;
     }
 
     if (this.isEdit()) {

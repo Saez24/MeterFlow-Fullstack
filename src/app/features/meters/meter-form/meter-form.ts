@@ -69,6 +69,7 @@ export class MeterForm {
     linkedWaterMeterId: [''],
     calorificValue: [undefined as number | undefined],
     zNumber: [undefined as number | undefined],
+    connectedLoadKw: [undefined as number | undefined],
     notes: [''],
     active: [true],
   });
@@ -86,7 +87,7 @@ export class MeterForm {
     [EnergyType.Water, EnergyType.GardenWater].includes(this.typeValue()),
   );
   readonly isHeatingOil = computed(() => this.typeValue() === EnergyType.HeatingOil);
-  readonly isFernwärme = computed(() => this.typeValue() === EnergyType.Fernwärme);
+  readonly isFernwarme = computed(() => this.typeValue() === EnergyType.Fernwärme);
   readonly isElectricity = computed(() => this.typeValue() === EnergyType.Electricity);
   readonly isGardenWater = computed(() => this.typeValue() === EnergyType.GardenWater);
   readonly isSolar = computed(() => this.typeValue() === EnergyType.Solar);
@@ -165,6 +166,7 @@ export class MeterForm {
       ...(value.linkedWaterMeterId && { linkedWaterMeterId: value.linkedWaterMeterId }),
       ...(value.calorificValue != null && { calorificValue: value.calorificValue }),
       ...(value.zNumber != null && { zNumber: value.zNumber }),
+      ...(value.connectedLoadKw != null && { connectedLoadKw: value.connectedLoadKw }),
       ...(value.meterNumber && { meterNumber: value.meterNumber }),
       ...(value.provider && { provider: value.provider }),
       ...(value.notes && { notes: value.notes }),

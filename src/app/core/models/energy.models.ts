@@ -27,7 +27,9 @@ export interface TariffPeriod {
   zNumber?: number;
   note?: string;
   emissionPrice?: number;
-  basePricePerKw?: number; // For Fernwärme
+  basePricePerKw?: number;       // Fernwärme: Bereitstellungspreis pro kW/Jahr
+  annualBasePrice?: number;      // Fernwärme: Grundpreis pro Jahr (fix)
+  capacityThresholdKw?: number;  // Fernwärme: Freigrenze (kW), ab der BP gilt (Standard: 15 kW)
 }
 
 export interface BudgetConfig {
@@ -44,7 +46,7 @@ export type UnitByEnergyType = {
   [EnergyType.GardenWater]: 'm³';
   [EnergyType.HeatingOil]: 'Liter';
   [EnergyType.Solar]: 'kWh';
-  [EnergyType.Fernwärme]: 'kWh';
+  [EnergyType.Fernwärme]: 'MWh';
 };
 
 export type MaterialIcon =
@@ -160,7 +162,7 @@ export const ENERGY_META: Record<
   [EnergyType.GardenWater]: { label: 'Gartenwasser', icon: 'yard', color: '#10B981', unit: 'm³' },
   [EnergyType.HeatingOil]: { label: 'Heizöl', icon: 'oil_barrel', color: '#F97316', unit: 'Liter' },
   [EnergyType.Solar]: { label: 'Solar', icon: 'wb_sunny', color: '#EAB308', unit: 'kWh' },
-  [EnergyType.Fernwärme]: { label: 'Fernwärme', icon: 'local_fire_department', color: '#EAB308', unit: 'kWh' },
+  [EnergyType.Fernwärme]: { label: 'Fernwärme', icon: 'local_fire_department', color: '#EAB308', unit: 'MWh' },
 };
 
 export const MONTH_NAMES = [

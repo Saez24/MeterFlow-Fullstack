@@ -76,6 +76,16 @@ export class ReadingService {
           new Date(reading.date),
         );
         wastewaterCost = Math.max(0, consumption - gardenM3) * (tariff.wastewaterPrice ?? 0);
+      } else if (meter.type === 'fernwarme') {
+        const days = prev
+          ? (new Date(reading.date).getTime() - new Date(prev.date).getTime()) / 86_400_000
+          : 0;
+        const connectedKw = meter.connectedLoadKw ?? 0;
+        const thresholdKw = tariff.capacityThresholdKw ?? 15;
+        const annualFixed =
+          (tariff.annualBasePrice ?? 0) +
+          Math.max(0, connectedKw - thresholdKw) * (tariff.basePricePerKw ?? 0);
+        cost = (annualFixed / 365) * days + consumption * tariff.pricePerUnit;
       } else {
         cost = consumption * tariff.pricePerUnit;
       }
@@ -152,6 +162,16 @@ export class ReadingService {
             : 0;
           const wc = Math.max(0, consumption - gardenM3) * (tariff.wastewaterPrice ?? 0);
           wastewaterCost = wc > 0 ? wc : undefined;
+        } else if (meter.type === 'fernwarme') {
+          const days = prev
+            ? (new Date(current.date).getTime() - new Date(prev.date).getTime()) / 86_400_000
+            : 0;
+          const connectedKw = meter.connectedLoadKw ?? 0;
+          const thresholdKw = tariff.capacityThresholdKw ?? 15;
+          const annualFixed =
+            (tariff.annualBasePrice ?? 0) +
+            Math.max(0, connectedKw - thresholdKw) * (tariff.basePricePerKw ?? 0);
+          cost = (annualFixed / 365) * days + consumption * tariff.pricePerUnit;
         } else {
           cost = consumption * tariff.pricePerUnit;
         }

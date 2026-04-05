@@ -14,34 +14,47 @@
         <input matInput type="number" formControlName="pricePerUnit" placeholder="0.30" />
         <span matSuffix>€</span>
         <mat-error>
-  @if (form.get('pricePerUnit')?.hasError('required')) {
-    Preis ist ein Pflichtfeld.
-  }
-</mat-error>
+          @if (form.get('pricePerUnit')?.hasError('required')) {
+          Preis ist ein Pflichtfeld.
+          }
+        </mat-error>
       </mat-form-field>
 
       @if (isDistrictHeating()) {
-        <mat-form-field appearance="outline">
-          <mat-label>Grundpreis pro kW/a</mat-label>
-          <input matInput type="number" formControlName="basePricePerKw" placeholder="150" />
-          <span matSuffix>€</span>
-        </mat-form-field>
-        <mat-form-field appearance="outline">
-          <mat-label>Emissionspreis pro kWh</mat-label>
-          <input matInput type="number" formControlName="emissionPrice" placeholder="0.005" />
-          <span matSuffix>€</span>
-        </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Grundpreis (GP) pro Jahr</mat-label>
+        <input matInput type="number" formControlName="annualBasePrice" placeholder="741.52" />
+        <span matSuffix>€</span>
+        <mat-hint>Fixer Jahresgrundbetrag</mat-hint>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Bereitstellungspreis (BP) pro kW/Jahr</mat-label>
+        <input matInput type="number" formControlName="basePricePerKw" placeholder="51.54" />
+        <span matSuffix>€</span>
+        <mat-hint>für jedes kW über der Freigrenze</mat-hint>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>BP-Freigrenze</mat-label>
+        <input matInput type="number" formControlName="capacityThresholdKw" placeholder="15" />
+        <span matSuffix>kW</span>
+        <mat-hint>Standard: 15 kW</mat-hint>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Emissionspreis pro MWh</mat-label>
+        <input matInput type="number" formControlName="emissionPrice" placeholder="0.005" />
+        <span matSuffix>€</span>
+      </mat-form-field>
       } @else if (!isLinkedGardenWater()) {
-        <mat-form-field appearance="outline">
-          <mat-label>Grundgebühr pro Monat</mat-label>
-          <input matInput type="number" formControlName="baseCharge" placeholder="12.50" />
-          <span matSuffix>€</span>
-          <mat-error>
-    @if (form.get('baseCharge')?.hasError('required')) {
-      Grundgebühr ist ein Pflichtfeld.
-    }
-  </mat-error>
-        </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Grundgebühr pro Monat</mat-label>
+        <input matInput type="number" formControlName="baseCharge" placeholder="12.50" />
+        <span matSuffix>€</span>
+        <mat-error>
+          @if (form.get('baseCharge')?.hasError('required')) {
+          Grundgebühr ist ein Pflichtfeld.
+          }
+        </mat-error>
+      </mat-form-field>
       }
     </div>
 
@@ -59,10 +72,10 @@
       <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
       <mat-datepicker #picker></mat-datepicker>
       <mat-error>
-  @if (form.get('validFrom')?.hasError('required')) {
-    Datum ist ein Pflichtfeld.
-  }
-</mat-error>
+        @if (form.get('validFrom')?.hasError('required')) {
+        Datum ist ein Pflichtfeld.
+        }
+      </mat-error>
     </mat-form-field>
 
     @if (isGas()) {
