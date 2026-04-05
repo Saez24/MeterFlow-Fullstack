@@ -1098,6 +1098,100 @@
         <source>Fehler beim Import</source>
         <target>Import error</target>
       </trans-unit>
+      <!-- PWA Install -->
+      <trans-unit id="settings.pwa.title" datatype="html">
+        <source>App installieren</source>
+        <target>Install App</target>
+      </trans-unit>
+      <trans-unit id="settings.pwa.doneTitle" datatype="html">
+        <source>Bereits installiert</source>
+        <target>Already installed</target>
+      </trans-unit>
+      <trans-unit id="settings.pwa.doneDesc" datatype="html">
+        <source>MeterFlow läuft als eigenständige App auf deinem Gerät.</source>
+        <target>MeterFlow is running as a standalone app on your device.</target>
+      </trans-unit>
+      <trans-unit id="settings.pwa.installTitle" datatype="html">
+        <source>Zum Home-Bildschirm hinzufügen</source>
+        <target>Add to Home Screen</target>
+      </trans-unit>
+      <trans-unit id="settings.pwa.installDesc" datatype="html">
+        <source>Installiere MeterFlow als App – ohne App Store, direkt aus dem Browser.</source>
+        <target>Install MeterFlow as an app – no App Store required, directly from the browser.</target>
+      </trans-unit>
+      <trans-unit id="settings.pwa.installBtn" datatype="html">
+        <source>Installieren</source>
+        <target>Install</target>
+      </trans-unit>
+      <trans-unit id="settings.pwa.iosTitle" datatype="html">
+        <source>iOS: Zum Home-Bildschirm</source>
+        <target>iOS: Add to Home Screen</target>
+      </trans-unit>
+      <trans-unit id="settings.pwa.iosDesc" datatype="html">
+        <source>Tippe auf das Teilen-Symbol ↑ in Safari und wähle „Zum Home-Bildschirm".</source>
+        <target>Tap the Share icon ↑ in Safari and choose "Add to Home Screen".</target>
+      </trans-unit>
+      <trans-unit id="settings.pwa.installed" datatype="html">
+        <source>App wurde installiert</source>
+        <target>App installed</target>
+      </trans-unit>
+      <!-- CO₂-Emissionsfaktoren Settings -->
+      <trans-unit id="settings.co2Factors.title" datatype="html">
+        <source>CO₂-Emissionsfaktoren</source>
+        <target>CO₂ Emission Factors</target>
+      </trans-unit>
+      <trans-unit id="settings.co2Factors.desc" datatype="html">
+        <source>Faktoren für die CO₂-Berechnung pro Energietyp. Standardwerte stammen vom Umweltbundesamt (UBA) 2024. Du kannst sie jährlich aktualisieren und die Quelle verlinken.</source>
+        <target>Factors for CO₂ calculation per energy type. Defaults are from the German Federal Environment Agency (UBA) 2024. You can update them annually and link to your source.</target>
+      </trans-unit>
+      <trans-unit id="settings.co2Factors.default" datatype="html">
+        <source>Standard (UBA)</source>
+        <target>Default (UBA)</target>
+      </trans-unit>
+      <trans-unit id="settings.co2Factors.editAria" datatype="html">
+        <source>CO₂-Faktor bearbeiten</source>
+        <target>Edit CO₂ factor</target>
+      </trans-unit>
+      <trans-unit id="settings.co2Factors.factor" datatype="html">
+        <source>Faktor (kg CO₂/<x id="INTERPOLATION" equiv-text="{{ entry.unit }}"/>)</source>
+        <target>Factor (kg CO₂/<x id="INTERPOLATION"/>)</target>
+      </trans-unit>
+      <trans-unit id="settings.co2Factors.factorHint" datatype="html">
+        <source>Negative Werte = Gutschrift (Solar)</source>
+        <target>Negative values = credit (Solar)</target>
+      </trans-unit>
+      <trans-unit id="settings.co2Factors.source" datatype="html">
+        <source>Quelle</source>
+        <target>Source</target>
+      </trans-unit>
+      <trans-unit id="settings.co2Factors.sourceUrl" datatype="html">
+        <source>Link zur Quelle (optional)</source>
+        <target>Source link (optional)</target>
+      </trans-unit>
+      <trans-unit id="settings.co2Factors.sourceUrlHint" datatype="html">
+        <source>z.B. UBA-Emissionsfaktoren, AGFW-Statistik</source>
+        <target>e.g. UBA emission factors, AGFW statistics</target>
+      </trans-unit>
+      <trans-unit id="settings.co2Factors.cancel" datatype="html">
+        <source>Abbrechen</source>
+        <target>Cancel</target>
+      </trans-unit>
+      <trans-unit id="settings.co2Factors.save" datatype="html">
+        <source>Speichern</source>
+        <target>Save</target>
+      </trans-unit>
+      <trans-unit id="settings.co2Factors.reset" datatype="html">
+        <source>Auf UBA-Standard zurücksetzen</source>
+        <target>Reset to UBA default</target>
+      </trans-unit>
+      <trans-unit id="settings.co2Factors.saved" datatype="html">
+        <source>CO₂-Faktor gespeichert</source>
+        <target>CO₂ factor saved</target>
+      </trans-unit>
+      <trans-unit id="settings.co2Factors.reset.done" datatype="html">
+        <source>Standardwert wiederhergestellt</source>
+        <target>Default value restored</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

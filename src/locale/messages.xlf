@@ -1924,6 +1924,169 @@
           <context context-type="linenumber">1</context>
         </context-group>
       </trans-unit>
+      <!-- PWA Install -->
+      <trans-unit id="settings.pwa.title" datatype="html">
+        <source>App installieren</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/settings/settings.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="settings.pwa.doneTitle" datatype="html">
+        <source>Bereits installiert</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/settings/settings.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="settings.pwa.doneDesc" datatype="html">
+        <source>MeterFlow läuft als eigenständige App auf deinem Gerät.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/settings/settings.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="settings.pwa.installTitle" datatype="html">
+        <source>Zum Home-Bildschirm hinzufügen</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/settings/settings.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="settings.pwa.installDesc" datatype="html">
+        <source>Installiere MeterFlow als App – ohne App Store, direkt aus dem Browser.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/settings/settings.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="settings.pwa.installBtn" datatype="html">
+        <source>Installieren</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/settings/settings.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="settings.pwa.iosTitle" datatype="html">
+        <source>iOS: Zum Home-Bildschirm</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/settings/settings.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="settings.pwa.iosDesc" datatype="html">
+        <source>Tippe auf das Teilen-Symbol ↑ in Safari und wähle „Zum Home-Bildschirm".</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/settings/settings.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="settings.pwa.installed" datatype="html">
+        <source>App wurde installiert</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/settings/settings.ts</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <!-- CO₂-Emissionsfaktoren Settings -->
+      <trans-unit id="settings.co2Factors.title" datatype="html">
+        <source>CO₂-Emissionsfaktoren</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/settings/settings.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="settings.co2Factors.desc" datatype="html">
+        <source>Faktoren für die CO₂-Berechnung pro Energietyp. Standardwerte stammen vom Umweltbundesamt (UBA) 2024. Du kannst sie jährlich aktualisieren und die Quelle verlinken.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/settings/settings.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="settings.co2Factors.default" datatype="html">
+        <source>Standard (UBA)</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/settings/settings.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="settings.co2Factors.editAria" datatype="html">
+        <source>CO₂-Faktor bearbeiten</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/settings/settings.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="settings.co2Factors.factor" datatype="html">
+        <source>Faktor (kg CO₂/<x id="INTERPOLATION" equiv-text="{{ entry.unit }}"/>)</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/settings/settings.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="settings.co2Factors.factorHint" datatype="html">
+        <source>Negative Werte = Gutschrift (Solar)</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/settings/settings.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="settings.co2Factors.source" datatype="html">
+        <source>Quelle</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/settings/settings.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="settings.co2Factors.sourceUrl" datatype="html">
+        <source>Link zur Quelle (optional)</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/settings/settings.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="settings.co2Factors.sourceUrlHint" datatype="html">
+        <source>z.B. UBA-Emissionsfaktoren, AGFW-Statistik</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/settings/settings.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="settings.co2Factors.cancel" datatype="html">
+        <source>Abbrechen</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/settings/settings.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="settings.co2Factors.save" datatype="html">
+        <source>Speichern</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/settings/settings.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="settings.co2Factors.reset" datatype="html">
+        <source>Auf UBA-Standard zurücksetzen</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/settings/settings.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="settings.co2Factors.saved" datatype="html">
+        <source>CO₂-Faktor gespeichert</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/settings/settings.ts</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="settings.co2Factors.reset.done" datatype="html">
+        <source>Standardwert wiederhergestellt</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/settings/settings.ts</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
     </body>
   </file>
 </xliff>

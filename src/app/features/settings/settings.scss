@@ -125,6 +125,137 @@
   height: 18px;
 }
 
+.pwa-check {
+  color: #10b981;
+  font-size: 28px;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+}
+
+.pwa-hint-icon {
+  color: var(--apple-blue, #007aff);
+  font-size: 28px;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+}
+
+// ── Marktpreise ─────────────────────────────
+.section-desc {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin: -8px 0 16px;
+  line-height: 1.5;
+}
+
+.market-prices-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.market-price-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--bg-elevated);
+  transition: background 0.15s;
+
+  &--editing {
+    border-radius: 12px 12px 0 0;
+  }
+}
+
+.market-price-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-size: 0.875rem;
+}
+
+.market-price-type {
+  font-weight: 600;
+  min-width: 90px;
+  color: var(--text-primary);
+}
+
+.market-price-val {
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.market-price-source {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 0.75rem;
+  color: var(--apple-blue, #007aff);
+  text-decoration: none;
+
+  mat-icon {
+    font-size: 11px;
+    width: 11px;
+    height: 11px;
+  }
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.market-price-badge {
+  font-size: 0.65rem;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 10px;
+  background: rgba(0, 122, 255, 0.1);
+  color: var(--apple-blue, #007aff);
+}
+
+.market-price-actions {
+  flex-shrink: 0;
+}
+
+.market-price-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  background: var(--bg-elevated);
+  border-radius: 0 0 12px 12px;
+  border-top: 1px solid var(--border-subtle);
+  margin-bottom: 4px;
+}
+
+.market-price-form-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.mp-field {
+  &--price {
+    flex: 0 0 180px;
+  }
+  &--source {
+    flex: 1 1 200px;
+  }
+  &--url {
+    width: 100%;
+  }
+}
+
+.market-price-form-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
 .stats-grid {
   display: flex;
   gap: 16px;

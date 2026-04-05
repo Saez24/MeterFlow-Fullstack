@@ -206,6 +206,35 @@ export class SupabaseService {
     if (error) throw error;
   }
 
+  // ── CO₂-Faktoren ──────────────────────────────────
+  async getCo2Factors() {
+    return this.client
+      .from('co2_factors')
+      .select('*')
+      .order('energy_type');
+  }
+
+  async upsertCo2Factor(row: {
+    energy_type: string;
+    factor_kg_per_unit: number;
+    unit: string;
+    source: string;
+    source_url: string | null;
+    valid_from: string;
+  }) {
+    const userId = this.currentUser()?.id;
+    if (!userId) throw new Error('Not authenticated');
+    const { error } = await this.client
+      .from('co2_factors')
+      .upsert({ ...row, user_id: userId }, { onConflict: 'user_id,energy_type,valid_from' });
+    if (error) throw error;
+  }
+
+  async deleteCo2Factor(id: string) {
+    const { error } = await this.client.from('co2_factors').delete().eq('id', id);
+    if (error) throw error;
+  }
+
   async checkConnection(): Promise<void> {
     this.connectionStatus.set('checking');
     try {
