@@ -212,7 +212,7 @@
       </trans-unit>
       <trans-unit id="meterReadings.photo.altDynamic" datatype="html">
         <source><x id="PH" equiv-text="meter.name"/> – Ablesung vom <x id="PH_1" equiv-text="dateStr"/></source>
-        <target><x id="PH" equiv-text="meter.name"/> – Reading from <x id="PH_1" equiv-text="dateStr"/></target>
+        <target><x id="meterName" equiv-text="meter.name"/> – Reading from <x id="date" equiv-text="dateStr"/></target>
       </trans-unit>
       <trans-unit id="meterReadings.delete.title" datatype="html">
         <source>Ablesung löschen</source>
@@ -349,6 +349,26 @@
       <trans-unit id="meterForm.gas.formula.label" datatype="html">
         <source>Formel:</source>
         <target>Formula:</target>
+      </trans-unit>
+      <trans-unit id="meterForm.fernwarme.title" datatype="html">
+        <source>Fernwärme-Parameter</source>
+        <target>District heating parameters</target>
+      </trans-unit>
+      <trans-unit id="meterForm.fernwarme.hint" datatype="html">
+        <source>Anschlussleistung laut Versorgungsvertrag</source>
+        <target>Connected load as per supply contract</target>
+      </trans-unit>
+      <trans-unit id="meterForm.fernwarme.connectedLoad" datatype="html">
+        <source>Bereitstellungsleistung</source>
+        <target>Connected load</target>
+      </trans-unit>
+      <trans-unit id="meterForm.fernwarme.connectedLoadPlaceholder" datatype="html">
+        <source>7.99</source>
+        <target>7.99</target>
+      </trans-unit>
+      <trans-unit id="meterForm.fernwarme.connectedLoadHint" datatype="html">
+        <source>Festgeschriebene Leistung je Zähler</source>
+        <target>Fixed capacity per meter</target>
       </trans-unit>
       <trans-unit id="meterForm.notes.title" datatype="html">
         <source>Notizen</source>
