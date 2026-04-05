@@ -96,6 +96,55 @@ export class DashboardStateService {
     }, 0);
   });
 
+  readonly yearOverYearDiff = computed(() => {
+    const currentYear = this.selectedYear();
+    const prevYear = currentYear - 1;
+
+    // Letzter Monat mit tatsächlichen Ablesedaten im aktuellen Jahr bestimmen
+    const currentStats = this.yearStats();
+    const currentMonthsWithData = currentStats.months.filter(
+      (m) => Object.keys(m.byMeter).length > 0,
+    );
+    if (currentMonthsWithData.length === 0) return null;
+    const maxMonth = Math.max(...currentMonthsWithData.map((m) => m.month));
+
+    // Kosten aktuelles Jahr bis maxMonth (totalYearCostWithBase liefert exakt das)
+    const currentCost = this.totalYearCostWithBase();
+
+    // Vorjahres-Stats: nur Monate 1..maxMonth mit Ablesedaten berücksichtigen
+    const prevStats = this.statsService.getYearStats(prevYear);
+    const prevMonthsUpTo = prevStats.months.filter(
+      (m) => m.month <= maxMonth && Object.keys(m.byMeter).length > 0,
+    );
+    if (prevMonthsUpTo.length === 0) return null;
+
+    // Variable Kosten Vorjahr (nur die gefilterten Monate)
+    const prevVariableCost = prevMonthsUpTo.reduce((sum, m) => sum + m.totalCost, 0);
+
+    // Grundgebühren Vorjahr für dieselben Monate
+    const meters = this.activeMeters();
+    const prevBaseTotal = meters.reduce((sum, meter) => {
+      if (meter.type === 'garden_water' && meter.linkedWaterMeterId) return sum;
+      const monthsWithMeterData = prevMonthsUpTo.filter(
+        (m) => m.byMeter[meter.id] !== undefined,
+      );
+      const baseForMeter = monthsWithMeterData.reduce((ms, month) => {
+        const tariff = this.tariffService.getActiveTariffForDate(
+          meter,
+          new Date(prevStats.year, month.month - 1),
+        );
+        return ms + (tariff?.baseCharge ?? 0);
+      }, 0);
+      return sum + baseForMeter;
+    }, 0);
+
+    const prevCost = prevVariableCost + prevBaseTotal;
+    if (prevCost === 0) return null;
+
+    const percent = ((currentCost - prevCost) / prevCost) * 100;
+    return { percent, prevYear, upToMonth: maxMonth };
+  });
+
   // ============ HILFSMETHODEN ============
   getYearTotalCost(year: number): number {
     const stats = this.statsService.getYearStats(year);

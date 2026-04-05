@@ -13,6 +13,7 @@ import { MeterService } from '../../core/services/meter.service';
 import { ReadingService } from '../../core/services/reading.service';
 import { DataSyncService } from '../../core/services/data-sync.service';
 import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/confirm-dialog';
+import { CsvImportDialogComponent } from '../../shared/components/csv-import-dialog/csv-import-dialog';
 import { NotificationService } from '../../core/services/notification.service';
 
 @Component({
@@ -34,6 +35,10 @@ export class Settings {
 
   readonly notificationService = inject(NotificationService);
   readonly themeMode = this.themeService.mode;
+
+  openCsvImport(): void {
+    this.dialog.open(CsvImportDialogComponent, { width: '640px', maxWidth: '95vw' });
+  }
 
   meterCount() {
     return this.meterService.meters().length;

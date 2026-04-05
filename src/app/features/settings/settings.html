@@ -51,6 +51,18 @@
         </label>
       </div>
 
+      <div class="data-action-item">
+        <div class="data-action-info">
+          <div class="data-action-title" i18n="@@settings.csvImport.title">CSV-Ablesungen importieren</div>
+          <div class="data-action-desc" i18n="@@settings.csvImport.desc">Zählerstände aus einer CSV-Datei einlesen
+            (Datum, Wert, Notiz)</div>
+        </div>
+        <button class="import-export-btn" (click)="openCsvImport()">
+          <mat-icon>table_chart</mat-icon>
+          <span i18n="@@settings.csvImportBtn">CSV importieren</span>
+        </button>
+      </div>
+
       <div class="data-action-item danger-item">
         <div class="data-action-info">
           <div class="data-action-title" i18n="@@settings.delete.title">Alle Daten löschen</div>
@@ -86,22 +98,22 @@
     <div class="data-actions">
       <div class="data-action-item">
         <div class="data-action-info">
-          <div class="data-action-title" i18n="@@settings.notifications.reminder.title">Monatliche Ableseerinnerung</div>
+          <div class="data-action-title" i18n="@@settings.notifications.reminder.title">Monatliche Ableseerinnerung
+          </div>
           <div class="data-action-desc">
             @if (notificationService.permission() === 'denied') {
-              <span i18n="@@settings.notifications.blocked">Benachrichtigungen sind im Browser blockiert.</span>
+            <span i18n="@@settings.notifications.blocked">Benachrichtigungen sind im Browser blockiert.</span>
             } @else if (notificationService.permission() === 'granted' && notificationService.enabled()) {
-              <span i18n="@@settings.notifications.active">Aktiv – du wirst monatlich erinnert.</span>
+            <span i18n="@@settings.notifications.active">Aktiv – du wirst monatlich erinnert.</span>
             } @else {
-              <span i18n="@@settings.notifications.reminder.desc">Erhalte monatlich eine Erinnerung, deinen Zählerstand einzutragen.</span>
+            <span i18n="@@settings.notifications.reminder.desc">Erhalte monatlich eine Erinnerung, deinen Zählerstand
+              einzutragen.</span>
             }
           </div>
         </div>
-        <mat-slide-toggle
-          [checked]="notificationService.enabled()"
+        <mat-slide-toggle [checked]="notificationService.enabled()"
           [disabled]="notificationService.permission() === 'denied'"
-          (change)="notificationService.setEnabled($event.checked)"
-          aria-label="Ableseerinnerung"
+          (change)="notificationService.setEnabled($event.checked)" aria-label="Ableseerinnerung"
           i18n-aria-label="@@settings.notifications.toggle.aria">
         </mat-slide-toggle>
       </div>
@@ -110,7 +122,8 @@
       <div class="data-action-item">
         <div class="data-action-info">
           <div class="data-action-title" i18n="@@settings.notifications.test.title">Test-Benachrichtigung</div>
-          <div class="data-action-desc" i18n="@@settings.notifications.test.desc">Sendet sofort eine Beispiel-Erinnerung.</div>
+          <div class="data-action-desc" i18n="@@settings.notifications.test.desc">Sendet sofort eine
+            Beispiel-Erinnerung.</div>
         </div>
         <button class="import-export-btn" (click)="sendTestNotification()">
           <mat-icon>notifications_active</mat-icon>

@@ -54,6 +54,20 @@
             state.totalYearCostWithBase() | currency: 'EUR' : 'symbol' : '1.2-2'
             }}</span>
         </div>
+        @if (state.yearOverYearDiff(); as yoy) {
+        <div class="yoy-chip" [class.yoy-chip--better]="yoy.percent < 0" [class.yoy-chip--worse]="yoy.percent >= 5">
+          <mat-icon>{{ yoy.percent < 0 ? 'trending_down' : 'trending_up' }}</mat-icon>
+              <span>
+                @if (yoy.percent < 0) { <ng-container i18n="@@dashboard.yoy.cheaper">{{ yoy.percent | number: '1.0-1'
+                  }}% ggü. {{ yoy.prevYear }}</ng-container>
+                  } @else {
+                  <ng-container i18n="@@dashboard.yoy.costlier">+{{ yoy.percent | number: '1.0-1' }}% ggü. {{
+                    yoy.prevYear }}</ng-container>
+                  }
+              </span>
+              <span class="yoy-period">(Jan–{{ monthShort(yoy.upToMonth) }})</span>
+        </div>
+        }
       </div>
       <div class="summary-card summary-card--meters">
         <span class="summary-label" i18n="@@dashboard.activeMeters">Aktive Zähler</span>

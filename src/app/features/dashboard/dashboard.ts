@@ -27,4 +27,13 @@ import { ReadingsList } from '../../shared/components/readings-list/readings-lis
 })
 export class Dashboard {
   readonly state = inject(DashboardStateService);
+
+  readonly MONTH_SHORT = [
+    'Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun',
+    'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez',
+  ];
+
+  monthShort(month: number): string {
+    return this.MONTH_SHORT[month - 1] ?? '';
+  }
 }

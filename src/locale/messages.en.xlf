@@ -974,6 +974,130 @@
         <source>Monat</source>
         <target>Month</target>
       </trans-unit>
+      <trans-unit id="dashboard.yoy.cheaper" datatype="html">
+        <source><x id="INTERPOLATION"/>% ggü. <x id="INTERPOLATION_1"/></source>
+        <target><x id="INTERPOLATION"/>% vs. <x id="INTERPOLATION_1"/></target>
+      </trans-unit>
+      <trans-unit id="dashboard.yoy.costlier" datatype="html">
+        <source>+<x id="INTERPOLATION"/>% ggü. <x id="INTERPOLATION_1"/></source>
+        <target>+<x id="INTERPOLATION"/>% vs. <x id="INTERPOLATION_1"/></target>
+      </trans-unit>
+      <trans-unit id="settings.csvImport.title" datatype="html">
+        <source>CSV-Ablesungen importieren</source>
+        <target>Import CSV readings</target>
+      </trans-unit>
+      <trans-unit id="settings.csvImport.desc" datatype="html">
+        <source>Zählerstände aus einer CSV-Datei einlesen (Datum, Wert, Notiz)</source>
+        <target>Import meter readings from a CSV file (date, value, note)</target>
+      </trans-unit>
+      <trans-unit id="settings.csvImportBtn" datatype="html">
+        <source>CSV importieren</source>
+        <target>Import CSV</target>
+      </trans-unit>
+      <trans-unit id="csv.dialog.title" datatype="html">
+        <source>CSV-Ablesungen importieren</source>
+        <target>Import CSV readings</target>
+      </trans-unit>
+      <trans-unit id="csv.format.hint" datatype="html">
+        <source>Erwartetes Format: <x id="START_TAG_CODE"/>datum,wert,notiz<x id="CLOSE_TAG_CODE"/> – Datum als JJJJ-MM-TT oder TT.MM.JJJJ</source>
+        <target>Expected format: <x id="START_TAG_CODE"/>date,value,note<x id="CLOSE_TAG_CODE"/> – date as YYYY-MM-DD or DD.MM.YYYY</target>
+      </trans-unit>
+      <trans-unit id="csv.dropzone.aria" datatype="html">
+        <source>CSV-Datei hier ablegen oder auswählen</source>
+        <target>Drop CSV file here or select one</target>
+      </trans-unit>
+      <trans-unit id="csv.dropzone.hint" datatype="html">
+        <source>CSV hier ablegen oder</source>
+        <target>Drop CSV here or</target>
+      </trans-unit>
+      <trans-unit id="csv.dropzone.select" datatype="html">
+        <source>Datei auswählen</source>
+        <target>Select file</target>
+      </trans-unit>
+      <trans-unit id="csv.dropzone.change" datatype="html">
+        <source>Andere Datei</source>
+        <target>Different file</target>
+      </trans-unit>
+      <trans-unit id="csv.rows.total" datatype="html">
+        <source> Zeilen gelesen –</source>
+        <target> rows read –</target>
+      </trans-unit>
+      <trans-unit id="csv.rows.errors" datatype="html">
+        <source> Fehler</source>
+        <target> errors</target>
+      </trans-unit>
+      <trans-unit id="csv.meter.label" datatype="html">
+        <source>Zähler auswählen:</source>
+        <target>Select meter:</target>
+      </trans-unit>
+      <trans-unit id="csv.table.aria" datatype="html">
+        <source>Vorschau</source>
+        <target>Preview</target>
+      </trans-unit>
+      <trans-unit id="csv.col.line" datatype="html">
+        <source>#</source>
+        <target>#</target>
+      </trans-unit>
+      <trans-unit id="csv.col.date" datatype="html">
+        <source>Datum</source>
+        <target>Date</target>
+      </trans-unit>
+      <trans-unit id="csv.col.value" datatype="html">
+        <source>Wert</source>
+        <target>Value</target>
+      </trans-unit>
+      <trans-unit id="csv.col.note" datatype="html">
+        <source>Notiz</source>
+        <target>Note</target>
+      </trans-unit>
+      <trans-unit id="csv.col.status" datatype="html">
+        <source>Status</source>
+        <target>Status</target>
+      </trans-unit>
+      <trans-unit id="csv.status.error" datatype="html">
+        <source>Fehler</source>
+        <target>Error</target>
+      </trans-unit>
+      <trans-unit id="csv.status.duplicate" datatype="html">
+        <source>Duplikat</source>
+        <target>Duplicate</target>
+      </trans-unit>
+      <trans-unit id="csv.status.ok" datatype="html">
+        <source>OK</source>
+        <target>OK</target>
+      </trans-unit>
+      <trans-unit id="csv.cancel" datatype="html">
+        <source>Abbrechen</source>
+        <target>Cancel</target>
+      </trans-unit>
+      <trans-unit id="csv.importBtn" datatype="html">
+        <source><x id="INTERPOLATION"/> Ablesungen importieren</source>
+        <target>Import <x id="INTERPOLATION"/> readings</target>
+      </trans-unit>
+      <trans-unit id="csv.error.date" datatype="html">
+        <source>Ungültiges Datum „<x id="INTERPOLATION"/>"</source>
+        <target>Invalid date "<x id="INTERPOLATION"/>"</target>
+      </trans-unit>
+      <trans-unit id="csv.error.value" datatype="html">
+        <source>Ungültiger Wert „<x id="INTERPOLATION"/>"</source>
+        <target>Invalid value "<x id="INTERPOLATION"/>"</target>
+      </trans-unit>
+      <trans-unit id="csv.error.negative" datatype="html">
+        <source>Wert darf nicht negativ sein</source>
+        <target>Value must not be negative</target>
+      </trans-unit>
+      <trans-unit id="csv.parseError" datatype="html">
+        <source>CSV-Datei konnte nicht gelesen werden</source>
+        <target>Could not read CSV file</target>
+      </trans-unit>
+      <trans-unit id="csv.importSuccess" datatype="html">
+        <source><x id="INTERPOLATION"/> Ablesungen importiert</source>
+        <target><x id="INTERPOLATION"/> readings imported</target>
+      </trans-unit>
+      <trans-unit id="csv.importError" datatype="html">
+        <source>Fehler beim Import</source>
+        <target>Import error</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

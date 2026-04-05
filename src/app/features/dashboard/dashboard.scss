@@ -187,6 +187,37 @@
   }
 }
 
+.yoy-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 8px;
+  padding: 4px 10px 4px 6px;
+  border-radius: 20px;
+  background: rgba(16, 185, 129, 0.12);
+  color: #10b981;
+  font-size: 0.75rem;
+  font-weight: 600;
+
+  mat-icon {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+    color: inherit;
+  }
+
+  .yoy-period {
+    font-weight: 400;
+    opacity: 0.75;
+    font-size: 0.7rem;
+  }
+
+  &--worse {
+    background: rgba(255, 59, 48, 0.1);
+    color: var(--apple-red, #ff3b30);
+  }
+}
+
 .stat-value.co2 {
   color: #10b981;
   font-size: 0.875rem;

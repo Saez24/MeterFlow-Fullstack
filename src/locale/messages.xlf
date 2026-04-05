@@ -1703,6 +1703,227 @@
           <context context-type="linenumber">1</context>
         </context-group>
       </trans-unit>
+      <!-- Jahresvergleich Dashboard -->
+      <trans-unit id="dashboard.yoy.cheaper" datatype="html">
+        <source><x id="INTERPOLATION" equiv-text="{{ yoy.percent | number: '1.0-1' }}"/>% ggü. <x id="INTERPOLATION_1" equiv-text="{{ yoy.prevYear }}"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/dashboard/dashboard.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.yoy.costlier" datatype="html">
+        <source>+<x id="INTERPOLATION" equiv-text="{{ yoy.percent | number: '1.0-1' }}"/>% ggü. <x id="INTERPOLATION_1" equiv-text="{{ yoy.prevYear }}"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/dashboard/dashboard.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <!-- CSV-Import Settings -->
+      <trans-unit id="settings.csvImport.title" datatype="html">
+        <source>CSV-Ablesungen importieren</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/settings/settings.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="settings.csvImport.desc" datatype="html">
+        <source>Zählerstände aus einer CSV-Datei einlesen (Datum, Wert, Notiz)</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/settings/settings.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="settings.csvImportBtn" datatype="html">
+        <source>CSV importieren</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/settings/settings.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <!-- CSV-Import Dialog -->
+      <trans-unit id="csv.dialog.title" datatype="html">
+        <source>CSV-Ablesungen importieren</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/components/csv-import-dialog/csv-import-dialog.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="csv.format.hint" datatype="html">
+        <source>Erwartetes Format: <x id="START_TAG_CODE" ctype="x-code" equiv-text="&lt;code&gt;"/>datum,wert,notiz<x id="CLOSE_TAG_CODE" ctype="x-code" equiv-text="&lt;/code&gt;"/> – Datum als JJJJ-MM-TT oder TT.MM.JJJJ</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/components/csv-import-dialog/csv-import-dialog.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="csv.dropzone.aria" datatype="html">
+        <source>CSV-Datei hier ablegen oder auswählen</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/components/csv-import-dialog/csv-import-dialog.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="csv.dropzone.hint" datatype="html">
+        <source>CSV hier ablegen oder</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/components/csv-import-dialog/csv-import-dialog.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="csv.dropzone.select" datatype="html">
+        <source>Datei auswählen</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/components/csv-import-dialog/csv-import-dialog.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="csv.dropzone.change" datatype="html">
+        <source>Andere Datei</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/components/csv-import-dialog/csv-import-dialog.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="csv.rows.total" datatype="html">
+        <source> Zeilen gelesen –</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/components/csv-import-dialog/csv-import-dialog.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="csv.rows.errors" datatype="html">
+        <source> Fehler</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/components/csv-import-dialog/csv-import-dialog.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="csv.meter.label" datatype="html">
+        <source>Zähler auswählen:</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/components/csv-import-dialog/csv-import-dialog.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="csv.table.aria" datatype="html">
+        <source>Vorschau</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/components/csv-import-dialog/csv-import-dialog.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="csv.col.line" datatype="html">
+        <source>#</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/components/csv-import-dialog/csv-import-dialog.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="csv.col.date" datatype="html">
+        <source>Datum</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/components/csv-import-dialog/csv-import-dialog.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="csv.col.value" datatype="html">
+        <source>Wert</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/components/csv-import-dialog/csv-import-dialog.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="csv.col.note" datatype="html">
+        <source>Notiz</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/components/csv-import-dialog/csv-import-dialog.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="csv.col.status" datatype="html">
+        <source>Status</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/components/csv-import-dialog/csv-import-dialog.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="csv.status.error" datatype="html">
+        <source>Fehler</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/components/csv-import-dialog/csv-import-dialog.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="csv.status.duplicate" datatype="html">
+        <source>Duplikat</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/components/csv-import-dialog/csv-import-dialog.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="csv.status.ok" datatype="html">
+        <source>OK</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/components/csv-import-dialog/csv-import-dialog.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="csv.cancel" datatype="html">
+        <source>Abbrechen</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/components/csv-import-dialog/csv-import-dialog.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="csv.importBtn" datatype="html">
+        <source><x id="INTERPOLATION" equiv-text="{{ importableCount() }}"/> Ablesungen importieren</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/components/csv-import-dialog/csv-import-dialog.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <!-- CSV TS Strings -->
+      <trans-unit id="csv.error.date" datatype="html">
+        <source>Ungültiges Datum „<x id="INTERPOLATION" equiv-text="${rawDatum}"/>"</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/services/csv-import.service.ts</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="csv.error.value" datatype="html">
+        <source>Ungültiger Wert „<x id="INTERPOLATION" equiv-text="${rawWert}"/>"</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/services/csv-import.service.ts</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="csv.error.negative" datatype="html">
+        <source>Wert darf nicht negativ sein</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/services/csv-import.service.ts</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="csv.parseError" datatype="html">
+        <source>CSV-Datei konnte nicht gelesen werden</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/components/csv-import-dialog/csv-import-dialog.ts</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="csv.importSuccess" datatype="html">
+        <source><x id="INTERPOLATION" equiv-text="${count}"/> Ablesungen importiert</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/components/csv-import-dialog/csv-import-dialog.ts</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="csv.importError" datatype="html">
+        <source>Fehler beim Import</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/components/csv-import-dialog/csv-import-dialog.ts</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
     </body>
   </file>
 </xliff>
