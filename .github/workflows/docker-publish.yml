@@ -42,6 +42,13 @@ jobs:
             supabaseKey: '${{ secrets.SUPABASE_KEY }}',
           };
           EOF
+          cat > src/environments/environment.development.ts << EOF
+          export const environment = {
+            production: false,
+            supabaseUrl: '${{ secrets.SUPABASE_URL }}',
+            supabaseKey: '${{ secrets.SUPABASE_KEY }}',
+          };
+          EOF
 
       - name: Run tests
         run: npm test -- --watch=false
