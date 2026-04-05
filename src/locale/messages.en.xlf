@@ -960,16 +960,16 @@
         <target>Export PDF</target>
       </trans-unit>
       <trans-unit id="pdf.subtitle" datatype="html">
-        <source>Jahresabrechnung <x id="INTERPOLATION" equiv-text="year"/></source>
-        <target>Annual report <x id="INTERPOLATION" equiv-text="year"/></target>
+        <source>Jahresabrechnung <x id="year" equiv-text="year"/></source>
+        <target>Annual report <x id="year" equiv-text="year"/></target>
       </trans-unit>
       <trans-unit id="pdf.generatedOn" datatype="html">
-        <source>Erstellt am <x id="INTERPOLATION" equiv-text="date"/></source>
-        <target>Generated on <x id="INTERPOLATION" equiv-text="date"/></target>
+        <source>Erstellt am <x id="date" equiv-text="date"/></source>
+        <target>Generated on <x id="date" equiv-text="date"/></target>
       </trans-unit>
       <trans-unit id="pdf.overview" datatype="html">
-        <source>Übersicht <x id="INTERPOLATION" equiv-text="year"/></source>
-        <target>Overview <x id="INTERPOLATION" equiv-text="year"/></target>
+        <source>Übersicht <x id="year" equiv-text="year"/></source>
+        <target>Overview <x id="year" equiv-text="year"/></target>
       </trans-unit>
       <trans-unit id="pdf.totalCostLabel" datatype="html">
         <source>Gesamtkosten: </source>
@@ -1112,12 +1112,12 @@
         <target>Import <x id="INTERPOLATION"/> readings</target>
       </trans-unit>
       <trans-unit id="csv.error.date" datatype="html">
-        <source>Ungültiges Datum „<x id="INTERPOLATION"/>"</source>
-        <target>Invalid date "<x id="INTERPOLATION"/>"</target>
+        <source>Ungültiges Datum „<x id="date"/>"</source>
+        <target>Invalid date "<x id="date"/>"</target>
       </trans-unit>
       <trans-unit id="csv.error.value" datatype="html">
-        <source>Ungültiger Wert „<x id="INTERPOLATION"/>"</source>
-        <target>Invalid value "<x id="INTERPOLATION"/>"</target>
+        <source>Ungültiger Wert „<x id="value"/>"</source>
+        <target>Invalid value "<x id="value"/>"</target>
       </trans-unit>
       <trans-unit id="csv.error.negative" datatype="html">
         <source>Wert darf nicht negativ sein</source>
@@ -1128,8 +1128,8 @@
         <target>Could not read CSV file</target>
       </trans-unit>
       <trans-unit id="csv.importSuccess" datatype="html">
-        <source><x id="INTERPOLATION"/> Ablesungen importiert</source>
-        <target><x id="INTERPOLATION"/> readings imported</target>
+        <source><x id="count"/> Ablesungen importiert</source>
+        <target><x id="count"/> readings imported</target>
       </trans-unit>
       <trans-unit id="csv.importError" datatype="html">
         <source>Fehler beim Import</source>

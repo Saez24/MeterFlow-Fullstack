@@ -1677,21 +1677,21 @@
         </context-group>
       </trans-unit>
       <trans-unit id="pdf.subtitle" datatype="html">
-        <source>Jahresabrechnung <x id="INTERPOLATION" equiv-text="year"/></source>
+        <source>Jahresabrechnung <x id="year" equiv-text="year"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/services/pdf-export.service.ts</context>
           <context context-type="linenumber">1</context>
         </context-group>
       </trans-unit>
       <trans-unit id="pdf.generatedOn" datatype="html">
-        <source>Erstellt am <x id="INTERPOLATION" equiv-text="date"/></source>
+        <source>Erstellt am <x id="date" equiv-text="date"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/services/pdf-export.service.ts</context>
           <context context-type="linenumber">1</context>
         </context-group>
       </trans-unit>
       <trans-unit id="pdf.overview" datatype="html">
-        <source>Übersicht <x id="INTERPOLATION" equiv-text="year"/></source>
+        <source>Übersicht <x id="year" equiv-text="year"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/services/pdf-export.service.ts</context>
           <context context-type="linenumber">1</context>
@@ -1947,14 +1947,14 @@
       </trans-unit>
       <!-- CSV TS Strings -->
       <trans-unit id="csv.error.date" datatype="html">
-        <source>Ungültiges Datum „<x id="INTERPOLATION" equiv-text="${rawDatum}"/>"</source>
+        <source>Ungültiges Datum „<x id="date" equiv-text="${rawDatum}"/>"</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/services/csv-import.service.ts</context>
           <context context-type="linenumber">1</context>
         </context-group>
       </trans-unit>
       <trans-unit id="csv.error.value" datatype="html">
-        <source>Ungültiger Wert „<x id="INTERPOLATION" equiv-text="${rawWert}"/>"</source>
+        <source>Ungültiger Wert „<x id="value" equiv-text="${rawWert}"/>"</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/services/csv-import.service.ts</context>
           <context context-type="linenumber">1</context>
@@ -1975,7 +1975,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="csv.importSuccess" datatype="html">
-        <source><x id="INTERPOLATION" equiv-text="${count}"/> Ablesungen importiert</source>
+        <source><x id="count" equiv-text="${count}"/> Ablesungen importiert</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/components/csv-import-dialog/csv-import-dialog.ts</context>
           <context context-type="linenumber">1</context>
