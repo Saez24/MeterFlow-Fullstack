@@ -23,6 +23,7 @@ import { ReadingService } from '../../../core/services/reading.service';
 import { TariffService } from '../../../core/services/tariff.service';
 import { SupabaseService } from '../../../core/services/supabase.service';
 import { GAS_DEFAULTS } from '../../../core/constants/gas.constants';
+import { OcrService, OcrResult } from '../../../core/services/ocr.service';
 
 import { maxDecimalPlaces } from '../../../core/validators/decimal-places.validator';
 
@@ -52,6 +53,7 @@ export class ReadingsForm {
   private readonly readingService = inject(ReadingService);
   private readonly tariffService = inject(TariffService);
   private readonly supabaseService = inject(SupabaseService);
+  private readonly ocrService = inject(OcrService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly snackBar = inject(MatSnackBar);
@@ -64,6 +66,10 @@ export class ReadingsForm {
   readonly selectedPhotoFile = signal<File | null>(null);
   readonly photoPreviewUrl = signal<string | null>(null);
   readonly isUploading = signal(false);
+
+  // ── OCR-State ────────────────────────────────────────────────────────
+  readonly ocrRunning = signal(false);
+  readonly ocrResult = signal<OcrResult | null>(null);
 
   readonly hasExistingPhoto = computed(
     () => !!this.existingPhotoPath() && !this.existingPhotoRemoved()
@@ -239,6 +245,8 @@ export class ReadingsForm {
     if (prev) URL.revokeObjectURL(prev);
     this.selectedPhotoFile.set(file);
     this.photoPreviewUrl.set(URL.createObjectURL(file));
+    // Reset previous OCR result when a new photo is selected
+    this.ocrResult.set(null);
   }
 
   clearPhoto(): void {
@@ -246,10 +254,43 @@ export class ReadingsForm {
     if (prev) URL.revokeObjectURL(prev);
     this.selectedPhotoFile.set(null);
     this.photoPreviewUrl.set(null);
+    this.ocrResult.set(null);
   }
 
   removeExistingPhoto(): void {
     this.existingPhotoRemoved.set(true);
+  }
+
+  async runOcr(): Promise<void> {
+    const file = this.selectedPhotoFile();
+    if (!file || this.ocrRunning()) return;
+
+    this.ocrRunning.set(true);
+    this.ocrResult.set(null);
+    try {
+      const result = await this.ocrService.recognizeMeterValue(file);
+      this.ocrResult.set(result);
+    } catch {
+      this.snackBar.open(
+        $localize`:@@readingsForm.ocr.error:Texterkennung fehlgeschlagen – bitte Wert manuell eingeben`,
+        'OK',
+        { duration: 5000 }
+      );
+    } finally {
+      this.ocrRunning.set(false);
+    }
+  }
+
+  applyOcrValue(): void {
+    const result = this.ocrResult();
+    if (result?.value == null) return;
+    this.form.patchValue({ value: result.value });
+    this.formSignal.set(this.form.getRawValue());
+    this.ocrResult.set(null);
+  }
+
+  dismissOcr(): void {
+    this.ocrResult.set(null);
   }
 
   getMeta(type: string) {

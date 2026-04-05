@@ -156,10 +156,63 @@
       <div class="photo-preview">
         <img [src]="photoPreviewUrl()!" class="photo-thumbnail" alt="Vorschau"
           i18n-alt="@@readingsForm.photo.previewAlt" />
-        <button type="button" mat-button color="warn" (click)="clearPhoto()" class="photo-remove-btn"
-          i18n="@@readingsForm.photo.clear">
-          <mat-icon>close</mat-icon> Auswahl aufheben
-        </button>
+        <div class="photo-preview-actions">
+          <button type="button" mat-stroked-button class="ocr-btn" [class.ocr-btn--running]="ocrRunning()"
+            [disabled]="ocrRunning()" (click)="runOcr()" i18n-aria-label="@@readingsForm.ocr.btnAria"
+            aria-label="Zählerstand aus Foto erkennen">
+            @if (ocrRunning()) {
+            <span class="ocr-spinner"></span>
+            } @else {
+            <mat-icon>document_scanner</mat-icon>
+            }
+            <span i18n="@@readingsForm.ocr.btn">Zählerstand erkennen</span>
+          </button>
+          <button type="button" mat-button color="warn" (click)="clearPhoto()" class="photo-remove-btn"
+            i18n="@@readingsForm.photo.clear">
+            <mat-icon>close</mat-icon> Auswahl aufheben
+          </button>
+        </div>
+
+        <!-- OCR-Ergebnis -->
+        @if (ocrResult(); as result) {
+        <div class="ocr-result" [class.ocr-result--no-value]="result.value === null">
+          @if (result.value !== null) {
+          <div class="ocr-result-main">
+            <mat-icon class="ocr-result-icon">auto_fix_high</mat-icon>
+            <div class="ocr-result-body">
+              <span class="ocr-result-label" i18n="@@readingsForm.ocr.detected">Erkannter Wert</span>
+              <span class="ocr-result-value">{{ result.value | number: '1.0-3' }}</span>
+              <span class="ocr-result-confidence">
+                <span i18n="@@readingsForm.ocr.confidence">Konfidenz</span>: {{ result.confidence }} %
+              </span>
+            </div>
+            <div class="ocr-result-actions">
+              <button type="button" mat-flat-button class="ocr-apply-btn" (click)="applyOcrValue()"
+                i18n="@@readingsForm.ocr.apply">
+                Übernehmen
+              </button>
+              <button type="button" mat-icon-button (click)="dismissOcr()" i18n-aria-label="@@readingsForm.ocr.dismiss"
+                aria-label="Ergebnis verwerfen">
+                <mat-icon>close</mat-icon>
+              </button>
+            </div>
+          </div>
+          } @else {
+          <div class="ocr-result-main">
+            <mat-icon class="ocr-result-icon ocr-result-icon--warn">search_off</mat-icon>
+            <div class="ocr-result-body">
+              <span class="ocr-result-label" i18n="@@readingsForm.ocr.noValue">Kein Zählerstand erkannt</span>
+              <span class="ocr-result-confidence" i18n="@@readingsForm.ocr.noValueHint">Bitte Wert manuell
+                eingeben</span>
+            </div>
+            <button type="button" mat-icon-button (click)="dismissOcr()" i18n-aria-label="@@readingsForm.ocr.dismiss"
+              aria-label="Ergebnis verwerfen">
+              <mat-icon>close</mat-icon>
+            </button>
+          </div>
+          }
+        </div>
+        }
       </div>
       } @else {
       <!-- Datei-Auswahl -->

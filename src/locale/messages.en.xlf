@@ -594,6 +594,43 @@
         <source>Foto wird hochgeladen…</source>
         <target>Uploading photo…</target>
       </trans-unit>
+      <!-- OCR -->
+      <trans-unit id="readingsForm.ocr.btnAria" datatype="html">
+        <source>Zählerstand aus Foto erkennen</source>
+        <target>Detect meter reading from photo</target>
+      </trans-unit>
+      <trans-unit id="readingsForm.ocr.btn" datatype="html">
+        <source>Zählerstand erkennen</source>
+        <target>Detect reading</target>
+      </trans-unit>
+      <trans-unit id="readingsForm.ocr.detected" datatype="html">
+        <source>Erkannter Wert</source>
+        <target>Detected value</target>
+      </trans-unit>
+      <trans-unit id="readingsForm.ocr.confidence" datatype="html">
+        <source>Konfidenz</source>
+        <target>Confidence</target>
+      </trans-unit>
+      <trans-unit id="readingsForm.ocr.apply" datatype="html">
+        <source>Übernehmen</source>
+        <target>Apply</target>
+      </trans-unit>
+      <trans-unit id="readingsForm.ocr.dismiss" datatype="html">
+        <source>Ergebnis verwerfen</source>
+        <target>Dismiss result</target>
+      </trans-unit>
+      <trans-unit id="readingsForm.ocr.noValue" datatype="html">
+        <source>Kein Zählerstand erkannt</source>
+        <target>No meter reading detected</target>
+      </trans-unit>
+      <trans-unit id="readingsForm.ocr.noValueHint" datatype="html">
+        <source>Bitte Wert manuell eingeben</source>
+        <target>Please enter the value manually</target>
+      </trans-unit>
+      <trans-unit id="readingsForm.ocr.error" datatype="html">
+        <source>Texterkennung fehlgeschlagen – bitte Wert manuell eingeben</source>
+        <target>Text recognition failed – please enter the value manually</target>
+      </trans-unit>
       <trans-unit id="readingsForm.cancel" datatype="html">
         <source>Abbrechen</source>
         <target>Cancel</target>

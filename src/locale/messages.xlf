@@ -1038,6 +1038,70 @@
           <context context-type="linenumber">176,181</context>
         </context-group>
       </trans-unit>
+      <!-- OCR -->
+      <trans-unit id="readingsForm.ocr.btnAria" datatype="html">
+        <source>Zählerstand aus Foto erkennen</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/readings/readings-form/readings-form.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="readingsForm.ocr.btn" datatype="html">
+        <source>Zählerstand erkennen</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/readings/readings-form/readings-form.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="readingsForm.ocr.detected" datatype="html">
+        <source>Erkannter Wert</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/readings/readings-form/readings-form.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="readingsForm.ocr.confidence" datatype="html">
+        <source>Konfidenz</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/readings/readings-form/readings-form.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="readingsForm.ocr.apply" datatype="html">
+        <source>Übernehmen</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/readings/readings-form/readings-form.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="readingsForm.ocr.dismiss" datatype="html">
+        <source>Ergebnis verwerfen</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/readings/readings-form/readings-form.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="readingsForm.ocr.noValue" datatype="html">
+        <source>Kein Zählerstand erkannt</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/readings/readings-form/readings-form.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="readingsForm.ocr.noValueHint" datatype="html">
+        <source>Bitte Wert manuell eingeben</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/readings/readings-form/readings-form.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="readingsForm.ocr.error" datatype="html">
+        <source>Texterkennung fehlgeschlagen – bitte Wert manuell eingeben</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/readings/readings-form/readings-form.ts</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="readingsForm.cancel" datatype="html">
         <source>Abbrechen</source>
         <context-group purpose="location">
