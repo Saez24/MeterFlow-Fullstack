@@ -88,6 +88,14 @@ export class DashboardStateService {
     return stats.totalCost + baseTotal;
   });
 
+  readonly totalYearCo2Kg = computed(() => {
+    const year = this.selectedYear();
+    return this.activeMeters().reduce((sum, meter) => {
+      const summary = this.statsService.getMeterSummary(meter.id, year);
+      return sum + (summary?.co2Kg ?? 0);
+    }, 0);
+  });
+
   // ============ HILFSMETHODEN ============
   getYearTotalCost(year: number): number {
     const stats = this.statsService.getYearStats(year);
@@ -117,6 +125,8 @@ export class DashboardStateService {
 
     return stats.totalCost + baseTotal;
   }
+
+  readonly budgetAlerts = this.statsService.budgetAlerts;
 
   getActiveTariff(meter: MeterConfig): TariffPeriod | null {
     if (meter.type === 'garden_water' && meter.linkedWaterMeterId) {

@@ -5,6 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { ThemeService } from '../../core/services/theme.service';
 import { SupabaseService } from '../../core/services/supabase.service';
 import { Router } from '@angular/router';
@@ -12,10 +13,11 @@ import { MeterService } from '../../core/services/meter.service';
 import { ReadingService } from '../../core/services/reading.service';
 import { DataSyncService } from '../../core/services/data-sync.service';
 import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/confirm-dialog';
+import { NotificationService } from '../../core/services/notification.service';
 
 @Component({
   selector: 'app-settings',
-  imports: [CommonModule, MatButtonModule, MatIconModule, MatCardModule, MatSnackBarModule, MatDialogModule],
+  imports: [CommonModule, MatButtonModule, MatIconModule, MatCardModule, MatSnackBarModule, MatDialogModule, MatSlideToggleModule],
   templateUrl: './settings.html',
   styleUrl: './settings.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -30,6 +32,7 @@ export class Settings {
   private readonly supabase = inject(SupabaseService);
   private readonly dialog = inject(MatDialog);
 
+  readonly notificationService = inject(NotificationService);
   readonly themeMode = this.themeService.mode;
 
   meterCount() {
@@ -85,6 +88,10 @@ export class Settings {
         localStorage.clear();
         window.location.reload();
       });
+  }
+
+  async sendTestNotification(): Promise<void> {
+    await this.notificationService.showTestNotification();
   }
 
   async logout(): Promise<void> {

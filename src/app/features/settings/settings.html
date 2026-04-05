@@ -80,6 +80,47 @@
     </div>
   </div>
 
+  <!-- Benachrichtigungen -->
+  <div class="settings-section">
+    <h3 class="section-title" i18n="@@settings.notifications.title">Benachrichtigungen</h3>
+    <div class="data-actions">
+      <div class="data-action-item">
+        <div class="data-action-info">
+          <div class="data-action-title" i18n="@@settings.notifications.reminder.title">Monatliche Ableseerinnerung</div>
+          <div class="data-action-desc">
+            @if (notificationService.permission() === 'denied') {
+              <span i18n="@@settings.notifications.blocked">Benachrichtigungen sind im Browser blockiert.</span>
+            } @else if (notificationService.permission() === 'granted' && notificationService.enabled()) {
+              <span i18n="@@settings.notifications.active">Aktiv – du wirst monatlich erinnert.</span>
+            } @else {
+              <span i18n="@@settings.notifications.reminder.desc">Erhalte monatlich eine Erinnerung, deinen Zählerstand einzutragen.</span>
+            }
+          </div>
+        </div>
+        <mat-slide-toggle
+          [checked]="notificationService.enabled()"
+          [disabled]="notificationService.permission() === 'denied'"
+          (change)="notificationService.setEnabled($event.checked)"
+          aria-label="Ableseerinnerung"
+          i18n-aria-label="@@settings.notifications.toggle.aria">
+        </mat-slide-toggle>
+      </div>
+
+      @if (notificationService.enabled() && notificationService.permission() === 'granted') {
+      <div class="data-action-item">
+        <div class="data-action-info">
+          <div class="data-action-title" i18n="@@settings.notifications.test.title">Test-Benachrichtigung</div>
+          <div class="data-action-desc" i18n="@@settings.notifications.test.desc">Sendet sofort eine Beispiel-Erinnerung.</div>
+        </div>
+        <button class="import-export-btn" (click)="sendTestNotification()">
+          <mat-icon>notifications_active</mat-icon>
+          <span i18n="@@settings.notifications.testBtn">Testen</span>
+        </button>
+      </div>
+      }
+    </div>
+  </div>
+
   <!-- About -->
   <div class="settings-section about-section">
     <div class="about-logo">

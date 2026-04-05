@@ -6,6 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ThemeService } from './core/services/theme.service';
 import { SupabaseService } from './core/services/supabase.service';
+import { NotificationService } from './core/services/notification.service';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { filter, map } from 'rxjs';
 
@@ -36,6 +37,12 @@ export class App {
   readonly sidebarCollapsed = signal(false);
 
   private readonly router = inject(Router);
+  private readonly notificationService = inject(NotificationService);
+
+  constructor() {
+    // Monatliche Ableseerinnerung prüfen
+    this.notificationService.checkAndShowReminder();
+  }
 
   readonly isAuthPage = toSignal(
     this.router.events.pipe(

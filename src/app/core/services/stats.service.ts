@@ -1,5 +1,6 @@
 import { Injectable, computed, inject } from '@angular/core';
 import {
+  CO2_FACTORS,
   ENERGY_META,
   MonthStats,
   YearStats,
@@ -18,6 +19,7 @@ export interface MeterSummary {
   cost: number;
   unit: string;
   consumptionKwh?: number;
+  co2Kg: number;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -259,11 +261,15 @@ export class StatsService {
         .reduce((sum, reading) => sum + (reading.kwh ?? 0), 0);
     }
 
+    // CO₂ berechnen auf Basis der nativen Verbrauchseinheit (m³ für Gas, kWh für Strom, etc.)
+    const co2Kg = meterStats.consumption * CO2_FACTORS[meter.type];
+
     return {
       consumption: meterStats.consumption,
       cost: totalCost,
       unit,
       consumptionKwh,
+      co2Kg,
     };
   }
 

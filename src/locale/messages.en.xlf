@@ -146,6 +146,34 @@
         <source>Übersicht deiner Verbrauchsdaten</source>
         <target>Overview of your consumption data</target>
       </trans-unit>
+      <trans-unit id="dashboard.budgetAlerts.aria" datatype="html">
+        <source>Budget-Warnungen</source>
+        <target>Budget alerts</target>
+      </trans-unit>
+      <trans-unit id="dashboard.budgetAlerts.monthlyCost" datatype="html">
+        <source> – Monatslimit</source>
+        <target> – Monthly limit</target>
+      </trans-unit>
+      <trans-unit id="dashboard.budgetAlerts.yearlyCost" datatype="html">
+        <source> – Jahreslimit</source>
+        <target> – Yearly limit</target>
+      </trans-unit>
+      <trans-unit id="dashboard.budgetAlerts.consumption" datatype="html">
+        <source> – Verbrauchslimit</source>
+        <target> – Consumption limit</target>
+      </trans-unit>
+      <trans-unit id="dashboard.budgetAlerts.of" datatype="html">
+        <source> von </source>
+        <target> of </target>
+      </trans-unit>
+      <trans-unit id="dashboard.budget.exceeded" datatype="html">
+        <source>Budget überschritten</source>
+        <target>Budget exceeded</target>
+      </trans-unit>
+      <trans-unit id="dashboard.budget.warning" datatype="html">
+        <source>Budget-Warnung</source>
+        <target>Budget warning</target>
+      </trans-unit>
       <trans-unit id="dashboard.totalCosts" datatype="html">
         <source>Gesamtkosten <x id="INTERPOLATION" equiv-text="{{ state.selectedYear() }}"/></source>
         <target>Total costs <x id="INTERPOLATION" equiv-text="{{ state.selectedYear() }}"/></target>
@@ -825,6 +853,126 @@
       <trans-unit id="tariffForm.added" datatype="html">
         <source>Neuer Tarif hinzugefügt</source>
         <target>New tariff added</target>
+      </trans-unit>
+      <trans-unit id="settings.notifications.title" datatype="html">
+        <source>Benachrichtigungen</source>
+        <target>Notifications</target>
+      </trans-unit>
+      <trans-unit id="settings.notifications.reminder.title" datatype="html">
+        <source>Monatliche Ableseerinnerung</source>
+        <target>Monthly reading reminder</target>
+      </trans-unit>
+      <trans-unit id="settings.notifications.blocked" datatype="html">
+        <source>Benachrichtigungen sind im Browser blockiert.</source>
+        <target>Notifications are blocked in your browser.</target>
+      </trans-unit>
+      <trans-unit id="settings.notifications.active" datatype="html">
+        <source>Aktiv – du wirst monatlich erinnert.</source>
+        <target>Active – you will be reminded monthly.</target>
+      </trans-unit>
+      <trans-unit id="settings.notifications.reminder.desc" datatype="html">
+        <source>Erhalte monatlich eine Erinnerung, deinen Zählerstand einzutragen.</source>
+        <target>Receive a monthly reminder to enter your meter readings.</target>
+      </trans-unit>
+      <trans-unit id="settings.notifications.toggle.aria" datatype="html">
+        <source>Ableseerinnerung</source>
+        <target>Reading reminder</target>
+      </trans-unit>
+      <trans-unit id="settings.notifications.test.title" datatype="html">
+        <source>Test-Benachrichtigung</source>
+        <target>Test notification</target>
+      </trans-unit>
+      <trans-unit id="settings.notifications.test.desc" datatype="html">
+        <source>Sendet sofort eine Beispiel-Erinnerung.</source>
+        <target>Sends an example reminder immediately.</target>
+      </trans-unit>
+      <trans-unit id="settings.notifications.testBtn" datatype="html">
+        <source>Testen</source>
+        <target>Test</target>
+      </trans-unit>
+      <trans-unit id="notification.reminder.title" datatype="html">
+        <source>MeterFlow – Zähler ablesen</source>
+        <target>MeterFlow – Read your meters</target>
+      </trans-unit>
+      <trans-unit id="notification.reminder.body" datatype="html">
+        <source>Zeit für deinen monatlichen Zählerstand! Jetzt Werte erfassen.</source>
+        <target>Time for your monthly meter reading! Enter your values now.</target>
+      </trans-unit>
+      <trans-unit id="dashboard.totalCo2" datatype="html">
+        <source>CO₂ <x id="INTERPOLATION" equiv-text="{{ state.selectedYear() }}"/></source>
+        <target>CO₂ <x id="INTERPOLATION" equiv-text="{{ state.selectedYear() }}"/></target>
+      </trans-unit>
+      <trans-unit id="dashboard.co2" datatype="html">
+        <source>CO₂</source>
+        <target>CO₂</target>
+      </trans-unit>
+      <trans-unit id="reports.totalCo2" datatype="html">
+        <source>CO₂-Emissionen <x id="INTERPOLATION" equiv-text="{{ state.selectedYear() }}"/></source>
+        <target>CO₂ emissions <x id="INTERPOLATION" equiv-text="{{ state.selectedYear() }}"/></target>
+      </trans-unit>
+      <trans-unit id="reports.co2Note" datatype="html">
+        <source>Basis: DE-Emissionsfaktoren (UBA 2024)</source>
+        <target>Based on: DE emission factors (UBA 2024)</target>
+      </trans-unit>
+      <trans-unit id="reports.pdfBtn" datatype="html">
+        <source>PDF exportieren</source>
+        <target>Export PDF</target>
+      </trans-unit>
+      <trans-unit id="reports.pdfBtn.aria" datatype="html">
+        <source>PDF exportieren</source>
+        <target>Export PDF</target>
+      </trans-unit>
+      <trans-unit id="pdf.subtitle" datatype="html">
+        <source>Jahresabrechnung <x id="INTERPOLATION" equiv-text="year"/></source>
+        <target>Annual report <x id="INTERPOLATION" equiv-text="year"/></target>
+      </trans-unit>
+      <trans-unit id="pdf.generatedOn" datatype="html">
+        <source>Erstellt am <x id="INTERPOLATION" equiv-text="date"/></source>
+        <target>Generated on <x id="INTERPOLATION" equiv-text="date"/></target>
+      </trans-unit>
+      <trans-unit id="pdf.overview" datatype="html">
+        <source>Übersicht <x id="INTERPOLATION" equiv-text="year"/></source>
+        <target>Overview <x id="INTERPOLATION" equiv-text="year"/></target>
+      </trans-unit>
+      <trans-unit id="pdf.totalCostLabel" datatype="html">
+        <source>Gesamtkosten: </source>
+        <target>Total costs: </target>
+      </trans-unit>
+      <trans-unit id="pdf.totalCo2Label" datatype="html">
+        <source>Gesamtemissionen: </source>
+        <target>Total emissions: </target>
+      </trans-unit>
+      <trans-unit id="pdf.meterTable" datatype="html">
+        <source>Zähler-Übersicht</source>
+        <target>Meter overview</target>
+      </trans-unit>
+      <trans-unit id="pdf.col.meter" datatype="html">
+        <source>Zähler</source>
+        <target>Meter</target>
+      </trans-unit>
+      <trans-unit id="pdf.col.type" datatype="html">
+        <source>Typ</source>
+        <target>Type</target>
+      </trans-unit>
+      <trans-unit id="pdf.col.consumption" datatype="html">
+        <source>Verbrauch</source>
+        <target>Consumption</target>
+      </trans-unit>
+      <trans-unit id="pdf.col.unit" datatype="html">
+        <source>Einheit</source>
+        <target>Unit</target>
+      </trans-unit>
+      <trans-unit id="pdf.col.cost" datatype="html">
+        <source>Kosten (€)</source>
+        <target>Cost (€)</target>
+      </trans-unit>
+      <trans-unit id="pdf.col.co2" datatype="html">
+        <source>CO₂ (kg)</source>
+        <target>CO₂ (kg)</target>
+      </trans-unit>
+      <trans-unit id="pdf.col.month" datatype="html">
+        <source>Monat</source>
+        <target>Month</target>
       </trans-unit>
     </body>
   </file>

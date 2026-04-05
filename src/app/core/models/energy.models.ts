@@ -152,6 +152,29 @@ export interface BudgetAlert {
 // ------------------------
 // Constants
 // ------------------------
+
+/**
+ * CO₂-Emissionsfaktoren (Quelle: Umweltbundesamt 2024)
+ * Einheit: kg CO₂ pro Verbrauchseinheit des jeweiligen Energietyps
+ *
+ * Strom:       0,380 kg/kWh  (DE-Strommix 2024)
+ * Gas:         2,020 kg/m³   (Erdgas H, inkl. Vorkette)
+ * Wasser:      0,000 kg/m³   (keine Verbrennung)
+ * GardenWater: 0,000 kg/m³
+ * Heizöl:      2,680 kg/L    (Leichtes Heizöl)
+ * Solar:      -0,050 kg/kWh  (Gutschrift: vermiedene Emissionen)
+ * Fernwärme:  75,000 kg/MWh  (DE-Fernwärme-Mittel)
+ */
+export const CO2_FACTORS: Record<EnergyType, number> = {
+  [EnergyType.Electricity]: 0.380,
+  [EnergyType.Gas]: 2.020,
+  [EnergyType.Water]: 0.000,
+  [EnergyType.GardenWater]: 0.000,
+  [EnergyType.HeatingOil]: 2.680,
+  [EnergyType.Solar]: -0.050,
+  [EnergyType.Fernwärme]: 75.000,
+};
+
 export const ENERGY_META: Record<
   EnergyType,
   { label: string; icon: MaterialIcon; color: string; unit: string }

@@ -254,6 +254,55 @@
           <context context-type="linenumber">5,7</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="dashboard.budgetAlerts.aria" datatype="html">
+        <source>Budget-Warnungen</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/dashboard/dashboard.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.budgetAlerts.monthlyCost" datatype="html">
+        <source> – Monatslimit</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/dashboard/dashboard.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.budgetAlerts.yearlyCost" datatype="html">
+        <source> – Jahreslimit</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/dashboard/dashboard.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.budgetAlerts.consumption" datatype="html">
+        <source> – Verbrauchslimit</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/dashboard/dashboard.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.budgetAlerts.of" datatype="html">
+        <source> von </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/dashboard/dashboard.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.budget.exceeded" datatype="html">
+        <source>Budget überschritten</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/dashboard/dashboard.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.budget.warning" datatype="html">
+        <source>Budget-Warnung</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/dashboard/dashboard.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="dashboard.totalCosts" datatype="html">
         <source>Gesamtkosten <x id="INTERPOLATION" equiv-text="{{ state.selectedYear() }}"/></source>
         <context-group purpose="location">
@@ -1442,6 +1491,216 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/components/tariff-form/tariff-form.ts</context>
           <context context-type="linenumber">139</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="settings.notifications.title" datatype="html">
+        <source>Benachrichtigungen</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/settings/settings.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="settings.notifications.reminder.title" datatype="html">
+        <source>Monatliche Ableseerinnerung</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/settings/settings.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="settings.notifications.blocked" datatype="html">
+        <source>Benachrichtigungen sind im Browser blockiert.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/settings/settings.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="settings.notifications.active" datatype="html">
+        <source>Aktiv – du wirst monatlich erinnert.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/settings/settings.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="settings.notifications.reminder.desc" datatype="html">
+        <source>Erhalte monatlich eine Erinnerung, deinen Zählerstand einzutragen.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/settings/settings.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="settings.notifications.toggle.aria" datatype="html">
+        <source>Ableseerinnerung</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/settings/settings.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="settings.notifications.test.title" datatype="html">
+        <source>Test-Benachrichtigung</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/settings/settings.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="settings.notifications.test.desc" datatype="html">
+        <source>Sendet sofort eine Beispiel-Erinnerung.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/settings/settings.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="settings.notifications.testBtn" datatype="html">
+        <source>Testen</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/settings/settings.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="notification.reminder.title" datatype="html">
+        <source>MeterFlow – Zähler ablesen</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/services/notification.service.ts</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="notification.reminder.body" datatype="html">
+        <source>Zeit für deinen monatlichen Zählerstand! Jetzt Werte erfassen.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/services/notification.service.ts</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.totalCo2" datatype="html">
+        <source>CO₂ <x id="INTERPOLATION" equiv-text="{{ state.selectedYear() }}"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/dashboard/dashboard.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dashboard.co2" datatype="html">
+        <source>CO₂</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/dashboard/dashboard.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="reports.totalCo2" datatype="html">
+        <source>CO₂-Emissionen <x id="INTERPOLATION" equiv-text="{{ state.selectedYear() }}"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/reports/reports.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="reports.co2Note" datatype="html">
+        <source>Basis: DE-Emissionsfaktoren (UBA 2024)</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/reports/reports.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="reports.pdfBtn" datatype="html">
+        <source>PDF exportieren</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/reports/reports.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="reports.pdfBtn.aria" datatype="html">
+        <source>PDF exportieren</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/reports/reports.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="pdf.subtitle" datatype="html">
+        <source>Jahresabrechnung <x id="INTERPOLATION" equiv-text="year"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/services/pdf-export.service.ts</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="pdf.generatedOn" datatype="html">
+        <source>Erstellt am <x id="INTERPOLATION" equiv-text="date"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/services/pdf-export.service.ts</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="pdf.overview" datatype="html">
+        <source>Übersicht <x id="INTERPOLATION" equiv-text="year"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/services/pdf-export.service.ts</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="pdf.totalCostLabel" datatype="html">
+        <source>Gesamtkosten: </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/services/pdf-export.service.ts</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="pdf.totalCo2Label" datatype="html">
+        <source>Gesamtemissionen: </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/services/pdf-export.service.ts</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="pdf.meterTable" datatype="html">
+        <source>Zähler-Übersicht</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/services/pdf-export.service.ts</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="pdf.col.meter" datatype="html">
+        <source>Zähler</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/services/pdf-export.service.ts</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="pdf.col.type" datatype="html">
+        <source>Typ</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/services/pdf-export.service.ts</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="pdf.col.consumption" datatype="html">
+        <source>Verbrauch</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/services/pdf-export.service.ts</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="pdf.col.unit" datatype="html">
+        <source>Einheit</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/services/pdf-export.service.ts</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="pdf.col.cost" datatype="html">
+        <source>Kosten (€)</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/services/pdf-export.service.ts</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="pdf.col.co2" datatype="html">
+        <source>CO₂ (kg)</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/services/pdf-export.service.ts</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="pdf.col.month" datatype="html">
+        <source>Monat</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/services/pdf-export.service.ts</context>
+          <context context-type="linenumber">1</context>
         </context-group>
       </trans-unit>
     </body>

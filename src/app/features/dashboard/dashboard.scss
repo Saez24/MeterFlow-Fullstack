@@ -4,6 +4,104 @@
   margin: 0 auto;
 }
 
+// ── Budget-Warnbanner ──────────────────────────────────────────────────────────
+.budget-alerts-section {
+  padding: 0 24px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.budget-alert {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto auto;
+  column-gap: 12px;
+  row-gap: 6px;
+  align-items: center;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: rgba(255, 149, 0, 0.08);
+  border: 1px solid rgba(255, 149, 0, 0.3);
+  position: relative;
+  overflow: hidden;
+
+  &--critical {
+    background: rgba(255, 59, 48, 0.08);
+    border-color: rgba(255, 59, 48, 0.3);
+
+    .budget-alert__icon {
+      color: var(--apple-red, #ff3b30);
+    }
+    .budget-alert__bar-fill {
+      background: var(--apple-red, #ff3b30);
+    }
+  }
+
+  &__icon {
+    grid-row: span 2;
+    color: #ff9500;
+    font-size: 22px;
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  &__title {
+    font-size: 0.875rem;
+    color: var(--text-primary);
+  }
+
+  &__detail {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+  }
+
+  &__bar {
+    grid-column: 2;
+    height: 4px;
+    background: var(--border-subtle, rgba(0, 0, 0, 0.08));
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  &__bar-fill {
+    height: 100%;
+    background: #ff9500;
+    border-radius: 2px;
+    transition: width 0.4s ease;
+  }
+}
+
+// ── Budget-Badge auf Meter-Card ────────────────────────────────────────────────
+.meter-budget-badge {
+  margin-left: auto;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(255, 149, 0, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    color: #ff9500;
+  }
+
+  &--critical {
+    background: rgba(255, 59, 48, 0.12);
+    mat-icon {
+      color: var(--apple-red, #ff3b30);
+    }
+  }
+}
+
 .dashboard-header {
   display: flex;
   justify-content: space-between;
@@ -74,6 +172,24 @@
   mat-icon {
     color: var(--apple-blue);
   }
+
+  &--co2 {
+    background: rgba(16, 185, 129, 0.1);
+    mat-icon {
+      color: #10b981;
+    }
+  }
+}
+
+.summary-card--co2 {
+  .summary-value {
+    color: #10b981;
+  }
+}
+
+.stat-value.co2 {
+  color: #10b981;
+  font-size: 0.875rem;
 }
 
 .summary-info {

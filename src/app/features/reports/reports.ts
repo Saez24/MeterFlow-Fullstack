@@ -19,6 +19,7 @@ import { ThemeService } from '../../core/services/theme.service';
 import { ENERGY_META, MONTH_NAMES } from '../../core/models/energy.models';
 import { DashboardStateService } from '../../core/services/dashboard-state.service';
 import { ReadingService } from '../../core/services/reading.service';
+import { PdfExportService } from '../../core/services/pdf-export.service';
 
 Chart.register(...registerables);
 
@@ -37,9 +38,9 @@ Chart.register(...registerables);
 })
 export class Reports implements AfterViewInit, OnDestroy {
   readonly state = inject(DashboardStateService);
-  // In reports.ts – oben bei den injects hinzufügen:
   private readonly readingService = inject(ReadingService);
   private readonly themeService = inject(ThemeService);
+  private readonly pdfExport = inject(PdfExportService);
 
   @ViewChild('costChart') costChartRef!: ElementRef<HTMLCanvasElement>;
   @ViewChild('consumptionChart') consumptionChartRef!: ElementRef<HTMLCanvasElement>;
@@ -74,6 +75,10 @@ export class Reports implements AfterViewInit, OnDestroy {
     this.costChartInstance?.destroy();
     this.consumptionChartInstance?.destroy();
     this.yearChartInstance?.destroy();
+  }
+
+  exportPdf(): void {
+    this.pdfExport.exportYearReport(this.state.selectedYear());
   }
 
   private buildAllCharts(): void {

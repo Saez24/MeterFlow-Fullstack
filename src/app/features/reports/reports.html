@@ -4,14 +4,21 @@
       <h1 class="page-title" i18n="@@reports.title">Auswertungen</h1>
       <p class="page-subtitle" i18n="@@reports.subtitle">Monats- und Jahresübersichten deiner Verbräuche</p>
     </div>
-    <mat-form-field appearance="outline" class="year-select">
-      <mat-label i18n="@@reports.yearLabel">Jahr</mat-label>
-      <mat-select [value]="state.selectedYear()" (selectionChange)="state.selectedYear.set($event.value)">
-        @for (y of state.availableYears(); track y) {
-        <mat-option [value]="y">{{ y }}</mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
+    <div class="page-header__actions">
+      <mat-form-field appearance="outline" class="year-select">
+        <mat-label i18n="@@reports.yearLabel">Jahr</mat-label>
+        <mat-select [value]="state.selectedYear()" (selectionChange)="state.selectedYear.set($event.value)">
+          @for (y of state.availableYears(); track y) {
+          <mat-option [value]="y">{{ y }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <button mat-flat-button class="pdf-btn" (click)="exportPdf()" aria-label="PDF exportieren"
+        i18n-aria-label="@@reports.pdfBtn.aria">
+        <mat-icon>picture_as_pdf</mat-icon>
+        <span i18n="@@reports.pdfBtn">PDF exportieren</span>
+      </button>
+    </div>
   </div>
 
   <!-- Jahres-KPIs -->
@@ -24,6 +31,20 @@
           <span class="kpi-value">{{
             state.totalYearCostWithBase() | currency: 'EUR' : 'symbol' : '1.2-2'
             }}</span>
+        </div>
+      </div>
+      <div class="kpi-card kpi-card--co2">
+        <div class="kpi-icon kpi-icon--co2"><mat-icon>eco</mat-icon></div>
+        <div class="kpi-info">
+          <span class="kpi-label" i18n="@@reports.totalCo2">CO₂-Emissionen {{ state.selectedYear() }}</span>
+          <span class="kpi-value kpi-value--co2">
+            @if (state.totalYearCo2Kg() >= 1000) {
+            {{ state.totalYearCo2Kg() / 1000 | number: '1.1-2' }} t
+            } @else {
+            {{ state.totalYearCo2Kg() | number: '1.0-1' }} kg
+            }
+          </span>
+          <span class="kpi-sub" i18n="@@reports.co2Note">Basis: DE-Emissionsfaktoren (UBA 2024)</span>
         </div>
       </div>
       @for (meter of state.activeMeters(); track meter.id) {
@@ -43,6 +64,16 @@
             {{ summary.consumption | number: '1.0-2' }} {{ summary.unit }}
             }
           </span>
+          @if (summary.co2Kg !== 0) {
+          <span class="kpi-co2">
+            <mat-icon class="kpi-co2__icon">eco</mat-icon>
+            @if (summary.co2Kg >= 1000) {
+            {{ summary.co2Kg / 1000 | number: '1.1-2' }} t CO₂
+            } @else {
+            {{ summary.co2Kg | number: '1.0-1' }} kg CO₂
+            }
+          </span>
+          }
         </div>
       </div>
       }
