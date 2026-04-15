@@ -31,13 +31,14 @@
 }
 .year-select {
   min-width: 120px;
+  height: 56px;
 }
 
 .pdf-btn {
   background: var(--apple-blue) !important;
   color: white !important;
   border-radius: 12px !important;
-  height: 44px;
+  height: 56px;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -60,14 +61,20 @@
   gap: 14px;
 }
 .kpi-card {
-  display: flex;
-  align-items: center;
+  display: grid;
   gap: 14px;
   padding: 18px;
   border-radius: 20px;
   background: var(--bg-surface);
   border: 1px solid var(--border-color);
 }
+
+.kpi-block {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
 .kpi-card--total {
   border-color: var(--apple-blue);
   background: rgba(var(--apple-blue-rgb), 0.1);

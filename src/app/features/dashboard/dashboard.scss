@@ -139,6 +139,13 @@
   gap: 16px;
 }
 
+.summary-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
 .summary-card {
   display: flex;
   align-items: center;
@@ -229,7 +236,7 @@
   flex-direction: row;
   gap: 2px;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
 }
 
 .summary-label {

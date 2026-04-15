@@ -45,11 +45,14 @@
   <section class="summary-section">
     <div class="summary-grid">
       <div class="summary-card summary-card--total">
-        <span class="summary-label" i18n="@@dashboard.totalCosts">Gesamtkosten {{ state.selectedYear() }}</span>
-        <div class="summary-info">
+        <div class="summary-header">
           <div class="summary-icon">
             <mat-icon>account_balance</mat-icon>
           </div>
+          <span class="summary-label" i18n="@@dashboard.totalCosts">Gesamtkosten {{ state.selectedYear() }}</span>
+        </div>
+        <div class="summary-info">
+
           <span class="summary-value">{{
             state.totalYearCostWithBase() | currency: 'EUR' : 'symbol' : '1.2-2'
             }}</span>
@@ -70,20 +73,24 @@
         }
       </div>
       <div class="summary-card summary-card--meters">
-        <span class="summary-label" i18n="@@dashboard.activeMeters">Aktive Zähler</span>
-        <div class="summary-info">
+        <div class="summary-header">
           <div class="summary-icon">
             <mat-icon>speed</mat-icon>
           </div>
+          <span class="summary-label" i18n="@@dashboard.activeMeters">Aktive Zähler</span>
+        </div>
+        <div class="summary-info">
           <span class="summary-value">{{ state.activeCount() }}</span>
         </div>
       </div>
       <div class="summary-card summary-card--co2">
-        <span class="summary-label" i18n="@@dashboard.totalCo2">CO₂ {{ state.selectedYear() }}</span>
-        <div class="summary-info">
-          <div class="summary-icon summary-icon--co2">
+        <div class="summary-header">
+          <div class="summary-icon">
             <mat-icon>eco</mat-icon>
           </div>
+          <span class="summary-label" i18n="@@dashboard.totalCo2">CO₂ {{ state.selectedYear() }}</span>
+        </div>
+        <div class="summary-info">
           <span class="summary-value">
             @if (state.totalYearCo2Kg() >= 1000) {
             {{ state.totalYearCo2Kg() / 1000 | number: '1.1-2' }} t

@@ -24,7 +24,7 @@
     "@angular/platform-browser": "^21.2.8",
     "@angular/router": "^21.2.8",
     "@angular/service-worker": "^21.2.8",
-    "@supabase/supabase-js": "^2.103.0",
+    "@supabase/supabase-js": "^2.103.2",
     "@types/papaparse": "^5.5.2",
     "chart.js": "^4.5.1",
     "jspdf": "^4.2.1",
@@ -41,7 +41,7 @@
     "@angular/localize": "^21.2.8",
     "@playwright/test": "^1.59.1",
     "jsdom": "^29.0.2",
-    "prettier": "^3.8.2",
+    "prettier": "^3.8.3",
     "typescript": "5.9.3",
     "vitest": "^4.1.4"
   }

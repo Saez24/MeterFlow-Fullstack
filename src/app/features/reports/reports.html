@@ -44,14 +44,29 @@
             {{ state.totalYearCo2Kg() | number: '1.0-1' }} kg
             }
           </span>
-          <span class="kpi-sub" i18n="@@reports.co2Note">Basis: DE-Emissionsfaktoren (UBA 2024)</span>
+          <!-- <span class="kpi-sub" i18n="@@reports.co2Note">Basis: DE-Emissionsfaktoren (UBA 2024)</span> -->
         </div>
       </div>
       @for (meter of state.activeMeters(); track meter.id) {
       @if (state.statsService.getMeterSummary(meter.id, state.selectedYear()); as summary) {
       <div class="kpi-card" [style.--kpi-color]="meter.color">
-        <div class="kpi-icon" [style.background]="meter.color + '22'">
-          <mat-icon [style.color]="meter.color">{{ meter.icon }}</mat-icon>
+        <div class="kpi-block">
+          <div class="kpi-icon" [style.background]="meter.color + '22'">
+            <mat-icon [style.color]="meter.color">{{ meter.icon }}</mat-icon>
+
+          </div>
+          <div>
+            @if (summary.co2Kg !== 0) {
+            <span class="kpi-co2">
+              <mat-icon class="kpi-co2__icon">eco</mat-icon>
+              @if (summary.co2Kg >= 1000) {
+              {{ summary.co2Kg / 1000 | number: '1.1-2' }} t CO₂
+              } @else {
+              {{ summary.co2Kg | number: '1.0-1' }} kg CO₂
+              }
+            </span>
+            }
+          </div>
         </div>
         <div class="kpi-info">
           <span class="kpi-label">{{ meter.name }}</span>
@@ -64,16 +79,7 @@
             {{ summary.consumption | number: '1.0-2' }} {{ summary.unit }}
             }
           </span>
-          @if (summary.co2Kg !== 0) {
-          <span class="kpi-co2">
-            <mat-icon class="kpi-co2__icon">eco</mat-icon>
-            @if (summary.co2Kg >= 1000) {
-            {{ summary.co2Kg / 1000 | number: '1.1-2' }} t CO₂
-            } @else {
-            {{ summary.co2Kg | number: '1.0-1' }} kg CO₂
-            }
-          </span>
-          }
+
         </div>
       </div>
       }
