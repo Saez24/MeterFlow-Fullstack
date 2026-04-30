@@ -19,13 +19,24 @@ export class OcrService {
      */
     async recognizeMeterValue(file: File): Promise<OcrResult> {
         // Lazy import – WASM bundle only loaded when OCR is first used
-        const Tesseract = await import('tesseract.js');
+        const { createWorker, PSM } = await import('tesseract.js');
 
-        const { data } = await Tesseract.recognize(file, 'deu+eng', {
-            // Force digit-optimized page segmentation:
-            // PSM 6 = Assume a single uniform block of text
-            // tessedit_char_whitelist restricts output to digits, comma, dot, space
+        // Convert HEIC to supported format if necessary
+        let processedFile = file;
+        if (file.type === 'image/heic' || file.type === 'image/heif' || file.name.toLowerCase().endsWith('.heic') || file.name.toLowerCase().endsWith('.heif')) {
+            const { default: heicTo } = await import('heic-to');
+            const convertedBlob = await (heicTo as any)(file, { type: 'image/jpeg', quality: 0.8 });
+            processedFile = new File([convertedBlob], file.name.replace(/\.(heic|heif)$/i, '.jpg'), { type: 'image/jpeg' });
+        }
+
+        const worker = await createWorker('deu');
+        await worker.setParameters({
+            tessedit_pageseg_mode: PSM.SINGLE_BLOCK,
+            tessedit_char_whitelist: '0123456789, ',
         });
+
+        const { data } = await worker.recognize(processedFile);
+        await worker.terminate();
 
         const rawText = data.text.trim();
         const confidence = Math.round(data.confidence);

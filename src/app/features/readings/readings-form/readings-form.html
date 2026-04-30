@@ -181,7 +181,7 @@
             <mat-icon class="ocr-result-icon">auto_fix_high</mat-icon>
             <div class="ocr-result-body">
               <span class="ocr-result-label" i18n="@@readingsForm.ocr.detected">Erkannter Wert</span>
-              <span class="ocr-result-value">{{ result.value | number: '1.0-3' }}</span>
+              <span class="ocr-result-value">{{ result.value | number: '1.0-3':'de' }}</span>
               <span class="ocr-result-confidence">
                 <span i18n="@@readingsForm.ocr.confidence">Konfidenz</span>: {{ result.confidence }} %
               </span>

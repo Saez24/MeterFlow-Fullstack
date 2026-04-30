@@ -26,7 +26,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     {
       provide: LOCALE_ID,
-      useFactory: () => navigator.language,
+      useValue: 'de',
     },
     provideServiceWorker('ngsw-worker.js', {
       enabled: !isDevMode(),
