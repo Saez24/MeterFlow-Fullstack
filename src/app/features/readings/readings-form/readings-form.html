@@ -1,5 +1,11 @@
 <div class="page-container">
-  <button class="back-btn" mat-icon-button (click)="goBack()">
+  @if (isSaving()) {
+  <div class="saving-overlay">
+    <mat-spinner diameter="48"></mat-spinner>
+    <span i18n="@@readingsForm.saving">Wird gespeichert…</span>
+  </div>
+  }
+  <button class="back-btn" mat-icon-button (click)="this.readingService.goBack()">
     <mat-icon>arrow_back</mat-icon>
   </button>
   <div class="page-header">
@@ -233,7 +239,8 @@
 
     <!-- Actions -->
     <div class="form-actions">
-      <button type="button" mat-button (click)="goBack()" i18n="@@readingsForm.cancel">Abbrechen</button>
+      <button type="button" mat-button (click)="this.readingService.goBack()"
+        i18n="@@readingsForm.cancel">Abbrechen</button>
       <button type="submit" mat-flat-button color="primary" [disabled]="isSaveDisabled()" class="save-btn">
         <mat-icon>check</mat-icon>
         <span i18n="@@readingsForm.save">Ablesung speichern</span>

@@ -65,6 +65,7 @@ export class Readings {
   deleteReading(id: string): void {
     this.dialog
       .open(ConfirmDialogComponent, {
+        backdropClass: 'blur-backdrop',
         data: {
           title: $localize`:@@readings.delete.title:Ablesung löschen`,
           message: $localize`:@@readings.delete.message:Ablesung wirklich löschen?`,

@@ -4,12 +4,14 @@ import { SupabaseService } from './supabase.service';
 import { MeterService } from './meter.service';
 import { TariffService } from './tariff.service';
 import { GAS_DEFAULTS } from '../constants/gas.constants';
+import { Router } from '@angular/router';
 
 @Injectable({ providedIn: 'root' })
 export class ReadingService {
   private readonly supabase = inject(SupabaseService);
   private readonly meterService = inject(MeterService);
   private readonly tariffService = inject(TariffService);
+  private readonly router = inject(Router);
 
   readonly readings = signal<MeterReading[]>([]);
   readonly loading = signal(true);
@@ -115,6 +117,7 @@ export class ReadingService {
       list.map((r) => (r.id === id ? { ...r, ...changes } : r)),
     );
     await this.recalculateAllReadingsForMeter(oldReading.meterId);
+    this.goBack();
   }
 
   async deleteReading(id: string): Promise<void> {
@@ -123,10 +126,12 @@ export class ReadingService {
     await this.supabase.deleteReading(id);
     this.readings.update((list) => list.filter((r) => r.id !== id));
     await this.recalculateAllReadingsForMeter(reading.meterId);
+    this.goBack();
   }
 
   async deleteReadingsForMeter(meterId: string): Promise<void> {
     this.readings.update((list) => list.filter((r) => r.meterId !== meterId));
+    this.goBack();
   }
 
   async recalculateAllReadingsForMeter(meterId: string): Promise<void> {
@@ -239,5 +244,9 @@ export class ReadingService {
 
   getMeter(id: string): MeterConfig | undefined {
     return this.meterService.getMeter(id);
+  }
+
+  goBack(): void {
+    this.router.navigate(['/readings']);
   }
 }

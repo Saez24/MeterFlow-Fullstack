@@ -24,7 +24,7 @@ import { TariffService } from '../../../core/services/tariff.service';
 import { SupabaseService } from '../../../core/services/supabase.service';
 import { GAS_DEFAULTS } from '../../../core/constants/gas.constants';
 import { OcrService, OcrResult } from '../../../core/services/ocr.service';
-
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { maxDecimalPlaces } from '../../../core/validators/decimal-places.validator';
 
 @Component({
@@ -43,6 +43,7 @@ import { maxDecimalPlaces } from '../../../core/validators/decimal-places.valida
     MatNativeDateModule,
     MatSnackBarModule,
     MatDividerModule,
+    MatProgressSpinnerModule,
   ],
   templateUrl: './readings-form.html',
   styleUrl: './readings-form.scss',
@@ -50,14 +51,14 @@ import { maxDecimalPlaces } from '../../../core/validators/decimal-places.valida
 })
 export class ReadingsForm {
   private readonly meterService = inject(MeterService);
-  private readonly readingService = inject(ReadingService);
+  public readonly readingService = inject(ReadingService);
   private readonly tariffService = inject(TariffService);
   private readonly supabaseService = inject(SupabaseService);
   private readonly ocrService = inject(OcrService);
-  private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly snackBar = inject(MatSnackBar);
   private readonly fb = inject(FormBuilder);
+  readonly isSaving = signal(false);
 
   // ── Foto-State ──────────────────────────────────────────────────────
   private readonly existingPhotoPath = signal<string | null>(null);
@@ -312,6 +313,7 @@ export class ReadingsForm {
 
   async save(): Promise<void> {
     if (this.form.invalid) return;
+    this.isSaving.set(true);
 
     const rawValue = this.form.getRawValue();
     const numericValue = this.numericFormValue();
@@ -369,7 +371,7 @@ export class ReadingsForm {
       }
 
       this.snackBar.open($localize`:@@readingsForm.saved:Ablesung gespeichert`, 'OK', { duration: 3000 });
-      this.goBack();
+      this.readingService.goBack();
     } catch (error) {
       console.error('Error saving reading:', error);
       this.snackBar.open($localize`:@@readingsForm.saveError:Fehler beim Speichern der Ablesung`, 'OK', {
@@ -377,9 +379,9 @@ export class ReadingsForm {
         panelClass: 'error-snackbar',
       });
     }
+    finally {
+      this.isSaving.set(false);
+    }
   }
 
-  goBack(): void {
-    this.router.navigate(['/readings']);
-  }
 }
