@@ -57,6 +57,7 @@ export class App {
     { path: '/meters', icon: 'speed', label: $localize`:@@nav.meters:Zähler` },
     { path: '/readings', icon: 'history', label: $localize`:@@nav.readings:Ablesungen` },
     { path: '/reports', icon: 'bar_chart', label: $localize`:@@nav.reports:Auswertungen` },
+    { path: '/cost-preview', icon: 'timeline', label: $localize`:@@nav.costPreview:Kostenvorschau` },
     { path: '/settings', icon: 'settings', label: $localize`:@@nav.settings:Einstellungen` },
   ];
 

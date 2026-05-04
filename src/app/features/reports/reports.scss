@@ -95,11 +95,26 @@
 .kpi-card--total .kpi-icon mat-icon {
   color: white;
 }
-.kpi-card--co2 .kpi-icon,
+
+.kpi-card--co2 {
+  border-color: #10b981;
+  background: rgba(16, 185, 129, 0.12);
+}
+.kpi-icon,
 .kpi-icon--co2 {
   background: rgba(16, 185, 129, 0.12);
   mat-icon {
     color: #10b981;
+  }
+}
+.kpi-card--preview {
+  border-color: #f59e0b;
+  background: rgba(245, 158, 11, 0.1);
+}
+.kpi-card--preview .kpi-icon {
+  background: #f59e0b;
+  mat-icon {
+    color: white;
   }
 }
 .kpi-value--co2 {

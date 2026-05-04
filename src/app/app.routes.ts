@@ -13,6 +13,7 @@ import { MeterChart } from './features/meters/meter-detail/tabs/meter-chart/mete
 import { MeterReadings } from './features/meters/meter-detail/tabs/meter-readings/meter-readings';
 import { MeterTariffs } from './features/meters/meter-detail/tabs/meter-tariffs/meter-tariffs';
 import { MeterCosts } from './features/meters/meter-detail/tabs/meter-costs/meter-costs';
+import { CostPreview } from './features/cost-preview/cost-preview';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
@@ -49,6 +50,7 @@ export const routes: Routes = [
     ],
   },
   { path: 'reports', component: Reports, canActivate: [authGuard] },
+  { path: 'cost-preview', component: CostPreview, canActivate: [authGuard] },
   { path: 'settings', component: Settings, canActivate: [authGuard] },
 
   { path: '**', redirectTo: 'dashboard' },

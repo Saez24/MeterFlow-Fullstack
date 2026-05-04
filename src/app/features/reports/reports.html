@@ -24,6 +24,16 @@
   <!-- Jahres-KPIs -->
   <section class="kpi-section">
     <div class="kpi-grid">
+      @if (state.costPreview(); as preview) {
+      <div class="kpi-card kpi-card--preview">
+        <div class="kpi-icon"><mat-icon>timeline</mat-icon></div>
+        <div class="kpi-info">
+          <span class="kpi-label" i18n="@@reports.costPreview">Kostenvorschau {{ state.selectedYear() }}</span>
+          <span class="kpi-value">{{ preview.projectedCost | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
+          <span class="kpi-sub">Basierend auf {{ preview.monthsUsed }} Monaten</span>
+        </div>
+      </div>
+      }
       <div class="kpi-card kpi-card--total">
         <div class="kpi-icon"><mat-icon>euro</mat-icon></div>
         <div class="kpi-info">
@@ -138,7 +148,6 @@
       <div class="water-table-header">
         <span i18n="@@reports.water.month">Monat</span>
         <span i18n="@@reports.water.totalM3">Gesamt m³</span>
-        <span i18n="@@reports.water.gardenM3">Garten m³</span>
         <span i18n="@@reports.water.billable">Abw.-pflichtig</span>
         <span i18n="@@reports.water.freshwater">Frischwasser</span>
         <span i18n="@@reports.water.wastewater">Abwasser</span>
@@ -149,15 +158,6 @@
       <div class="water-table-row" [class.water-table-row--has-garden]="bill.gardenConsumption > 0">
         <span class="month-label" data-label="Monat">{{ MONTH_NAMES[bill.month - 1] }}</span>
         <span data-label="Gesamt m³">{{ bill.totalConsumption | number: '1.0-2' }} m³</span>
-        <span class="garden-col" data-label="Garten m³">
-          @if (bill.gardenConsumption > 0) {
-          <span class="garden-badge">
-            -{{ bill.gardenConsumption | number: '1.0-2' }} m³
-          </span>
-          } @else {
-          <span class="no-garden">–</span>
-          }
-        </span>
         <span data-label="Abw.-pflichtig">{{ bill.billableWastewater | number: '1.0-2' }} m³</span>
         <span data-label="Frischwasser">{{ bill.freshwaterCost | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
         <span data-label="Abwasser">{{ bill.wastewaterCost | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
@@ -170,9 +170,6 @@
       <div class="water-table-footer">
         <span data-label="Jahresgesamt" i18n="@@reports.water.yearTotal">Jahresgesamt</span>
         <span data-label="Gesamt m³">{{ state.waterTotals().totalM3 | number: '1.0-2' }} m³</span>
-        <span class="garden-col" data-label="Garten m³">
-          -{{ state.waterTotals().gardenM3 | number: '1.0-2' }} m³
-        </span>
         <span data-label="Abw.-pflichtig">{{ state.waterTotals().billableM3 | number: '1.0-2' }} m³</span>
         <span data-label="Frischwasser">{{ state.waterTotals().freshCost | currency: 'EUR' : 'symbol' : '1.2-2'
           }}</span>
