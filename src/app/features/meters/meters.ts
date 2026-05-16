@@ -1,7 +1,7 @@
 // src/app/features/meters/meters.ts
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -40,6 +40,7 @@ import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/c
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Meters {
+  private readonly router = inject(Router);
   private readonly meterService = inject(MeterService);
   private readonly readingService = inject(ReadingService);
   private readonly tariffService = inject(TariffService);
@@ -62,6 +63,10 @@ export class Meters {
 
   getActiveTariff(meter: MeterConfig): TariffPeriod | null {
     return this.tariffService.getActiveTariffForDate(meter, new Date());
+  }
+
+  navigateToMeter(meterId: string): void {
+    this.router.navigate(['/meters', meterId]);
   }
 
   toggleActive(meter: MeterConfig): void {

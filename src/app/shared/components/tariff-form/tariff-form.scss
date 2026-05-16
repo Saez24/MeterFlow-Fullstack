@@ -37,12 +37,14 @@
 
 .form-row {
   display: flex;
+  flex-wrap: wrap;
   gap: 16px;
   width: 100%;
 }
 
 .form-row--2 > * {
-  flex: 1 1 50%;
+  flex: 1 1 calc(50% - 8px);
+  min-width: 220px;
 }
 
 .form-field--full {

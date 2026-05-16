@@ -28,10 +28,6 @@ yarn-error.log
 !.vscode/extensions.json
 !.vscode/mcp.json
 .history/*
-agents.md
-GEMINI.md
-.gemini
-blueprint.md
 
 # Miscellaneous
 /.angular/cache

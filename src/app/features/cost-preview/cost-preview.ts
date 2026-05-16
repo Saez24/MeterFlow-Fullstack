@@ -8,7 +8,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
 import { DashboardStateService } from '../../core/services/dashboard-state.service';
 import { TariffService } from '../../core/services/tariff.service';
-import { ENERGY_META, MONTH_NAMES } from '../../core/models/energy.models';
+import { MONTH_NAMES } from '../../core/models/energy.models';
 
 @Component({
     selector: 'app-cost-preview',
@@ -75,15 +75,21 @@ export class CostPreview {
                 };
             }
 
-            // Durchschnittliche variable Kosten pro Monat für diesen Zähler
+            const activeTariff = this.state.getActiveTariff(meter);
+            const connectedKw = meter.type === 'fernwarme' ? Math.max(0, meter.connectedLoadKw ?? 10) : 0;
+
+            // Durchschnittliche monatliche Kosten für diesen Zähler
             const avgMonthlyVariable = allMeterMonths.reduce((sum, m) => sum + (m.byMeter[meter.id]?.cost ?? 0), 0) / allMeterMonths.length;
 
-            // Prognostizierte variable Kosten für 12 Monate
+            // Prognostizierte Kosten für 12 Monate
             const projectedVariableCost = avgMonthlyVariable * 12;
 
-            // Grundgebühren für 12 Monate (nur wenn nicht Gartenwasser)
-            const baseChargeYearly = (meter.type === 'garden_water' && meter.linkedWaterMeterId) ? 0 :
-                (this.state.getActiveTariff(meter)?.baseCharge ?? 0) * 12;
+            // Grundgebühren für 12 Monate
+            const baseChargeYearly = meter.type === 'garden_water' && meter.linkedWaterMeterId
+                ? 0
+                : meter.type === 'fernwarme'
+                    ? connectedKw * (activeTariff?.basePricePerKw ?? 0)
+                    : (activeTariff?.baseCharge ?? 0) * 12;
 
             // Gesamtprognose für diesen Zähler
             const projectedTotal = projectedVariableCost + baseChargeYearly;
@@ -123,6 +129,10 @@ export class CostPreview {
                         meter,
                         new Date(year, m.month - 1),
                     );
+                    if (meter.type === 'fernwarme') {
+                        const kw = Math.max(0, meter.connectedLoadKw ?? 10);
+                        return sum + (kw * (tariff?.basePricePerKw ?? 0)) / 12;
+                    }
                     return sum + (tariff?.baseCharge ?? 0);
                 }, 0),
                 totalCost: m.totalCost + meters.reduce((sum, meter) => {
@@ -131,6 +141,10 @@ export class CostPreview {
                         meter,
                         new Date(year, m.month - 1),
                     );
+                    if (meter.type === 'fernwarme') {
+                        const kw = Math.max(0, meter.connectedLoadKw ?? 10);
+                        return sum + (kw * (tariff?.basePricePerKw ?? 0)) / 12;
+                    }
                     return sum + (tariff?.baseCharge ?? 0);
                 }, 0),
             })),

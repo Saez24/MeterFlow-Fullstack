@@ -16,8 +16,9 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { ENERGY_META, TariffPeriod, MeterConfig } from '../../../core/models/energy.models';
+import { TariffPeriod, MeterConfig } from '../../../core/models/energy.models';
 import { TariffService } from '../../../core/services/tariff.service';
+import { MeterService } from '../../../core/services/meter.service';
 import { ReadingService } from '../../../core/services/reading.service';
 
 export interface TariffFormData {
@@ -46,6 +47,7 @@ export interface TariffFormData {
 export class TariffFormComponent {
   private readonly fb = inject(FormBuilder);
   private readonly tariffService = inject(TariffService);
+  private readonly meterService = inject(MeterService);
   private readonly readingService = inject(ReadingService);
   private readonly snackBar = inject(MatSnackBar);
   public readonly dialogRef = inject(MatDialogRef<TariffFormComponent>);
@@ -61,8 +63,7 @@ export class TariffFormComponent {
     validFrom: [new Date(), Validators.required],
     emissionPrice: [undefined as number | undefined],
     basePricePerKw: [undefined as number | undefined],
-    annualBasePrice: [undefined as number | undefined],
-    capacityThresholdKw: [15 as number | undefined],
+    connectedLoadKw: [this.data.meter.connectedLoadKw ?? undefined as number | undefined, [Validators.min(0)]],
     wastewaterPrice: [undefined as number | undefined],
     calorificValue: [undefined as number | undefined],
     zNumber: [undefined as number | undefined],
@@ -97,8 +98,7 @@ export class TariffFormComponent {
         this.form.patchValue({
           emissionPrice: lastTariff?.emissionPrice ?? 0,
           basePricePerKw: lastTariff?.basePricePerKw ?? 0,
-          annualBasePrice: lastTariff?.annualBasePrice ?? 0,
-          capacityThresholdKw: lastTariff?.capacityThresholdKw ?? 15,
+          connectedLoadKw: this.meter().connectedLoadKw ?? 10,
         });
       }
       if (this.isWater()) {
@@ -133,8 +133,11 @@ export class TariffFormComponent {
     if (this.isDistrictHeating()) {
       tariffData.emissionPrice = formValue.emissionPrice;
       tariffData.basePricePerKw = formValue.basePricePerKw;
-      tariffData.annualBasePrice = formValue.annualBasePrice;
-      tariffData.capacityThresholdKw = formValue.capacityThresholdKw ?? 15;
+      if (formValue.connectedLoadKw != null) {
+        await this.meterService.updateMeter(this.meter().id, {
+          connectedLoadKw: formValue.connectedLoadKw,
+        });
+      }
     }
 
     if (this.isEdit()) {

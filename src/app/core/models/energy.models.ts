@@ -28,8 +28,7 @@ export interface TariffPeriod {
   note?: string;
   emissionPrice?: number;
   basePricePerKw?: number;       // Fernwärme: Bereitstellungspreis pro kW/Jahr
-  annualBasePrice?: number;      // Fernwärme: Grundpreis pro Jahr (fix)
-  capacityThresholdKw?: number;  // Fernwärme: Freigrenze (kW), ab der BP gilt (Standard: 15 kW)
+
 }
 
 export interface BudgetConfig {

@@ -24,7 +24,9 @@
 
   <div class="meters-list">
     @for (meter of meters(); track meter.id) {
-    <a class="meter-row" [class.meter-row--inactive]="!meter.active" [routerLink]="[meter.id]"
+    <div class="meter-row" [class.meter-row--inactive]="!meter.active"
+      (click)="navigateToMeter(meter.id)"
+      role="link" tabindex="0" (keydown.enter)="navigateToMeter(meter.id)"
       [attr.aria-label]="meter.name + ' – Details anzeigen'">
       <div class="meter-row__icon" [style.background]="meter.color + '22'">
         <mat-icon [style.color]="meter.color">{{ meter.icon }}</mat-icon>
@@ -80,7 +82,8 @@
         <mat-slide-toggle [checked]="meter.active" (change)="toggleActive(meter)" color="primary"
           class="active-toggle"></mat-slide-toggle>
 
-        <button mat-icon-button [matMenuTriggerFor]="meterMenu" class="menu-btn">
+        <button mat-icon-button [matMenuTriggerFor]="meterMenu" class="menu-btn"
+                (click)="$event.stopPropagation()">
           <mat-icon>more_vert</mat-icon>
         </button>
 
@@ -104,7 +107,7 @@
           </button>
         </mat-menu>
       </div>
-    </a>
+    </div>
     }
   </div>
 </div>

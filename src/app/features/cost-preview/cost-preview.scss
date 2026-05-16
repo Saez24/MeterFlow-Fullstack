@@ -38,31 +38,59 @@
 }
 
 .total-summary-card {
+  background: var(--bg-surface);
+  color: var(--text-primary);
   margin-bottom: 32px;
+  border: 1px solid var(--border-color);
   border-radius: 8px;
   box-shadow:
-    0 2px 8px rgba(0, 0, 0, 0.1),
-    0 1px 3px rgba(0, 0, 0, 0.08);
+    0 2px 8px rgba(0, 0, 0, 0.08),
+    0 1px 3px rgba(0, 0, 0, 0.04);
   overflow: hidden;
 
   mat-card-header {
     padding: 16px 16px 8px;
     margin-bottom: 0;
+    border-bottom: 1px solid var(--border-color);
   }
 
   mat-card-title {
+    color: var(--text-primary);
     font-size: 1.4rem;
     font-weight: 700;
     margin-bottom: 4px;
   }
 
   mat-card-subtitle {
-    opacity: 0.9;
+    color: var(--text-secondary);
+    opacity: 1;
     font-size: 0.9rem;
   }
 
   mat-card-content {
     padding: 8px 16px 16px;
+  }
+}
+
+.total-amount {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 8px;
+
+  .total-icon {
+    font-size: 32px;
+    width: 32px;
+    height: 32px;
+    color: var(--apple-blue);
+  }
+
+  .total-value {
+    font-size: 2.2rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--apple-blue);
   }
 }
 
@@ -102,11 +130,13 @@
 }
 
 .meter-preview-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
   border-left: 4px solid var(--meter-color, #666);
   border-radius: 8px;
   box-shadow:
-    0 2px 8px rgba(0, 0, 0, 0.1),
-    0 1px 3px rgba(0, 0, 0, 0.08);
+    0 2px 8px rgba(0, 0, 0, 0.08),
+    0 1px 3px rgba(0, 0, 0, 0.04);
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease;
@@ -126,7 +156,8 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  margin-bottom: 16px;
+  margin-bottom: 8px;
+  padding: 16px 16px 0;
 
   mat-icon {
     font-size: 28px;
@@ -138,9 +169,16 @@
     margin: 0;
     font-size: 1.1rem;
     font-weight: 600;
+    color: var(--text-primary);
   }
 }
 
+.meter-header mat-card-subtitle {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
 .meter-cost-summary {
   display: flex;
   flex-direction: column;

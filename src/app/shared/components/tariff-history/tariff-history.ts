@@ -44,6 +44,7 @@ export class TariffHistory {
   readonly isLinkedGardenWater = computed(
     () => this.meter().type === 'garden_water' && !!this.meter().linkedWaterMeterId,
   );
+  readonly isDistrictHeating = computed(() => this.meter().type === 'fernwarme');
 
   readonly sortedHistory = computed(() =>
     [...(this.meter().tariffHistory ?? [])].sort(
@@ -68,6 +69,15 @@ export class TariffHistory {
 
     const pct = ((curr.pricePerUnit - prevPrice) / prevPrice) * 100;
     return { pct, prev: prevPrice, curr: curr.pricePerUnit };
+  }
+
+  getFernwaermeAnnualBaseCharge(period: TariffPeriod): number {
+    const connectedKw = Math.max(0, this.meter().connectedLoadKw ?? 10);
+    return connectedKw * (period.basePricePerKw ?? 0);
+  }
+
+  getFernwaermeMonthlyBaseCharge(period: TariffPeriod): number {
+    return this.getFernwaermeAnnualBaseCharge(period) / 12;
   }
 
   delete(period: TariffPeriod): void {

@@ -82,12 +82,10 @@ export class ReadingService {
         const days = prev
           ? (new Date(reading.date).getTime() - new Date(prev.date).getTime()) / 86_400_000
           : 0;
-        const connectedKw = meter.connectedLoadKw ?? 0;
-        const thresholdKw = tariff.capacityThresholdKw ?? 15;
-        const annualFixed =
-          (tariff.annualBasePrice ?? 0) +
-          Math.max(0, connectedKw - thresholdKw) * (tariff.basePricePerKw ?? 0);
-        cost = (annualFixed / 365) * days + consumption * tariff.pricePerUnit;
+        const connectedKw = Math.max(0, meter.connectedLoadKw ?? 10);
+        const annualFixed = connectedKw * (tariff.basePricePerKw ?? 0);
+        const pricePerMWh = tariff.pricePerUnit + (tariff.emissionPrice ?? 0);
+        cost = (annualFixed / 365) * days + consumption * pricePerMWh;
       } else {
         cost = consumption * tariff.pricePerUnit;
       }
@@ -131,7 +129,6 @@ export class ReadingService {
 
   async deleteReadingsForMeter(meterId: string): Promise<void> {
     this.readings.update((list) => list.filter((r) => r.meterId !== meterId));
-    this.goBack();
   }
 
   async recalculateAllReadingsForMeter(meterId: string): Promise<void> {
@@ -171,12 +168,10 @@ export class ReadingService {
           const days = prev
             ? (new Date(current.date).getTime() - new Date(prev.date).getTime()) / 86_400_000
             : 0;
-          const connectedKw = meter.connectedLoadKw ?? 0;
-          const thresholdKw = tariff.capacityThresholdKw ?? 15;
-          const annualFixed =
-            (tariff.annualBasePrice ?? 0) +
-            Math.max(0, connectedKw - thresholdKw) * (tariff.basePricePerKw ?? 0);
-          cost = (annualFixed / 365) * days + consumption * tariff.pricePerUnit;
+          const connectedKw = Math.max(0, meter.connectedLoadKw ?? 10);
+          const annualFixed = connectedKw * (tariff.basePricePerKw ?? 0);
+          const pricePerMWh = tariff.pricePerUnit + (tariff.emissionPrice ?? 0);
+          cost = (annualFixed / 365) * days + consumption * pricePerMWh;
         } else {
           cost = consumption * tariff.pricePerUnit;
         }

@@ -152,10 +152,10 @@
             <span class="reading-value">{{ summary.consumptionKwh | number: '1.0-0' }}</span>
             <span class="reading-unit">kWh</span>
             <span class="reading-unit reading-unit--secondary">
-              ({{ summary.consumption | number: '1.0-2' }} {{ summary.unit }})
+              ({{ summary.consumption | number: (meter.type === 'fernwarme' ? '1.3-3' : '1.0-2') }} {{ summary.unit }})
             </span>
             } @else {
-            <span class="reading-value">{{ summary.consumption | number: '1.0-2' }}</span>
+            <span class="reading-value">{{ summary.consumption | number: (meter.type === 'fernwarme' ? '1.3-3' : '1.0-2') }}</span>
             <span class="reading-unit">{{ summary.unit }}</span>
             }
           </div>

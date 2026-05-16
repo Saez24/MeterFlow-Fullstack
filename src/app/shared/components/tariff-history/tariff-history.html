@@ -1,10 +1,8 @@
 @if (isLinkedGardenWater()) {
 <div class="tariff-container--linked">
   <mat-icon>info_outline</mat-icon>
-  <span
-    >Dieser Gartenwasserzähler ist mit einem Hauptzähler verknüpft. Der Verbrauch wird
-    automatisch vom Abwasser abgezogen und es ist kein separater Tarif erforderlich.</span
-  >
+  <span>Dieser Gartenwasserzähler ist mit einem Hauptzähler verknüpft. Der Verbrauch wird
+    automatisch vom Abwasser abgezogen und es ist kein separater Tarif erforderlich.</span>
 </div>
 } @else {
 <div class="tariff-container">
@@ -46,55 +44,46 @@
         <div class="tariff-card-header">
           <div class="tariff-date-block">
             <mat-icon class="date-icon">event</mat-icon>
-            <span class="tariff-date"
-              >Gültig: {{ period.validFrom | date: 'dd.MM.yyyy' }} @if(period.validTo) { - {{
-              period.validTo | date: 'dd.MM.yyyy' }} }</span
-            >
+            <span class="tariff-date">Gültig: {{ period.validFrom | date: 'dd.MM.yyyy' }} @if(period.validTo) { - {{
+              period.validTo | date: 'dd.MM.yyyy' }} }</span>
             @if (i === 0) {
             <span class="tariff-active-badge">Aktiv</span>
             }
           </div>
           <div class="tariff-card-actions">
-          <button
-            mat-icon-button
-            (click)="editTariff.emit(period.id)"
-            [matTooltip]="'Tarif bearbeiten'"
-            class="edit-btn"
-          >
-            <mat-icon>edit</mat-icon>
-          </button>
-          <button
-            mat-icon-button
-            (click)="delete(period)"
-            [matTooltip]="'Tarif löschen'"
-            class="delete-btn"
-          >
-            <mat-icon>delete_outline</mat-icon>
-          </button>
+            <button mat-icon-button (click)="editTariff.emit(period.id)" [matTooltip]="'Tarif bearbeiten'"
+              class="edit-btn">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button (click)="delete(period)" [matTooltip]="'Tarif löschen'" class="delete-btn">
+              <mat-icon>delete_outline</mat-icon>
+            </button>
           </div>
         </div>
 
         <div class="tariff-prices">
           <div class="price-chip">
             <span class="price-label">Arbeitspreis</span>
-            <span class="price-val"
-              >{{ period.pricePerUnit | currency: 'EUR' : 'symbol' : '1.4-4' }}/{{
-                meter().unit
-              }}</span
-            >
+            <span class="price-val">{{ period.pricePerUnit | currency: 'EUR' : 'symbol' : '1.4-4' }}/{{
+              meter().unit
+              }}</span>
           </div>
+          @if (isDistrictHeating()) {
+          <div class="price-chip">
+            <span class="price-label">Bereitstellungspreis</span>
+            <span class="price-val">{{ getFernwaermeAnnualBaseCharge(period) | currency: 'EUR' : 'symbol' : '1.2-2' }}/Jahr</span>
+            <span class="price-hint">{{ meter().connectedLoadKw ?? 10 }} kW × {{ period.basePricePerKw | currency: 'EUR' : 'symbol' : '1.4-4' }}/kW</span>
+          </div>
+          } @else {
           <div class="price-chip">
             <span class="price-label">Grundgebühr</span>
-            <span class="price-val"
-              >{{ period.baseCharge | currency: 'EUR' : 'symbol' : '1.2-2' }}/Mon.</span
-            >
+            <span class="price-val">{{ period.baseCharge | currency: 'EUR' : 'symbol' : '1.2-2' }}/Mon.</span>
           </div>
+          }
           @if (period.wastewaterPrice) {
           <div class="price-chip">
             <span class="price-label">Abwasser</span>
-            <span class="price-val"
-              >{{ period.wastewaterPrice | currency: 'EUR' : 'symbol' : '1.4-4' }}/m³</span
-            >
+            <span class="price-val">{{ period.wastewaterPrice | currency: 'EUR' : 'symbol' : '1.4-4' }}/m³</span>
           </div>
           } @if (period.calorificValue) {
           <div class="price-chip">
@@ -118,11 +107,7 @@
 
         <!-- Preisvergleich zum vorherigen Tarif -->
         @if (getPriceDiff(i); as diff) {
-        <div
-          class="tariff-diff"
-          [class.tariff-diff--up]="diff.pct > 0"
-          [class.tariff-diff--down]="diff.pct < 0"
-        >
+        <div class="tariff-diff" [class.tariff-diff--up]="diff.pct > 0" [class.tariff-diff--down]="diff.pct < 0">
           <mat-icon>{{ diff.pct > 0 ? 'trending_up' : 'trending_down' }}</mat-icon>
           {{ diff.pct > 0 ? '+' : '' }}{{ diff.pct | number: '1.1-1' }}% gegenüber vorherigem Tarif
           ({{ diff.prev | currency: 'EUR' : 'symbol' : '1.4-4' }} →

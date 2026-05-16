@@ -84,9 +84,9 @@
           <span class="kpi-sub">
             @if (summary.consumptionKwh !== undefined) {
             {{ summary.consumptionKwh | number: '1.0-0' }} kWh
-            ({{ summary.consumption | number: '1.0-2' }} {{ summary.unit }})
+            ({{ summary.consumption | number: (meter.type === 'fernwarme' ? '1.3-3' : '1.0-2') }} {{ summary.unit }})
             } @else {
-            {{ summary.consumption | number: '1.0-2' }} {{ summary.unit }}
+            {{ summary.consumption | number: (meter.type === 'fernwarme' ? '1.3-3' : '1.0-2') }} {{ summary.unit }}
             }
           </span>
 

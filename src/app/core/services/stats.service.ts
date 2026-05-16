@@ -192,19 +192,39 @@ export class StatsService {
       };
 
       for (const meter of this.meterService.activeMeters()) {
-        const readings = (this.readingService.readingsByMeter().get(meter.id) ?? [])
-          .filter((r) => {
-            const d = new Date(r.date);
-            return d.getFullYear() === year && d.getMonth() + 1 === month;
-          })
-          .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+        const allReadings = (this.readingService.readingsByMeter().get(meter.id) ?? [])
+          .slice()
+          .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
-        if (readings.length >= 1) {
-          const consumption =
-            readings[0].consumption ?? readings[0].value - (readings[1]?.value ?? 0);
-          const cost = readings[0].totalCost ?? this.calcCost(meter, consumption, readings[0].date);
-          stats.byMeter[meter.id] = { consumption, cost, unit: ENERGY_META[meter.type].unit };
-          stats.totalCost += cost;
+        const monthReadings = allReadings.filter((r) => {
+          const d = new Date(r.date);
+          return d.getFullYear() === year && d.getMonth() + 1 === month;
+        });
+
+        if (monthReadings.length >= 1) {
+          const monthConsumption = monthReadings.reduce((sum, reading) => {
+            const index = allReadings.findIndex((r) => r.id === reading.id);
+            const prev = index > 0 ? allReadings[index - 1] : undefined;
+            const consumption =
+              reading.consumption ?? (prev ? reading.value - prev.value : 0);
+            return sum + consumption;
+          }, 0);
+
+          const monthCost = monthReadings.reduce((sum, reading) => {
+            const index = allReadings.findIndex((r) => r.id === reading.id);
+            const prev = index > 0 ? allReadings[index - 1] : undefined;
+            const consumption =
+              reading.consumption ?? (prev ? reading.value - prev.value : 0);
+            const cost = reading.totalCost ?? this.calcCost(meter, consumption, reading.date);
+            return sum + cost;
+          }, 0);
+
+          stats.byMeter[meter.id] = {
+            consumption: monthConsumption,
+            cost: monthCost,
+            unit: ENERGY_META[meter.type].unit,
+          };
+          stats.totalCost += monthCost;
         }
       }
       result.push(stats);
@@ -282,6 +302,9 @@ export class StatsService {
       const zNumber = tariff.zNumber ?? meter.zNumber ?? GAS_DEFAULTS.Z_NUMBER;
       const kwh = consumption * calorificValue * zNumber;
       return kwh * tariff.pricePerUnit;
+    }
+    if (meter.type === 'fernwarme') {
+      return consumption * (tariff.pricePerUnit + (tariff.emissionPrice ?? 0));
     }
     return consumption * tariff.pricePerUnit;
   }

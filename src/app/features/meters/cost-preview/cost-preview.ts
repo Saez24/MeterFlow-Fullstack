@@ -83,13 +83,10 @@ export class CostPreview {
       let consumptionCost: number;
 
       if (meter.type === 'fernwarme') {
-        const connectedKw = meter.connectedLoadKw ?? 0;
-        const thresholdKw = tariff.capacityThresholdKw ?? 15;
-        const annualFixed =
-          (tariff.annualBasePrice ?? 0) +
-          Math.max(0, connectedKw - thresholdKw) * (tariff.basePricePerKw ?? 0);
+        const connectedKw = Math.max(0, meter.connectedLoadKw ?? 10);
+        const annualFixed = connectedKw * (tariff.basePricePerKw ?? 0);
         periodBaseCharge = (annualFixed / 365) * days;
-        consumptionCost = periodConsumption * tariff.pricePerUnit;
+        consumptionCost = periodConsumption * (tariff.pricePerUnit + (tariff.emissionPrice ?? 0));
       } else {
         const baseChargePerDay = (tariff.baseCharge * 12) / 365;
         periodBaseCharge = baseChargePerDay * days;
