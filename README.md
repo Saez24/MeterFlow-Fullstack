@@ -19,14 +19,14 @@ MeterFlow ist eine moderne Web-App zur Erfassung und Auswertung von Energiezähl
 
 ## 🛠 Tech Stack
 
-| Bereich | Technologie |
-|---|---|
-| Frontend | Angular 19 (Standalone Components, Signals) |
-| UI | Angular Material |
-| Charts | Chart.js |
-| Backend / Auth | Supabase (PostgreSQL) |
-| Hosting | Docker + Nginx |
-| CI/CD | GitHub Actions → GHCR |
+| Bereich        | Technologie                                 |
+| -------------- | ------------------------------------------- |
+| Frontend       | Angular 21 (Standalone Components, Signals) |
+| UI             | Angular Material                            |
+| Charts         | Chart.js                                    |
+| Backend / Auth | Supabase (PostgreSQL)                       |
+| Hosting        | Docker + Nginx                              |
+| CI/CD          | GitHub Actions → GHCR                       |
 
 ---
 
@@ -34,9 +34,9 @@ MeterFlow ist eine moderne Web-App zur Erfassung und Auswertung von Energiezähl
 
 MeterFlow benötigt zwei Umgebungsvariablen die zur Build-Zeit übergeben werden:
 
-| Variable | Beschreibung |
-|---|---|
-| `SUPABASE_URL` | URL deines Supabase-Projekts |
+| Variable       | Beschreibung                      |
+| -------------- | --------------------------------- |
+| `SUPABASE_URL` | URL deines Supabase-Projekts      |
 | `SUPABASE_KEY` | Anon-Key deines Supabase-Projekts |
 
 ### Lokal (Development)
@@ -67,9 +67,11 @@ Die Werte werden beim Build über GitHub Secrets injiziert — kein manuelles Se
 ## 🚀 Roadmap
 
 ### In Arbeit
+
 - [ ] Mobile App (Flutter + SQLite + iCloud/Google Drive Backup)
 
 ### Geplant
+
 - [ ] Push-Benachrichtigungen bei Budget-Überschreitung
 - [ ] CSV-Export für alle Ablesungen
 - [ ] Mehrsprachigkeit (DE/EN)
@@ -77,6 +79,7 @@ Die Werte werden beim Build über GitHub Secrets injiziert — kein manuelles Se
 - [ ] Selbst-gehostetes Supabase (Unraid)
 
 ### Fertig ✅
+
 - [x] Dashboard mit Jahres- und Monatsübersicht
 - [x] Zählerverwaltung (Strom, Gas, Wasser, Solar, Heizöl)
 - [x] Automatische kWh-Umrechnung für Gas
