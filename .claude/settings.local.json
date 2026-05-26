@@ -1,7 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(xargs sed -n '34,160p')"
-    ]
-  }
-}
