@@ -1,8 +1,8 @@
 # MeterFlow – Blueprint
 
-**Zuletzt aktualisiert:** 2026-04-05 (Session 17)  
-**Version:** 0.0.0  
-**Angular:** 21.x · **Material:** 21.x · **Supabase:** 2.x · **Chart.js:** 4.x
+**Zuletzt aktualisiert:** 2026-06-06 (Session 18)  
+**Version:** 0.1.0  
+**Angular:** 21.x · **Material:** 21.x · **FastAPI:** 0.115+ · **SQLAlchemy:** 2.0 · **PostgreSQL:** 17 · **Chart.js:** 4.x
 
 ---
 
@@ -10,18 +10,26 @@
 
 | Schicht   | Technologie                                |
 | --------- | ------------------------------------------ |
-| Framework | Angular 21 (Standalone, Zoneless)          |
-| UI        | Angular Material 3 (Apple-Skin)            |
-| State     | Signals (`signal`, `computed`, `resource`) |
-| Backend   | Supabase (Postgres + Auth + RLS)           |
-| Charts    | Chart.js 4                                 |
-| Tests     | Vitest (Unit) · Playwright (E2E)           |
-| Styling   | SCSS + CSS-Variablen (Apple Design System) |
-| Sprache   | TypeScript strict                          |
+| Schicht    | Technologie                                |
+| ---------- | ------------------------------------------ |
+| Framework  | Angular 21 (Standalone, Zoneless)          |
+| UI         | Angular Material 3 (Apple-Skin)            |
+| State      | Signals (`signal`, `computed`, `resource`) |
+| Backend    | FastAPI 0.115+ (Python 3.13)               |
+| ORM        | SQLAlchemy 2.0 async + asyncpg             |
+| Auth       | Eigenes JWT (HS256) + HttpOnly Cookies     |
+| Datenbank  | PostgreSQL 17 (Docker)                     |
+| Migrations | Alembic                                    |
+| Storage    | MinIO (S3-kompatibel)                      |
+| Charts     | Chart.js 4                                 |
+| Tests Web  | Vitest (Unit) · Playwright (E2E)           |
+| Tests API  | pytest + httpx + Allure (OOP)              |
+| Styling    | SCSS + CSS-Variablen (Apple Design System) |
+| Sprache    | TypeScript strict · Python 3.13            |
 
 ---
 
-## Architektur
+## Frontend-Architektur
 
 ```
 src/app/
@@ -73,6 +81,81 @@ src/app/
 
 ---
 
+## Backend-Architektur
+
+```
+backend/
+├── pyproject.toml                    # black, ruff, mypy strict, pytest, alembic
+├── .env.example                      # JWT_SECRET, DATABASE_URL, S3_*, ALLOWED_ORIGINS
+├── alembic.ini
+├── alembic/versions/
+│   └── 001_initial_schema.py        # users, refresh_tokens, meters, readings, co2_factors
+├── src/meterflow/
+│   ├── main.py                      # App-Factory, lifespan, CORS, Router-Registrierung
+│   ├── config.py                    # pydantic-settings BaseSettings
+│   ├── database.py                  # async engine, get_db Dependency
+│   ├── auth/
+│   │   ├── dependencies.py          # get_current_user → CurrentUser(id, email)
+│   │   ├── router.py                # POST /auth/register, /login, /refresh, /logout + GET /me
+│   │   ├── service.py               # Passwort-Hashing (bcrypt), Token-Generierung
+│   │   └── schemas.py               # RegisterRequest, LoginRequest, TokenResponse
+│   ├── models/                      # SQLAlchemy 2.0 mapped[] ORM-Klassen
+│   │   ├── base.py                  # DeclarativeBase, UUID-PK, timestamptz-Mixin
+│   │   ├── user.py                  # User (id, email, hashed_password, created_at)
+│   │   ├── refresh_token.py         # RefreshToken (user_id, token_hash, expires_at, revoked)
+│   │   ├── meter.py                 # Meter (tariff_history JSONB, budget JSONB)
+│   │   ├── reading.py               # Reading
+│   │   └── co2_factor.py            # Co2Factor
+│   ├── schemas/                     # Pydantic v2 Request/Response-Schemas
+│   │   ├── meter.py
+│   │   ├── reading.py
+│   │   ├── co2_factor.py
+│   │   └── stats.py                 # MonthStats, YearStats, BudgetAlert
+│   ├── repositories/                # Datenzugriff, nur select()-Stil, kein raw SQL
+│   │   ├── base.py                  # BaseRepository[ModelT]
+│   │   ├── meter.py
+│   │   ├── reading.py
+│   │   └── co2_factor.py
+│   ├── services/                    # Business-Logik (kein DB-Zugriff direkt)
+│   │   ├── tariff.py                # Aktiven Tarif für Datum finden
+│   │   ├── reading.py               # Verbrauch + Kosten berechnen
+│   │   ├── co2.py                   # CO₂-Berechnung, Fallback auf UBA-Defaults
+│   │   ├── stats.py                 # Monats-/Jahresstatistiken, YoY-Vergleich
+│   │   └── budget.py                # Budget-Alerts generieren
+│   └── routers/
+│       ├── auth.py                  # /api/v1/auth
+│       ├── meters.py                # /api/v1/meters
+│       ├── readings.py              # /api/v1/readings
+│       ├── co2_factors.py           # /api/v1/co2-factors
+│       └── stats.py                 # /api/v1/stats
+└── tests/
+    ├── conftest.py                  # async Test-DB, Fixtures
+    ├── base_test.py                 # BaseTest, DataGenerator, Factories
+    ├── helpers/                     # API-Service-Klassen mit @allure.step
+    └── integration/                 # Klassen-basierte pytest-Tests
+```
+
+### Auth-Flow (HttpOnly Cookies)
+
+- **Login** → FastAPI setzt `access_token` (15 min) + `refresh_token` (30 Tage) als `HttpOnly; Secure; SameSite=Strict` Cookies
+- **Kein localStorage** — Tokens sind für JavaScript nicht lesbar (XSS-Schutz)
+- **Angular:** `HttpClient` mit `withCredentials: true` — kein manueller Token-Interceptor
+- **Refresh:** Angular-Interceptor fängt 401 ab → `POST /api/v1/auth/refresh` → neues Access-Token Cookie
+- **nginx:** Frontend und Backend auf gleicher Domain — `/api/v1/*` wird proxied zu `http://api:8000`
+
+### API-Endpunkte
+
+| Router | Basis-Pfad | Auth |
+| ------ | ---------- | ---- |
+| Auth | `/api/v1/auth` | register/login öffentlich, rest JWT |
+| Meters | `/api/v1/meters` | JWT |
+| Readings | `/api/v1/readings` | JWT |
+| CO₂-Faktoren | `/api/v1/co2-factors` | JWT |
+| Stats | `/api/v1/stats` | JWT |
+| Health | `/health` | öffentlich |
+
+---
+
 ## Domain-Modell
 
 ### EnergyType
@@ -90,19 +173,23 @@ src/app/
 
 ## Daten & Backend
 
-### Supabase-Schema (`supabase/migrations/`)
+### PostgreSQL-Schema (`backend/alembic/versions/`)
 
-| Tabelle                       | Schlüsselfelder                                               | RLS         |
-| ----------------------------- | ------------------------------------------------------------- | ----------- |
-| `meters`                      | `id`, `user_id`, `type`, `tariff_history` (JSONB), `active`   | ✅ pro User |
-| `readings`                    | `id`, `user_id`, `meter_id`, `date`, `value`, `cost`, `photo` | ✅ pro User |
-| Storage-Bucket `meter-photos` | privat, 5 MB Limit, JPEG/PNG/WebP/HEIC                        | ✅ pro User |
+| Tabelle         | Schlüsselfelder                                                  | Schutz                        |
+| --------------- | ---------------------------------------------------------------- | ----------------------------- |
+| `users`         | `id` UUID, `email` unique, `hashed_password`, `created_at`      | –                             |
+| `refresh_tokens`| `id`, `user_id`, `token_hash`, `expires_at`, `revoked`          | FK auf users                  |
+| `meters`        | `id`, `user_id`, `type`, `tariff_history` JSONB, `budget` JSONB | `user_id`-Filter in Repos     |
+| `readings`      | `id`, `user_id`, `meter_id`, `date`, `value`, `cost`, `photo`   | `user_id`-Filter in Repos     |
+| `co2_factors`   | `id`, `user_id`, `energy_type`, `factor_kg_per_unit`, `valid_from` | `unique(user_id, type, date)` |
 
 ### Sicherheit
 
-- RLS auf beiden Tabellen (Policy: `auth.uid() = user_id`)
-- Auth via Supabase Email/Password
-- Alle Routen außer `/auth` durch `authGuard` geschützt
+- `user_id`-Filter in FastAPI-Repositories (ersetzt Supabase RLS)
+- Auth via eigenes JWT (HS256, 15 min) + HttpOnly Refresh-Token Cookie
+- Passwörter mit bcrypt gehasht (`passlib[bcrypt]`)
+- Alle Routen außer `/auth/register`, `/auth/login`, `/health` durch `get_current_user` Dependency geschützt
+- Fotos in MinIO (S3-kompatibel), Zugriff nur via signierte URLs
 
 ---
 
@@ -483,6 +570,40 @@ Dreiteiliger Fernwärme-Preis vollständig umgesetzt:
 - [x] `test`-Job: `npm test -- --run` (Vitest, Node 22) als Pipeline-Gate
 - [x] `e2e`-Job: Playwright Chromium, Artifact-Upload bei Fehler
 - [x] `build-and-push`: `needs: [test, e2e]` – Image wird nur bei grünen Tests gepusht
+
+---
+
+## Session 18 – FastAPI Backend (2026-06-06)
+
+### Architektur-Entscheidung: Von Supabase zu eigenem Backend
+
+Supabase wird vollständig abgelöst durch:
+- FastAPI 0.115+ als REST-API-Backend
+- SQLAlchemy 2.0 async + asyncpg auf eigenem PostgreSQL 17 Container
+- Eigenes JWT-Auth-System mit HttpOnly Cookies (keine localStorage-Tokens)
+- MinIO als S3-kompatibler Foto-Storage
+
+### Implementierungsfortschritt
+
+- [x] `backend/` Projektstruktur angelegt (`pyproject.toml`, `src/meterflow/`)
+- [x] `config.py` + `database.py` (Fundament)
+- [x] Alembic + `001_initial_schema.py` (users, refresh_tokens, meters, readings, co2_factors)
+- [x] SQLAlchemy ORM-Models (user, refresh_token, meter, reading, co2_factor)
+- [x] Auth-System: register, login, refresh, logout (HttpOnly Cookies)
+- [x] Repositories (meter, reading, co2_factor)
+- [x] Services (tariff, reading, co2, stats, budget)
+- [x] Routers (auth, meters, readings, co2_factors, stats)
+- [x] main.py + Dockerfile + docker-compose.yml
+- [x] Integrationstests (pytest OOP + Allure)
+- [ ] Angular: Supabase SDK entfernen, eigener AuthService + withCredentials
+
+### Migrations-Plan (Angular-Seite)
+
+1. `@supabase/supabase-js` entfernen
+2. `SupabaseService` → eigener `ApiService` (HttpClient + withCredentials)
+3. `AuthService` auf `/api/v1/auth/*` umschreiben
+4. `authGuard` → prüft Cookie via `GET /api/v1/auth/me`
+5. HTTP-Interceptor: 401 → stilles Refresh → Retry
 
 ---
 
