@@ -7,7 +7,7 @@ import {
   ViewChild,
   ElementRef,
   effect,
-  ChangeDetectionStrategy,
+
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
@@ -34,7 +34,7 @@ Chart.register(...registerables);
   ],
   templateUrl: './reports.html',
   styleUrl: './reports.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
 })
 export class Reports implements AfterViewInit, OnDestroy {
   readonly state = inject(DashboardStateService);

@@ -1,18 +1,18 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 
 export interface ConfirmDialogData {
-    title: string;
-    message: string;
-    confirmLabel?: string;
-    cancelLabel?: string;
+  title: string;
+  message: string;
+  confirmLabel?: string;
+  cancelLabel?: string;
 }
 
 @Component({
-    selector: 'app-confirm-dialog',
-    imports: [MatButtonModule, MatDialogModule],
-    template: `
+  selector: 'app-confirm-dialog',
+  imports: [MatButtonModule, MatDialogModule],
+  template: `
     <h2 mat-dialog-title>{{ data.title }}</h2>
     <mat-dialog-content>
       <p>{{ data.message }}</p>
@@ -26,9 +26,9 @@ export interface ConfirmDialogData {
       </button>
     </mat-dialog-actions>
   `,
-    changeDetection: ChangeDetectionStrategy.OnPush,
+
 })
 export class ConfirmDialogComponent {
-    readonly data = inject<ConfirmDialogData>(MAT_DIALOG_DATA);
-    readonly dialogRef = inject<MatDialogRef<ConfirmDialogComponent, boolean>>(MatDialogRef);
+  readonly data = inject<ConfirmDialogData>(MAT_DIALOG_DATA);
+  readonly dialogRef = inject<MatDialogRef<ConfirmDialogComponent, boolean>>(MatDialogRef);
 }

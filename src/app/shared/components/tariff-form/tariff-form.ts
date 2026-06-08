@@ -42,7 +42,7 @@ export interface TariffFormData {
   ],
   templateUrl: './tariff-form.html',
   styleUrls: ['./tariff-form.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
 })
 export class TariffFormComponent {
   private readonly fb = inject(FormBuilder);

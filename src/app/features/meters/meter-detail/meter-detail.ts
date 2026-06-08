@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -11,7 +11,7 @@ import { MeterDetailStateService } from '../../../core/services/meter-detail-sta
   imports: [CommonModule, RouterModule, MatButtonModule, MatIconModule],
   templateUrl: './meter-detail.html',
   styleUrl: './meter-detail.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
   providers: [MeterDetailStateService],
 })
 export class MeterDetail {

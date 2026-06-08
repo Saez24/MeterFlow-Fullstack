@@ -47,7 +47,7 @@ import { maxDecimalPlaces } from '../../../core/validators/decimal-places.valida
   ],
   templateUrl: './readings-form.html',
   styleUrl: './readings-form.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
 })
 export class ReadingsForm {
   private readonly meterService = inject(MeterService);

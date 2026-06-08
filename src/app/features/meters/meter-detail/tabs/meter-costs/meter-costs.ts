@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MeterDetailStateService } from '../../../../../core/services/meter-detail-state.service';
 import { CostPreview } from '../../../cost-preview/cost-preview';
@@ -8,7 +8,7 @@ import { CostPreview } from '../../../cost-preview/cost-preview';
   imports: [CommonModule, CostPreview],
   templateUrl: './meter-costs.html',
   styleUrl: './meter-costs.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
 })
 export class MeterCosts {
   private readonly state = inject(MeterDetailStateService);

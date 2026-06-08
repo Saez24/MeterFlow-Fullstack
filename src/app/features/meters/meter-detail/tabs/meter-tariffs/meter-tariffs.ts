@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
@@ -15,7 +15,7 @@ import { ConfirmDialogComponent } from '../../../../../shared/components/confirm
   imports: [CommonModule, MatDialogModule, MatSnackBarModule, TariffHistory],
   templateUrl: './meter-tariffs.html',
   styleUrl: './meter-tariffs.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
 })
 export class MeterTariffs {
   private readonly tariffService = inject(TariffService);
