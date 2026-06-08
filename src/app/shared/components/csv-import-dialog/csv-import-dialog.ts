@@ -1,5 +1,5 @@
 import {
-    ChangeDetectionStrategy,
+
     Component,
     inject,
     signal,
@@ -29,7 +29,7 @@ import { MeterConfig } from '../../../core/models/energy.models';
     ],
     templateUrl: './csv-import-dialog.html',
     styleUrl: './csv-import-dialog.scss',
-    changeDetection: ChangeDetectionStrategy.OnPush,
+
 })
 export class CsvImportDialogComponent {
     private readonly csvImport = inject(CsvImportService);

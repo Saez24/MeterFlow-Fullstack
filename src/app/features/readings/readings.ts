@@ -30,7 +30,7 @@ import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/c
   ],
   templateUrl: './readings.html',
   styleUrl: './readings.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
 })
 export class Readings {
   private readonly meterService = inject(MeterService);

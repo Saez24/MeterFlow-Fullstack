@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
@@ -17,7 +17,7 @@ import { SupabaseService } from '../../../../../core/services/supabase.service';
   providers: [DatePipe],
   templateUrl: './meter-readings.html',
   styleUrl: './meter-readings.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
 })
 export class MeterReadings {
   private readonly readingService = inject(ReadingService);

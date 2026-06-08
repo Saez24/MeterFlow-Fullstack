@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, effect, inject, signal, ViewChild, ElementRef, computed } from '@angular/core';
+import { Component, effect, inject, signal, ViewChild, ElementRef, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { Chart } from 'chart.js';
@@ -11,7 +11,7 @@ import { MeterConfig } from '../../../../../core/models/energy.models';
   imports: [CommonModule, MatIconModule],
   templateUrl: './meter-chart.html',
   styleUrl: './meter-chart.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
 })
 export class MeterChart {
   private readonly state = inject(MeterDetailStateService);

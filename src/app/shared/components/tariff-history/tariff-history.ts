@@ -29,7 +29,7 @@ import { MeterConfig, TariffPeriod } from '../../../core/models/energy.models';
   ],
   templateUrl: './tariff-history.html',
   styleUrl: './tariff-history.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
 })
 export class TariffHistory {
   private readonly snackBar = inject(MatSnackBar);

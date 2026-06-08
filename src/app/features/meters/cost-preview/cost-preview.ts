@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input, signal } from '@angular/core';
+import { Component, computed, input, signal } from '@angular/core';
 import { MeterConfig } from '../../../core/models/energy.models';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -19,7 +19,7 @@ import { CommonModule } from '@angular/common';
   ],
   templateUrl: './cost-preview.html',
   styleUrl: './cost-preview.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
 })
 export class CostPreview {
   meter = input.required<MeterConfig>();

@@ -43,7 +43,7 @@ import { GAS_DEFAULTS } from '../../../core/constants/gas.constants';
   ],
   templateUrl: './meter-form.html',
   styleUrls: ['./meter-form.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
 })
 export class MeterForm {
   private readonly meterService = inject(MeterService);

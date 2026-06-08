@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormsModule, ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
@@ -19,7 +19,7 @@ type AuthMode = 'login' | 'register';
     MatIconModule, MatSnackBarModule,],
   templateUrl: './auth.html',
   styleUrl: './auth.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
 })
 export class Auth {
   private readonly supabase = inject(SupabaseService);

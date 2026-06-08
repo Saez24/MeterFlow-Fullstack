@@ -1,5 +1,5 @@
 // src/app/features/meters/meters.ts
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
@@ -37,7 +37,7 @@ import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/c
   ],
   templateUrl: './meters.html',
   styleUrl: './meters.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
 })
 export class Meters {
   private readonly router = inject(Router);

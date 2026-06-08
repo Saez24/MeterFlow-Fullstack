@@ -28,7 +28,7 @@ import { EnergyType, ENERGY_META } from '../../core/models/energy.models';
     MatSnackBarModule, MatDialogModule, MatSlideToggleModule, MatFormFieldModule, MatInputModule],
   templateUrl: './settings.html',
   styleUrl: './settings.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+
 })
 export class Settings {
   private readonly themeService = inject(ThemeService);
