@@ -33,7 +33,7 @@ def upgrade() -> None:
         sa.Column("user_id", UUID(as_uuid=True), sa.ForeignKey("users.id", ondelete="CASCADE"), nullable=False),
         sa.Column("token_hash", sa.Text(), nullable=False, unique=True),
         sa.Column("expires_at", sa.TIMESTAMP(timezone=True), nullable=False),
-        sa.Column("revoked", sa.Boolean(), nullable=False, server_default="false"),
+        sa.Column("revoked", sa.Boolean(), nullable=False, server_default=sa.text("false")),
         sa.Column("created_at", sa.TIMESTAMP(timezone=True), nullable=False, server_default=sa.func.now()),
     )
     op.create_index("idx_refresh_tokens_user_id", "refresh_tokens", ["user_id"])
@@ -48,8 +48,8 @@ def upgrade() -> None:
         sa.Column("unit", sa.Text(), nullable=False),
         sa.Column("icon", sa.Text(), nullable=False),
         sa.Column("color", sa.Text(), nullable=False),
-        sa.Column("active", sa.Boolean(), nullable=False, server_default="true"),
-        sa.Column("archived", sa.Boolean(), nullable=False, server_default="false"),
+        sa.Column("active", sa.Boolean(), nullable=False, server_default=sa.text("true")),
+        sa.Column("archived", sa.Boolean(), nullable=False, server_default=sa.text("false")),
         sa.Column("meter_number", sa.Text()),
         sa.Column("provider", sa.Text()),
         sa.Column("notes", sa.Text()),
@@ -57,7 +57,7 @@ def upgrade() -> None:
         sa.Column("z_number", sa.Numeric()),
         sa.Column("connected_load_kw", sa.Numeric()),
         sa.Column("linked_water_meter_id", UUID(as_uuid=True), sa.ForeignKey("meters.id", ondelete="SET NULL")),
-        sa.Column("tariff_history", JSONB(), nullable=False, server_default="'[]'::jsonb"),
+        sa.Column("tariff_history", JSONB(), nullable=False, server_default=sa.text("'[]'::jsonb")),
         sa.Column("budget", JSONB()),
         sa.Column("created_at", sa.TIMESTAMP(timezone=True), nullable=False, server_default=sa.func.now()),
     )
@@ -90,7 +90,7 @@ def upgrade() -> None:
         sa.Column("energy_type", sa.Text(), nullable=False),
         sa.Column("factor_kg_per_unit", sa.Numeric(12, 6), nullable=False),
         sa.Column("unit", sa.Text(), nullable=False),
-        sa.Column("source", sa.Text(), nullable=False, server_default="''"),
+        sa.Column("source", sa.Text(), nullable=False, server_default=sa.text("''")),
         sa.Column("source_url", sa.Text()),
         sa.Column("valid_from", sa.Date(), nullable=False, server_default=sa.func.current_date()),
         sa.Column("created_at", sa.TIMESTAMP(timezone=True), nullable=False, server_default=sa.func.now()),

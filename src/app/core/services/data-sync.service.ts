@@ -1,13 +1,16 @@
 import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
+import { environment } from '../../../environments/environment';
 import { MeterService } from './meter.service';
 import { ReadingService } from './reading.service';
-import { SupabaseService } from './supabase.service';
 
 @Injectable({ providedIn: 'root' })
 export class DataSyncService {
+  private readonly http = inject(HttpClient);
   private readonly meterService = inject(MeterService);
   private readonly readingService = inject(ReadingService);
-  private readonly supabase = inject(SupabaseService);
+  private readonly base = environment.apiUrl;
 
   exportData(): string {
     return JSON.stringify(
@@ -31,22 +34,23 @@ export class DataSyncService {
     if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
       throw new Error('Ungültige Datenstruktur');
     }
-    const data = parsed as Record<string, unknown>;
-    if (Array.isArray(data['meters'])) {
-      for (const m of data['meters']) {
-        await this.supabase.addMeter(m as never);
-      }
-    }
-    if (Array.isArray(data['readings'])) {
-      for (const r of data['readings'] as Record<string, unknown>[]) {
-        const reading = r as Omit<Parameters<typeof this.supabase.addReading>[0], 'date'> & { date: unknown };
-        await this.supabase.addReading({ ...reading, date: new Date(reading.date as string) });
-      }
-    }
-    // Reload all data after import
+
+    const result = await firstValueFrom(
+      this.http.post<{
+        meters_added: number;
+        meters_skipped: number;
+        readings_added: number;
+        readings_skipped: number;
+      }>(`${this.base}/import/`, parsed)
+    );
+
+    console.log(
+      `Import: ${result.meters_added} Zähler, ${result.readings_added} Ablesungen importiert`
+    );
+
     await Promise.all([
       this.meterService.loadMeters(),
-      this.readingService.loadReadings()
+      this.readingService.loadReadings(),
     ]);
   }
 }

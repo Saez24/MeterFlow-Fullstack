@@ -1,0 +1,27 @@
+import aiofiles
+import aiofiles.os
+
+from meterflow.storage.base import StorageProvider
+
+
+class LocalStorageProvider(StorageProvider):
+    def __init__(self, base_path: str) -> None:
+        self._base = base_path
+
+    def _full_path(self, file_key: str) -> str:
+        return f"{self._base}/{file_key}"
+
+    async def upload(self, file_id: str, data: bytes, content_type: str) -> str:
+        await aiofiles.os.makedirs(self._base, exist_ok=True)
+        async with aiofiles.open(self._full_path(file_id), "wb") as f:
+            await f.write(data)
+        return file_id
+
+    async def get_url(self, file_key: str) -> str:
+        return f"/photos/{file_key}"
+
+    async def delete(self, file_key: str) -> None:
+        try:
+            await aiofiles.os.remove(self._full_path(file_key))
+        except FileNotFoundError:
+            pass

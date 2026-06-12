@@ -1,3 +1,5 @@
+from typing import Literal
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -11,6 +13,9 @@ class Settings(BaseSettings):
     refresh_token_expire_days: int = 30
 
     allowed_origins: str = "http://localhost:4200"
+
+    storage_backend: Literal["minio", "local", "none"] = "none"
+    local_storage_path: str = "/data/photos"
 
     s3_endpoint: str = "http://localhost:9000"
     s3_access_key: str = ""

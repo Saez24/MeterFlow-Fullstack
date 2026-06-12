@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import uuid
 from datetime import date
 from decimal import Decimal
@@ -20,15 +22,16 @@ router = APIRouter(prefix="/readings", tags=["readings"])
 async def list_readings(
     meter_id: uuid.UUID | None = None,
     year: int | None = None,
-    limit: int = 100,
+    limit: int = 1000,
     cursor: date | None = None,
     current_user: CurrentUser = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ) -> list[ReadingResponse]:
     repo = ReadingRepository(db)
-    if meter_id is None:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="meter_id is required")
-    readings = await repo.list_for_meter(meter_id, current_user.id, year=year, limit=limit, cursor=cursor)
+    if meter_id is not None:
+        readings = await repo.list_for_meter(meter_id, current_user.id, year=year, limit=limit, cursor=cursor)
+    else:
+        readings = await repo.list_all(current_user.id, limit=limit)
     return [ReadingResponse.model_validate(r) for r in readings]
 
 

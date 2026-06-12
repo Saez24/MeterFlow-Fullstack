@@ -67,12 +67,7 @@ export class Auth {
       } else {
         const { error } = await this.supabase.signUp(email!, password!);
         if (error) throw error;
-        this.snackBar.open(
-          $localize`:@@auth.accountCreated:Konto erstellt! Bitte bestätige deine E-Mail.`,
-          'OK',
-          { duration: 6000 }
-        );
-        this.mode.set('login');
+        this.router.navigate(['/dashboard']);
       }
     } catch (err: any) {
       this.errorMessage.set(this.translateError(err.message));
@@ -82,10 +77,9 @@ export class Auth {
   }
 
   private translateError(msg: string): string {
-    if (msg.includes('Invalid login credentials')) return $localize`:@@auth.error.invalidCredentials:E-Mail oder Passwort falsch`;
-    if (msg.includes('Email not confirmed')) return $localize`:@@auth.error.emailNotConfirmed:Bitte bestätige zuerst deine E-Mail`;
-    if (msg.includes('User already registered')) return $localize`:@@auth.error.alreadyRegistered:Diese E-Mail ist bereits registriert`;
-    if (msg.includes('Password should be')) return $localize`:@@auth.error.passwordTooShort:Passwort muss mindestens 6 Zeichen haben`;
-    return $localize`:@@auth.error.generic:Ein Fehler ist aufgetreten. Bitte versuche es erneut.`;
+    if (msg.includes('Invalid login credentials') || msg.includes('Incorrect email or password')) return $localize`:@@auth.error.invalidCredentials:E-Mail oder Passwort falsch`;
+    if (msg.includes('already registered') || msg.includes('already exists')) return $localize`:@@auth.error.alreadyRegistered:Diese E-Mail ist bereits registriert`;
+    if (msg.includes('Password should be') || msg.includes('password')) return $localize`:@@auth.error.passwordTooShort:Passwort muss mindestens 6 Zeichen haben`;
+    return msg || $localize`:@@auth.error.generic:Ein Fehler ist aufgetreten. Bitte versuche es erneut.`;
   }
 }

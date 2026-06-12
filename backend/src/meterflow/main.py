@@ -8,6 +8,8 @@ from meterflow.auth.router import router as auth_router
 from meterflow.config import settings
 from meterflow.database import engine
 from meterflow.routers.co2_factors import router as co2_router
+from meterflow.routers.config import router as config_router
+from meterflow.routers.import_export import router as import_router
 from meterflow.routers.meters import router as meters_router
 from meterflow.routers.readings import router as readings_router
 from meterflow.routers.stats import router as stats_router
@@ -39,6 +41,8 @@ app.include_router(meters_router, prefix=_PREFIX)
 app.include_router(readings_router, prefix=_PREFIX)
 app.include_router(co2_router, prefix=_PREFIX)
 app.include_router(stats_router, prefix=_PREFIX)
+app.include_router(config_router, prefix=_PREFIX)
+app.include_router(import_router, prefix=_PREFIX)
 
 
 @app.get("/health", tags=["health"])

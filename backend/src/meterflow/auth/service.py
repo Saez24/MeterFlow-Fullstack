@@ -4,16 +4,14 @@ import uuid
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 
+import bcrypt
 from jose import JWTError, jwt
-from passlib.context import CryptContext
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from meterflow.config import settings
 from meterflow.models.refresh_token import RefreshToken
 from meterflow.models.user import User
-
-_pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 @dataclass(frozen=True)
@@ -23,11 +21,11 @@ class CurrentUser:
 
 
 def hash_password(password: str) -> str:
-    return _pwd_context.hash(password)
+    return bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
 
 
 def verify_password(plain: str, hashed: str) -> bool:
-    return _pwd_context.verify(plain, hashed)
+    return bcrypt.checkpw(plain.encode(), hashed.encode())
 
 
 def create_access_token(user_id: uuid.UUID, email: str) -> str:

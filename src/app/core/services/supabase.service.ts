@@ -1,117 +1,220 @@
-import { Injectable, signal } from '@angular/core';
-import { createClient, SupabaseClient, User } from '@supabase/supabase-js';
+import { Injectable, inject, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { MeterConfig, MeterReading } from '../models/energy.models';
 
+export interface AppUser {
+  id: string;
+  email: string;
+}
 
 @Injectable({ providedIn: 'root' })
 export class SupabaseService {
-  private readonly client: SupabaseClient = createClient(
-    environment.supabaseUrl,
-    environment.supabaseKey
-  );
-  readonly connectionStatus = signal<'checking' | 'connected' | 'error'>('checking');
+  private readonly http = inject(HttpClient);
+  private readonly base = environment.apiUrl;
 
-  readonly currentUser = signal<User | null>(null);
+  readonly connectionStatus = signal<'checking' | 'connected' | 'error'>('checking');
+  readonly currentUser = signal<AppUser | null>(null);
+
+  readonly sessionReady: Promise<void>;
+  private _resolveReady!: () => void;
 
   constructor() {
-    // Session beim Start laden
-    this.client.auth.getSession().then(({ data }) => {
-      this.currentUser.set(data.session?.user ?? null);
-      this.checkConnection();
-    });
+    this.sessionReady = new Promise(resolve => (this._resolveReady = resolve));
+    this.initSession();
+  }
 
-    // Auth Änderungen beobachten
-    this.client.auth.onAuthStateChange((_, session) => {
-      this.currentUser.set(session?.user ?? null);
-    });
+  private async initSession(): Promise<void> {
+    try {
+      const user = await firstValueFrom(
+        this.http.get<AppUser>(`${this.base}/auth/me`)
+      );
+      this.currentUser.set(user);
+      this.connectionStatus.set('connected');
+    } catch (err: any) {
+      if (err?.status === 401) {
+        try {
+          await fetch(`${this.base}/auth/refresh`, { method: 'POST', credentials: 'include' });
+          const user = await firstValueFrom(
+            this.http.get<AppUser>(`${this.base}/auth/me`)
+          );
+          this.currentUser.set(user);
+          this.connectionStatus.set('connected');
+        } catch {
+          this.currentUser.set(null);
+          this.connectionStatus.set('error');
+        }
+      } else {
+        this.connectionStatus.set('error');
+      }
+    } finally {
+      this._resolveReady();
+    }
   }
 
   // ── Auth ──────────────────────────────────────────
-  async signUp(email: string, password: string) {
-    return this.client.auth.signUp({ email, password });
+
+  async signUp(email: string, password: string): Promise<{ error: { message: string } | null }> {
+    try {
+      const user = await firstValueFrom(
+        this.http.post<AppUser>(`${this.base}/auth/register`, { email, password })
+      );
+      this.currentUser.set(user);
+      this.connectionStatus.set('connected');
+      return { error: null };
+    } catch (err: any) {
+      const msg = err?.error?.detail ?? 'Registrierung fehlgeschlagen';
+      return { error: { message: Array.isArray(msg) ? (msg[0]?.msg ?? String(msg)) : String(msg) } };
+    }
   }
 
-  async signIn(email: string, password: string) {
-    return this.client.auth.signInWithPassword({ email, password });
+  async signIn(email: string, password: string): Promise<{ error: { message: string } | null }> {
+    try {
+      const user = await firstValueFrom(
+        this.http.post<AppUser>(`${this.base}/auth/login`, { email, password })
+      );
+      this.currentUser.set(user);
+      this.connectionStatus.set('connected');
+      return { error: null };
+    } catch (err: any) {
+      const msg = err?.error?.detail ?? 'Login fehlgeschlagen';
+      return { error: { message: Array.isArray(msg) ? (msg[0]?.msg ?? String(msg)) : String(msg) } };
+    }
   }
 
-  async signOut() {
-    return this.client.auth.signOut();
-  }
-
-  async getSession() {
-    const { data } = await this.client.auth.getSession();
-    return data.session?.user ?? null;
+  async signOut(): Promise<void> {
+    try {
+      await firstValueFrom(this.http.post(`${this.base}/auth/logout`, {}));
+    } finally {
+      this.currentUser.set(null);
+    }
   }
 
   // ── Zähler ────────────────────────────────────────
+
   async getMeters(): Promise<MeterConfig[]> {
-    const { data, error } = await this.client
-      .from('meters')
-      .select('*')
-      .order('created_at');
-    if (error) throw error;
+    const data = await firstValueFrom(this.http.get<any[]>(`${this.base}/meters/`));
     return (data ?? []).map(this.mapMeter);
   }
 
   async addMeter(meter: Omit<MeterConfig, 'id' | 'createdAt'>): Promise<MeterConfig> {
-    const { data, error } = await this.client
-      .from('meters')
-      .insert(this.toDbMeter(meter))
-      .select()
-      .single();
-    if (error) throw error;
+    const data = await firstValueFrom(
+      this.http.post<any>(`${this.base}/meters/`, this.toDbMeter(meter))
+    );
     return this.mapMeter(data);
   }
 
   async updateMeter(id: string, changes: Partial<MeterConfig>): Promise<void> {
-    const { error } = await this.client
-      .from('meters')
-      .update(this.toDbMeter(changes))
-      .eq('id', id);
-    if (error) throw error;
+    await firstValueFrom(
+      this.http.patch(`${this.base}/meters/${id}`, this.toDbMeter(changes))
+    );
   }
 
   async deleteMeter(id: string): Promise<void> {
-    const { error } = await this.client.from('meters').delete().eq('id', id);
-    if (error) throw error;
+    await firstValueFrom(this.http.delete(`${this.base}/meters/${id}`));
   }
 
   // ── Ablesungen ────────────────────────────────────
+
   async getReadings(): Promise<MeterReading[]> {
-    const { data, error } = await this.client
-      .from('readings')
-      .select('*')
-      .order('date', { ascending: false });
-    if (error) throw error;
+    const data = await firstValueFrom(this.http.get<any[]>(`${this.base}/readings/`));
     return (data ?? []).map(this.mapReading);
   }
 
   async addReading(reading: Omit<MeterReading, 'id'>): Promise<MeterReading> {
-    const { data, error } = await this.client
-      .from('readings')
-      .insert(this.toDbReading(reading))
-      .select()
-      .single();
-    if (error) throw error;
+    const date = reading.date instanceof Date
+      ? reading.date.toISOString().split('T')[0]
+      : String(reading.date);
+    const body = {
+      meter_id: reading.meterId,
+      date,
+      value: reading.value,
+      note: reading.note ?? null,
+    };
+    const data = await firstValueFrom(this.http.post<any>(`${this.base}/readings/`, body));
     return this.mapReading(data);
   }
 
   async updateReading(id: string, changes: Partial<MeterReading>): Promise<void> {
-    const { error } = await this.client
-      .from('readings')
-      .update(this.toDbReading(changes))
-      .eq('id', id);
-    if (error) throw error;
+    await firstValueFrom(
+      this.http.patch(`${this.base}/readings/${id}`, this.toDbReading(changes))
+    );
   }
 
   async deleteReading(id: string): Promise<void> {
-    const { error } = await this.client.from('readings').delete().eq('id', id);
-    if (error) throw error;
+    await firstValueFrom(this.http.delete(`${this.base}/readings/${id}`));
+  }
+
+  async recalculateReadings(meterId: string): Promise<MeterReading[]> {
+    const data = await firstValueFrom(
+      this.http.post<any[]>(`${this.base}/readings/recalculate/${meterId}`, {})
+    );
+    return (data ?? []).map(this.mapReading);
+  }
+
+  // ── Fotos (Storage) ───────────────────────────────
+
+  async uploadPhoto(file: File, readingId?: string): Promise<string> {
+    if (!readingId) throw new Error('readingId required for photo upload');
+    const formData = new FormData();
+    formData.append('file', file);
+    const data = await firstValueFrom(
+      this.http.post<{ key: string }>(`${this.base}/readings/${readingId}/photo`, formData)
+    );
+    return data.key;
+  }
+
+  async getSignedPhotoUrl(path: string): Promise<string> {
+    return path;
+  }
+
+  async deletePhoto(_path: string): Promise<void> {
+    // handled server-side when reading is deleted
+  }
+
+  // ── CO₂-Faktoren ──────────────────────────────────
+
+  async getCo2Factors(): Promise<{ data: any[] | null; error: any }> {
+    try {
+      const data = await firstValueFrom(
+        this.http.get<any[]>(`${this.base}/co2-factors/`)
+      );
+      return { data, error: null };
+    } catch (e) {
+      return { data: null, error: e };
+    }
+  }
+
+  async upsertCo2Factor(row: {
+    energy_type: string;
+    factor_kg_per_unit: number;
+    unit: string;
+    source: string;
+    source_url: string | null;
+    valid_from: string;
+  }): Promise<void> {
+    await firstValueFrom(this.http.put(`${this.base}/co2-factors/`, row));
+  }
+
+  async deleteCo2Factor(id: string): Promise<void> {
+    await firstValueFrom(this.http.delete(`${this.base}/co2-factors/${id}`));
+  }
+
+  // ── Verbindungscheck ──────────────────────────────
+
+  async checkConnection(): Promise<void> {
+    this.connectionStatus.set('checking');
+    try {
+      await firstValueFrom(this.http.get('/health'));
+      this.connectionStatus.set('connected');
+    } catch {
+      this.connectionStatus.set('error');
+    }
   }
 
   // ── Mapper: DB → App ──────────────────────────────
+
   private mapMeter = (d: any): MeterConfig => ({
     id: d.id,
     name: d.name,
@@ -122,8 +225,9 @@ export class SupabaseService {
     active: d.active,
     createdAt: new Date(d.created_at),
     linkedWaterMeterId: d.linked_water_meter_id,
-    calorificValue: d.calorific_value,
-    zNumber: d.z_number,
+    calorificValue: d.calorific_value != null ? Number(d.calorific_value) : undefined,
+    zNumber: d.z_number != null ? Number(d.z_number) : undefined,
+    connectedLoadKw: d.connected_load_kw != null ? Number(d.connected_load_kw) : undefined,
     meterNumber: d.meter_number,
     provider: d.provider,
     notes: d.notes,
@@ -134,20 +238,20 @@ export class SupabaseService {
   private mapReading = (d: any): MeterReading => ({
     id: d.id,
     meterId: d.meter_id,
-    value: d.value,
+    value: Number(d.value),
     date: new Date(d.date),
-    consumption: d.consumption,
-    kwh: d.kwh,
-    cost: d.cost,
-    wastewaterCost: d.wastewater_cost,
-    totalCost: d.total_cost,
+    consumption: d.consumption != null ? Number(d.consumption) : undefined,
+    kwh: d.kwh != null ? Number(d.kwh) : undefined,
+    cost: d.cost != null ? Number(d.cost) : undefined,
+    wastewaterCost: d.wastewater_cost != null ? Number(d.wastewater_cost) : undefined,
+    totalCost: d.total_cost != null ? Number(d.total_cost) : undefined,
     note: d.note,
     photo: d.photo,
   });
 
   // ── Mapper: App → DB ──────────────────────────────
+
   private toDbMeter = (m: Partial<MeterConfig>) => ({
-    user_id: this.currentUser()?.id,
     ...(m.name !== undefined && { name: m.name }),
     ...(m.type !== undefined && { type: m.type }),
     ...(m.unit !== undefined && { unit: m.unit }),
@@ -157,6 +261,7 @@ export class SupabaseService {
     ...(m.linkedWaterMeterId !== undefined && { linked_water_meter_id: m.linkedWaterMeterId }),
     ...(m.calorificValue !== undefined && { calorific_value: m.calorificValue }),
     ...(m.zNumber !== undefined && { z_number: m.zNumber }),
+    ...(m.connectedLoadKw !== undefined && { connected_load_kw: m.connectedLoadKw }),
     ...(m.meterNumber !== undefined && { meter_number: m.meterNumber }),
     ...(m.provider !== undefined && { provider: m.provider }),
     ...(m.notes !== undefined && { notes: m.notes }),
@@ -165,10 +270,11 @@ export class SupabaseService {
   });
 
   private toDbReading = (r: Partial<MeterReading>) => ({
-    user_id: this.currentUser()?.id,
     ...(r.meterId !== undefined && { meter_id: r.meterId }),
     ...(r.value !== undefined && { value: r.value }),
-    ...(r.date !== undefined && { date: r.date }),
+    ...(r.date !== undefined && {
+      date: r.date instanceof Date ? r.date.toISOString().split('T')[0] : String(r.date),
+    }),
     ...(r.consumption !== undefined && { consumption: r.consumption }),
     ...(r.kwh !== undefined && { kwh: r.kwh }),
     ...(r.cost !== undefined && { cost: r.cost }),
@@ -177,71 +283,4 @@ export class SupabaseService {
     ...(r.note !== undefined && { note: r.note }),
     ...(r.photo !== undefined && { photo: r.photo }),
   });
-
-  // ── Fotos (Storage) ───────────────────────────────
-  async uploadPhoto(file: File): Promise<string> {
-    const user = this.currentUser();
-    if (!user) throw new Error('Not authenticated');
-    const ext = file.name.split('.').pop() ?? 'jpg';
-    const path = `${user.id}/${crypto.randomUUID()}.${ext}`;
-    const { error } = await this.client.storage
-      .from('meter-photos')
-      .upload(path, file, { contentType: file.type, upsert: false });
-    if (error) throw error;
-    return path;
-  }
-
-  async getSignedPhotoUrl(path: string, expiresInSeconds = 3600): Promise<string> {
-    const { data, error } = await this.client.storage
-      .from('meter-photos')
-      .createSignedUrl(path, expiresInSeconds);
-    if (error) throw error;
-    return data.signedUrl;
-  }
-
-  async deletePhoto(path: string): Promise<void> {
-    const { error } = await this.client.storage
-      .from('meter-photos')
-      .remove([path]);
-    if (error) throw error;
-  }
-
-  // ── CO₂-Faktoren ──────────────────────────────────
-  async getCo2Factors() {
-    return this.client
-      .from('co2_factors')
-      .select('*')
-      .order('energy_type');
-  }
-
-  async upsertCo2Factor(row: {
-    energy_type: string;
-    factor_kg_per_unit: number;
-    unit: string;
-    source: string;
-    source_url: string | null;
-    valid_from: string;
-  }) {
-    const userId = this.currentUser()?.id;
-    if (!userId) throw new Error('Not authenticated');
-    const { error } = await this.client
-      .from('co2_factors')
-      .upsert({ ...row, user_id: userId }, { onConflict: 'user_id,energy_type,valid_from' });
-    if (error) throw error;
-  }
-
-  async deleteCo2Factor(id: string) {
-    const { error } = await this.client.from('co2_factors').delete().eq('id', id);
-    if (error) throw error;
-  }
-
-  async checkConnection(): Promise<void> {
-    this.connectionStatus.set('checking');
-    try {
-      const { error } = await this.client.from('meters').select('id').limit(1);
-      this.connectionStatus.set(error ? 'error' : 'connected');
-    } catch {
-      this.connectionStatus.set('error');
-    }
-  }
 }

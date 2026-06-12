@@ -1,5 +1,8 @@
+from __future__ import annotations
+
 import uuid
-from datetime import date, datetime
+from datetime import date as Date
+from datetime import datetime
 from decimal import Decimal
 
 from pydantic import BaseModel
@@ -7,13 +10,13 @@ from pydantic import BaseModel
 
 class ReadingCreate(BaseModel):
     meter_id: uuid.UUID
-    date: date
+    date: Date
     value: Decimal
     note: str | None = None
 
 
 class ReadingUpdate(BaseModel):
-    date: date | None = None
+    date: Date | None = None
     value: Decimal | None = None
     note: str | None = None
 
@@ -22,7 +25,7 @@ class ReadingResponse(BaseModel):
     id: uuid.UUID
     user_id: uuid.UUID
     meter_id: uuid.UUID
-    date: date
+    date: Date
     value: Decimal
     consumption: Decimal | None
     kwh: Decimal | None

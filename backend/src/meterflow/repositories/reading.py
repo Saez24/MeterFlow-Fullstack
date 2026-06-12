@@ -35,6 +35,16 @@ class ReadingRepository(BaseRepository[Reading]):
         result = await self.db.execute(stmt)
         return list(result.scalars().all())
 
+    async def list_all(self, user_id: uuid.UUID, limit: int = 1000) -> list[Reading]:
+        stmt = (
+            select(Reading)
+            .where(Reading.user_id == user_id)
+            .order_by(Reading.date.desc())
+            .limit(limit)
+        )
+        result = await self.db.execute(stmt)
+        return list(result.scalars().all())
+
     async def list_for_user_year(self, user_id: uuid.UUID, year: int) -> list[Reading]:
         stmt = (
             select(Reading)
