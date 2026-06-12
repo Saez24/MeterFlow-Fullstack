@@ -3,7 +3,8 @@ from collections.abc import AsyncGenerator
 
 import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
-from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+from sqlalchemy.pool import NullPool
 
 from meterflow.database import get_db
 from meterflow.main import app
@@ -14,8 +15,7 @@ TEST_DATABASE_URL = os.environ.get(
     "postgresql+asyncpg://meterflow:meterflow@localhost:5432/meterflow_test",
 )
 
-_engine = create_async_engine(TEST_DATABASE_URL, echo=False)
-_TestSession = async_sessionmaker(bind=_engine, expire_on_commit=False, class_=AsyncSession)
+_engine = create_async_engine(TEST_DATABASE_URL, echo=False, poolclass=NullPool)
 
 
 @pytest_asyncio.fixture(scope="session", autouse=True)
@@ -31,9 +31,16 @@ async def setup_database() -> AsyncGenerator[None]:
 
 @pytest_asyncio.fixture
 async def db() -> AsyncGenerator[AsyncSession]:
-    async with _TestSession() as session:
+    async with _engine.connect() as conn:
+        await conn.begin()
+        session = AsyncSession(
+            bind=conn,
+            expire_on_commit=False,
+            join_transaction_mode="create_savepoint",
+        )
         yield session
-        await session.rollback()
+        await session.close()
+        await conn.rollback()
 
 
 @pytest_asyncio.fixture
