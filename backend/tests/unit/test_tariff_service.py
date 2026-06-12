@@ -1,10 +1,8 @@
 from datetime import date
-from decimal import Decimal
 
 import allure
-import pytest
 
-from meterflow.services.tariff import find_active_tariff, get_decimal
+from meterflow.services.tariff import find_active_tariff
 
 
 @allure.epic("MeterFlow API")

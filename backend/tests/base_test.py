@@ -1,5 +1,5 @@
 import uuid
-from datetime import date, timedelta
+from datetime import date
 from decimal import Decimal
 
 from faker import Faker
@@ -32,7 +32,7 @@ class UserFactory:
     def __init__(self, db: AsyncSession) -> None:
         self.db = db
 
-    async def create(self, email: str | None = None, password: str = "Test@1234!") -> User:
+    async def create(self, email: str | None = None, password: str = "Test@1234!") -> User:  # noqa: S107
         user = User(
             email=email or DataGenerator.email(),
             hashed_password=hash_password(password),

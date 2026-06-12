@@ -3,9 +3,8 @@ import pytest
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from tests.base_test import BaseTest, DataGenerator
+from tests.base_test import BaseTest
 from tests.helpers.meter_api import MeterAPI
-
 
 _METER_PAYLOAD = {
     "name": "Hauptzähler Strom",
