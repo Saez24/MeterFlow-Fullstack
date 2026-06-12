@@ -44,10 +44,6 @@ export class DataSyncService {
       }>(`${this.base}/import/`, parsed)
     );
 
-    console.log(
-      `Import: ${result.meters_added} Zähler, ${result.readings_added} Ablesungen importiert`
-    );
-
     await Promise.all([
       this.meterService.loadMeters(),
       this.readingService.loadReadings(),

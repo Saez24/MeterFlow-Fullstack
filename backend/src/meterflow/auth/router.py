@@ -1,8 +1,13 @@
+import logging
 from typing import Annotated
 
-from fastapi import APIRouter, Cookie, Depends, HTTPException, Response, status
+from fastapi import APIRouter, Cookie, Depends, HTTPException, Request, Response, status
+from slowapi import Limiter
+from slowapi.util import get_remote_address
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
+
+logger = logging.getLogger(__name__)
 
 from meterflow.auth.dependencies import get_current_user
 from meterflow.auth.schemas import LoginRequest, RegisterRequest, UserResponse
@@ -15,12 +20,13 @@ from meterflow.auth.service import (
     register_user,
     revoke_refresh_token,
     rotate_refresh_token,
-    verify_password,
+    verify_password_async,
 )
 from meterflow.config import settings
 from meterflow.database import get_db
 
 router = APIRouter(prefix="/auth", tags=["auth"])
+limiter = Limiter(key_func=get_remote_address)
 
 _ACCESS_MAX_AGE = settings.access_token_expire_minutes * 60
 _REFRESH_MAX_AGE = settings.refresh_token_expire_days * 86400
@@ -47,7 +53,9 @@ def _set_auth_cookies(response: Response, access_token: str, refresh_token: str)
 
 
 @router.post("/register", status_code=status.HTTP_201_CREATED, response_model=UserResponse)
+@limiter.limit("5/minute")
 async def register(
+    request: Request,
     body: RegisterRequest,
     response: Response,
     db: AsyncSession = Depends(get_db),
@@ -60,22 +68,27 @@ async def register(
     access_token = create_access_token(user.id, user.email)
     refresh_token = await create_refresh_token(db, user.id)
     _set_auth_cookies(response, access_token, refresh_token)
+    logger.info("auth.register.success user_id=%s", user.id)
     return UserResponse.model_validate(user)
 
 
 @router.post("/login", response_model=UserResponse)
+@limiter.limit("10/minute")
 async def login(
+    request: Request,
     body: LoginRequest,
     response: Response,
     db: AsyncSession = Depends(get_db),
 ) -> UserResponse:
     user = await get_user_by_email(db, body.email)
-    if user is None or not verify_password(body.password, user.hashed_password):
+    if user is None or not await verify_password_async(body.password, user.hashed_password):
+        logger.warning("auth.login.failed email=%s", body.email)
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
 
     access_token = create_access_token(user.id, user.email)
     refresh_token = await create_refresh_token(db, user.id)
     _set_auth_cookies(response, access_token, refresh_token)
+    logger.info("auth.login.success user_id=%s", user.id)
     return UserResponse.model_validate(user)
 
 

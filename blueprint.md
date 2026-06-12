@@ -8,8 +8,8 @@
 
 ## Stack
 
-| Schicht   | Technologie                                |
-| --------- | ------------------------------------------ |
+| Schicht    | Technologie                                |
+| ---------- | ------------------------------------------ |
 | Schicht    | Technologie                                |
 | ---------- | ------------------------------------------ |
 | Framework  | Angular 21 (Standalone, Zoneless)          |
@@ -145,14 +145,14 @@ backend/
 
 ### API-Endpunkte
 
-| Router | Basis-Pfad | Auth |
-| ------ | ---------- | ---- |
-| Auth | `/api/v1/auth` | register/login öffentlich, rest JWT |
-| Meters | `/api/v1/meters` | JWT |
-| Readings | `/api/v1/readings` | JWT |
-| CO₂-Faktoren | `/api/v1/co2-factors` | JWT |
-| Stats | `/api/v1/stats` | JWT |
-| Health | `/health` | öffentlich |
+| Router       | Basis-Pfad            | Auth                                |
+| ------------ | --------------------- | ----------------------------------- |
+| Auth         | `/api/v1/auth`        | register/login öffentlich, rest JWT |
+| Meters       | `/api/v1/meters`      | JWT                                 |
+| Readings     | `/api/v1/readings`    | JWT                                 |
+| CO₂-Faktoren | `/api/v1/co2-factors` | JWT                                 |
+| Stats        | `/api/v1/stats`       | JWT                                 |
+| Health       | `/health`             | öffentlich                          |
 
 ---
 
@@ -175,13 +175,13 @@ backend/
 
 ### PostgreSQL-Schema (`backend/alembic/versions/`)
 
-| Tabelle         | Schlüsselfelder                                                  | Schutz                        |
-| --------------- | ---------------------------------------------------------------- | ----------------------------- |
-| `users`         | `id` UUID, `email` unique, `hashed_password`, `created_at`      | –                             |
-| `refresh_tokens`| `id`, `user_id`, `token_hash`, `expires_at`, `revoked`          | FK auf users                  |
-| `meters`        | `id`, `user_id`, `type`, `tariff_history` JSONB, `budget` JSONB | `user_id`-Filter in Repos     |
-| `readings`      | `id`, `user_id`, `meter_id`, `date`, `value`, `cost`, `photo`   | `user_id`-Filter in Repos     |
-| `co2_factors`   | `id`, `user_id`, `energy_type`, `factor_kg_per_unit`, `valid_from` | `unique(user_id, type, date)` |
+| Tabelle          | Schlüsselfelder                                                    | Schutz                        |
+| ---------------- | ------------------------------------------------------------------ | ----------------------------- |
+| `users`          | `id` UUID, `email` unique, `hashed_password`, `created_at`         | –                             |
+| `refresh_tokens` | `id`, `user_id`, `token_hash`, `expires_at`, `revoked`             | FK auf users                  |
+| `meters`         | `id`, `user_id`, `type`, `tariff_history` JSONB, `budget` JSONB    | `user_id`-Filter in Repos     |
+| `readings`       | `id`, `user_id`, `meter_id`, `date`, `value`, `cost`, `photo`      | `user_id`-Filter in Repos     |
+| `co2_factors`    | `id`, `user_id`, `energy_type`, `factor_kg_per_unit`, `valid_from` | `unique(user_id, type, date)` |
 
 ### Sicherheit
 
@@ -247,7 +247,6 @@ Via `[data-theme='dark']` und `body.dark-theme` – gesteuert durch `ThemeServic
 | Regel             | Standard                                                       |
 | ----------------- | -------------------------------------------------------------- |
 | Komponenten       | 100% Standalone, kein NgModule                                 |
-| Change Detection  | `ChangeDetectionStrategy.OnPush` überall                       |
 | DI                | `inject()` Funktion, kein Konstruktor-DI                       |
 | State             | `signal()`, `computed()` – kein RxJS in Komponenten            |
 | RxJS (wenn nötig) | `takeUntilDestroyed()` für Cleanup                             |
@@ -578,6 +577,7 @@ Dreiteiliger Fernwärme-Preis vollständig umgesetzt:
 ### Architektur-Entscheidung: Von Supabase zu eigenem Backend
 
 Supabase wird vollständig abgelöst durch:
+
 - FastAPI 0.115+ als REST-API-Backend
 - SQLAlchemy 2.0 async + asyncpg auf eigenem PostgreSQL 17 Container
 - Eigenes JWT-Auth-System mit HttpOnly Cookies (keine localStorage-Tokens)

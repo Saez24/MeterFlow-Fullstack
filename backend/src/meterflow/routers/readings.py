@@ -4,7 +4,7 @@ import uuid
 from datetime import date
 from decimal import Decimal
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from meterflow.auth.dependencies import get_current_user
@@ -22,7 +22,7 @@ router = APIRouter(prefix="/readings", tags=["readings"])
 async def list_readings(
     meter_id: uuid.UUID | None = None,
     year: int | None = None,
-    limit: int = 1000,
+    limit: int = Query(default=1000, ge=1, le=10000),
     cursor: date | None = None,
     current_user: CurrentUser = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
@@ -47,7 +47,7 @@ async def create_reading(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Meter not found")
 
     reading_repo = ReadingRepository(db)
-    prev = await reading_repo.get_previous(body.meter_id, body.date)
+    prev = await reading_repo.get_previous(body.meter_id, current_user.id, body.date)
 
     computed = compute_reading(
         meter=meter,

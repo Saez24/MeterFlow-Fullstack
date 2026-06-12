@@ -1,3 +1,4 @@
+import asyncio
 import hashlib
 import secrets
 import uuid
@@ -5,7 +6,7 @@ from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 
 import bcrypt
-from jose import JWTError, jwt
+import jwt
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -28,6 +29,16 @@ def verify_password(plain: str, hashed: str) -> bool:
     return bcrypt.checkpw(plain.encode(), hashed.encode())
 
 
+async def hash_password_async(password: str) -> str:
+    loop = asyncio.get_event_loop()
+    return await loop.run_in_executor(None, hash_password, password)
+
+
+async def verify_password_async(plain: str, hashed: str) -> bool:
+    loop = asyncio.get_event_loop()
+    return await loop.run_in_executor(None, verify_password, plain, hashed)
+
+
 def create_access_token(user_id: uuid.UUID, email: str) -> str:
     expire = datetime.now(UTC) + timedelta(minutes=settings.access_token_expire_minutes)
     payload = {"sub": str(user_id), "email": email, "exp": expire}
@@ -35,8 +46,16 @@ def create_access_token(user_id: uuid.UUID, email: str) -> str:
 
 
 def decode_access_token(token: str) -> CurrentUser:
-    payload = jwt.decode(token, settings.jwt_secret, algorithms=[settings.jwt_algorithm])
-    return CurrentUser(id=uuid.UUID(payload["sub"]), email=payload["email"])
+    try:
+        payload = jwt.decode(
+            token,
+            settings.jwt_secret,
+            algorithms=[settings.jwt_algorithm],
+            options={"require": ["sub", "email", "exp"]},
+        )
+        return CurrentUser(id=uuid.UUID(payload["sub"]), email=payload["email"])
+    except (jwt.PyJWTError, KeyError, ValueError) as exc:
+        raise jwt.PyJWTError("Invalid token payload") from exc
 
 
 def _hash_token(raw: str) -> str:
@@ -104,7 +123,7 @@ async def get_user_by_id(db: AsyncSession, user_id: uuid.UUID) -> User | None:
 
 
 async def register_user(db: AsyncSession, email: str, password: str) -> User:
-    user = User(email=email, hashed_password=hash_password(password))
+    user = User(email=email, hashed_password=await hash_password_async(password))
     db.add(user)
     await db.commit()
     await db.refresh(user)

@@ -153,8 +153,10 @@ export class Settings {
       .afterClosed()
       .subscribe((confirmed: boolean) => {
         if (!confirmed) return;
-        localStorage.clear();
-        window.location.reload();
+        ['mf_reminder_enabled', 'mf_reminder_last', 'theme'].forEach(k =>
+          localStorage.removeItem(k)
+        );
+        this.router.navigate(['/auth']);
       });
   }
 

@@ -58,10 +58,16 @@ class ReadingRepository(BaseRepository[Reading]):
         result = await self.db.execute(stmt)
         return list(result.scalars().all())
 
-    async def get_previous(self, meter_id: uuid.UUID, before_date: date) -> Reading | None:
+    async def get_previous(
+        self, meter_id: uuid.UUID, user_id: uuid.UUID, before_date: date
+    ) -> Reading | None:
         result = await self.db.execute(
             select(Reading)
-            .where(Reading.meter_id == meter_id, Reading.date < before_date)
+            .where(
+                Reading.meter_id == meter_id,
+                Reading.user_id == user_id,
+                Reading.date < before_date,
+            )
             .order_by(Reading.date.desc())
             .limit(1)
         )

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import uuid
-from datetime import datetime
+from datetime import date, datetime
 from decimal import Decimal
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -69,8 +69,14 @@ def _fix_encoding(s: str) -> str:
         return s
 
 
-def _parse_date(date_str: str):
-    return datetime.fromisoformat(date_str.replace("Z", "+00:00")).date()
+def _parse_date(date_str: str) -> date:
+    try:
+        return datetime.fromisoformat(date_str.replace("Z", "+00:00")).date()
+    except (ValueError, TypeError) as exc:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Ungültiges Datumsformat im Import",
+        ) from exc
 
 
 @router.post("/", response_model=ImportResult, status_code=status.HTTP_200_OK)
@@ -146,7 +152,21 @@ async def import_data(
             except ValueError:
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
-                    detail=f"Ungültige meter_id: {meter_uuid_str}",
+                    detail="Ungültige meter_id im Import-Payload",
+                )
+            # Ownership check: meter must belong to current user
+            from sqlalchemy import select as sa_select
+
+            meter_check = await db.execute(
+                sa_select(Meter.id).where(
+                    Meter.id == meter_id,
+                    Meter.user_id == user_id,
+                )
+            )
+            if meter_check.scalar_one_or_none() is None:
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="Meter nicht gefunden oder kein Zugriff",
                 )
 
         reading = Reading(

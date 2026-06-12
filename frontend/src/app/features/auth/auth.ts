@@ -54,6 +54,7 @@ export class Auth {
 
     if (this.mode() === 'register' && password !== confirmPassword) {
       this.errorMessage.set($localize`:@@auth.error.passwordMismatch:Passwörter stimmen nicht überein`);
+      return;
     }
 
     this.loading.set(true);
