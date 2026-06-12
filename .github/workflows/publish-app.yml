@@ -41,7 +41,7 @@ jobs:
 
       - name: Install backend dependencies
         working-directory: backend
-        run: pip install -e ".[dev]"
+        run: pip install -e ".[dev]" pip-audit
 
       - name: Security scan (pip-audit)
         working-directory: backend
@@ -77,6 +77,16 @@ jobs:
       - name: Install dependencies
         working-directory: frontend
         run: npm ci
+
+      - name: Create environment files
+        working-directory: frontend
+        run: |
+          cat > src/environments/environment.ts << 'EOF'
+          export const environment = { apiUrl: '/api/v1', production: true };
+          EOF
+          cat > src/environments/environment.development.ts << 'EOF'
+          export const environment = { apiUrl: '/api/v1', production: false };
+          EOF
 
       - name: Security scan (npm audit)
         working-directory: frontend
