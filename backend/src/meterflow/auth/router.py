@@ -2,8 +2,6 @@ import logging
 from typing import Annotated
 
 from fastapi import APIRouter, Cookie, Depends, HTTPException, Request, Response, status
-from slowapi import Limiter
-from slowapi.util import get_remote_address
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -22,11 +20,11 @@ from meterflow.auth.service import (
 )
 from meterflow.config import settings
 from meterflow.database import get_db
+from meterflow.limiter import limiter
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/auth", tags=["auth"])
-limiter = Limiter(key_func=get_remote_address)
 
 _ACCESS_MAX_AGE = settings.access_token_expire_minutes * 60
 _REFRESH_MAX_AGE = settings.refresh_token_expire_days * 86400

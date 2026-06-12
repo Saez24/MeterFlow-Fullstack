@@ -4,13 +4,13 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
-from slowapi.util import get_remote_address
 
 from meterflow.auth.router import router as auth_router
 from meterflow.config import settings
 from meterflow.database import engine
+from meterflow.limiter import limiter
 from meterflow.routers.co2_factors import router as co2_router
 from meterflow.routers.config import router as config_router
 from meterflow.routers.import_export import router as import_router
@@ -19,8 +19,6 @@ from meterflow.routers.readings import router as readings_router
 from meterflow.routers.stats import router as stats_router
 
 logger = logging.getLogger(__name__)
-
-limiter = Limiter(key_func=get_remote_address)
 
 
 @asynccontextmanager
