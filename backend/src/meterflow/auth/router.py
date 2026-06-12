@@ -33,11 +33,12 @@ _REFRESH_MAX_AGE = settings.refresh_token_expire_days * 86400
 
 
 def _set_auth_cookies(response: Response, access_token: str, refresh_token: str) -> None:
+    _secure = settings.is_production
     response.set_cookie(
         key="access_token",
         value=access_token,
         httponly=True,
-        secure=True,
+        secure=_secure,
         samesite="strict",
         max_age=_ACCESS_MAX_AGE,
     )
@@ -45,7 +46,7 @@ def _set_auth_cookies(response: Response, access_token: str, refresh_token: str)
         key="refresh_token",
         value=refresh_token,
         httponly=True,
-        secure=True,
+        secure=_secure,
         samesite="strict",
         max_age=_REFRESH_MAX_AGE,
         path="/api/v1/auth/refresh",

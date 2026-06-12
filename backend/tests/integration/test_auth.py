@@ -25,7 +25,7 @@ class TestAuthRegister(BaseTest):
         assert data["email"] == email
         assert "id" in data
         assert "access_token" in response.cookies
-        assert "refresh_token" not in response.cookies  # httponly, not in JS-readable cookies
+        assert "refresh_token" in response.cookies
 
     @allure.story("User Registration")
     @allure.severity(allure.severity_level.NORMAL)
