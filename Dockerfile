@@ -1,25 +1,52 @@
-FROM node:24-alpine AS builder
+# ── Stage 1: Angular Build ────────────────────────────────────────────────────
+FROM node:22-alpine AS frontend-builder
+
 WORKDIR /app
-COPY package.json package-lock.json ./
-RUN npm ci
-COPY . .
+COPY frontend/package.json frontend/package-lock.json ./
+RUN npm ci --prefer-offline
 
-ARG SUPABASE_URL
-ARG SUPABASE_KEY
+COPY frontend/ .
+RUN npm run build -- --configuration=production
 
-RUN mkdir -p src/environments && \
-    echo "export const environment = { production: true, supabaseUrl: '${SUPABASE_URL}', supabaseKey: '${SUPABASE_KEY}' };" \
-    > src/environments/environment.ts
+# ── Stage 2: Python Build ─────────────────────────────────────────────────────
+FROM python:3.13-slim AS backend-builder
 
-RUN ./node_modules/.bin/ng build --configuration=production
+WORKDIR /build
+COPY backend/pyproject.toml .
+COPY backend/src/ src/
 
-FROM nginx:alpine
-RUN rm -rf /usr/share/nginx/html/*
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-# DE (baseHref: "/") → nginx-Root
-COPY --from=builder /app/dist/MeterFlow/browser/de /usr/share/nginx/html/
-# EN (baseHref: "/en/") → /en/ Unterordner
-COPY --from=builder /app/dist/MeterFlow/browser/en /usr/share/nginx/html/en/
+RUN pip install --no-cache-dir build && \
+    python -m build --wheel --outdir /wheels
+
+# ── Stage 3: Runtime ──────────────────────────────────────────────────────────
+FROM python:3.13-slim
+
+# System-Pakete: nginx + supervisor
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends nginx supervisor curl && \
+    rm -rf /var/lib/apt/lists/*
+
+# Python-Paket installieren
+COPY --from=backend-builder /wheels/*.whl /tmp/
+RUN pip install --no-cache-dir /tmp/*.whl && rm /tmp/*.whl
+
+# Alembic-Migrations-Setup
+WORKDIR /app
+COPY backend/alembic.ini .
+COPY backend/alembic/ alembic/
+
+# Angular Static Files
+COPY --from=frontend-builder /app/dist/MeterFlow/browser/de /usr/share/nginx/html/
+COPY --from=frontend-builder /app/dist/MeterFlow/browser/en /usr/share/nginx/html/en/
+
+# Konfiguration
+COPY nginx.conf /etc/nginx/sites-available/default
+COPY supervisord.conf /etc/supervisor/conf.d/meterflow.conf
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
 EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+HEALTHCHECK --interval=30s --timeout=10s --retries=3 \
+    CMD curl -f http://localhost/health || exit 1
+
+ENTRYPOINT ["/entrypoint.sh"]
