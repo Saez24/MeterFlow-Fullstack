@@ -1,6 +1,8 @@
+import asyncio
 import os
 from collections.abc import AsyncGenerator
 
+import pytest
 import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
@@ -18,15 +20,21 @@ TEST_DATABASE_URL = os.environ.get(
 _engine = create_async_engine(TEST_DATABASE_URL, echo=False, poolclass=NullPool)
 
 
-@pytest_asyncio.fixture(scope="session", autouse=True)
-async def setup_database() -> AsyncGenerator[None]:
-    async with _engine.begin() as conn:
-        await conn.run_sync(Base.metadata.drop_all)
-        await conn.run_sync(Base.metadata.create_all)
+@pytest.fixture(scope="session", autouse=True)
+def setup_database() -> None:
+    async def _setup() -> None:
+        async with _engine.begin() as conn:
+            await conn.run_sync(Base.metadata.drop_all)
+            await conn.run_sync(Base.metadata.create_all)
+
+    async def _teardown() -> None:
+        async with _engine.begin() as conn:
+            await conn.run_sync(Base.metadata.drop_all)
+        await _engine.dispose()
+
+    asyncio.run(_setup())
     yield
-    async with _engine.begin() as conn:
-        await conn.run_sync(Base.metadata.drop_all)
-    await _engine.dispose()
+    asyncio.run(_teardown())
 
 
 @pytest_asyncio.fixture
