@@ -3,6 +3,7 @@ from __future__ import annotations
 import uuid
 from datetime import date, datetime
 from decimal import Decimal
+from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel
@@ -46,8 +47,8 @@ class ImportMeter(BaseModel):
     zNumber: float | None = None
     connectedLoadKw: float | None = None
     linkedWaterMeterId: str | None = None
-    tariffHistory: list[dict] = []
-    budget: dict | None = None
+    tariffHistory: list[dict[str, Any]] = []
+    budget: dict[str, Any] | None = None
 
 
 class ImportPayload(BaseModel):
@@ -75,7 +76,7 @@ def _parse_date(date_str: str) -> date:
     except (ValueError, TypeError) as exc:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Ungültiges Datumsformat im Import",
+            detail="Ungültiges Datumsformat im Import",
         ) from exc
 
 
@@ -137,7 +138,7 @@ async def import_data(
 
     for r in payload.readings:
         db_id = r.id or uuid.uuid4()
-        existing = await db.get(Reading, db_id)
+        existing = await db.get(Reading, db_id)  # type: ignore[arg-type]
         if existing:
             readings_skipped += 1
             continue
@@ -153,7 +154,7 @@ async def import_data(
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
                     detail="Ungültige meter_id im Import-Payload",
-                )
+                ) from None
             # Ownership check: meter must belong to current user
             from sqlalchemy import select as sa_select
 

@@ -7,8 +7,6 @@ from slowapi.util import get_remote_address
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-logger = logging.getLogger(__name__)
-
 from meterflow.auth.dependencies import get_current_user
 from meterflow.auth.schemas import LoginRequest, RegisterRequest, UserResponse
 from meterflow.auth.service import (
@@ -24,6 +22,8 @@ from meterflow.auth.service import (
 )
 from meterflow.config import settings
 from meterflow.database import get_db
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 limiter = Limiter(key_func=get_remote_address)
@@ -63,7 +63,10 @@ async def register(
     try:
         user = await register_user(db, body.email, body.password)
     except IntegrityError:
-        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Email already registered")
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Email already registered",
+        ) from None
 
     access_token = create_access_token(user.id, user.email)
     refresh_token = await create_refresh_token(db, user.id)
@@ -83,7 +86,10 @@ async def login(
     user = await get_user_by_email(db, body.email)
     if user is None or not await verify_password_async(body.password, user.hashed_password):
         logger.warning("auth.login.failed email=%s", body.email)
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid credentials",
+        )
 
     access_token = create_access_token(user.id, user.email)
     refresh_token = await create_refresh_token(db, user.id)
@@ -99,15 +105,24 @@ async def refresh(
     db: AsyncSession = Depends(get_db),
 ) -> UserResponse:
     if refresh_token is None:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="No refresh token")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="No refresh token",
+        )
     try:
         new_refresh_raw, user_id = await rotate_refresh_token(db, refresh_token)
     except ValueError:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid or expired refresh token")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid or expired refresh token",
+        ) from None
 
     user = await get_user_by_id(db, user_id)
     if user is None:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="User not found",
+        )
 
     new_access = create_access_token(user.id, user.email)
     _set_auth_cookies(response, new_access, new_refresh_raw)
@@ -133,5 +148,8 @@ async def me(
 ) -> UserResponse:
     user = await get_user_by_id(db, current_user.id)
     if user is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found",
+        )
     return UserResponse.model_validate(user)

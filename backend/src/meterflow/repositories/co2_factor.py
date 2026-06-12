@@ -1,5 +1,4 @@
 import uuid
-from datetime import date
 
 from sqlalchemy import delete, select
 from sqlalchemy.dialects.postgresql import insert
@@ -59,4 +58,4 @@ class Co2FactorRepository(BaseRepository[Co2Factor]):
             )
         )
         await self.db.commit()
-        return result.rowcount > 0
+        return bool(result.rowcount)  # type: ignore[attr-defined]

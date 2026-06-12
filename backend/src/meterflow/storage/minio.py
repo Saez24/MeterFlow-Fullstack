@@ -1,8 +1,8 @@
 import asyncio
 from functools import partial
 
-import boto3
-from botocore.client import Config
+import boto3  # type: ignore[import-untyped]
+from botocore.client import Config  # type: ignore[import-untyped]
 
 from meterflow.config import Settings
 from meterflow.storage.base import StorageProvider

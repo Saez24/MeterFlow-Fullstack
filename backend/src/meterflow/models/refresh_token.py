@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import uuid
 from datetime import datetime
 
@@ -18,4 +20,4 @@ class RefreshToken(UUIDMixin, TimestampMixin, Base):
     expires_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), nullable=False)
     revoked: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
 
-    user: Mapped["User"] = relationship(back_populates="refresh_tokens")  # type: ignore[name-defined]
+    user: Mapped[User] = relationship(back_populates="refresh_tokens")  # type: ignore[name-defined]  # noqa: F821

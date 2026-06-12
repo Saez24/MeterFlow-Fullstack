@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 import uuid
-from datetime import date, datetime
+from datetime import datetime
 from decimal import Decimal
+from typing import Any
 
 from pydantic import BaseModel
 
@@ -43,8 +44,8 @@ class MeterCreate(BaseModel):
     z_number: Decimal | None = None
     connected_load_kw: Decimal | None = None
     linked_water_meter_id: uuid.UUID | None = None
-    tariff_history: list[dict] = []
-    budget: dict | None = None
+    tariff_history: list[dict[str, Any]] = []
+    budget: dict[str, Any] | None = None
 
 
 class MeterUpdate(BaseModel):
@@ -62,8 +63,8 @@ class MeterUpdate(BaseModel):
     z_number: Decimal | None = None
     connected_load_kw: Decimal | None = None
     linked_water_meter_id: uuid.UUID | None = None
-    tariff_history: list[dict] | None = None
-    budget: dict | None = None
+    tariff_history: list[dict[str, Any]] | None = None
+    budget: dict[str, Any] | None = None
 
 
 class MeterResponse(BaseModel):
@@ -83,8 +84,8 @@ class MeterResponse(BaseModel):
     z_number: Decimal | None
     connected_load_kw: Decimal | None
     linked_water_meter_id: uuid.UUID | None
-    tariff_history: list[dict]
-    budget: dict | None
+    tariff_history: list[dict[str, Any]]
+    budget: dict[str, Any] | None
     created_at: datetime
 
     model_config = {"from_attributes": True}

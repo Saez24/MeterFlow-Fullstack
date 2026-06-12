@@ -1,5 +1,8 @@
+from __future__ import annotations
+
 import uuid
 from decimal import Decimal
+from typing import Any
 
 from sqlalchemy import Boolean, ForeignKey, Numeric, Text
 from sqlalchemy.dialects.postgresql import JSONB, UUID
@@ -30,8 +33,8 @@ class Meter(UUIDMixin, TimestampMixin, Base):
     linked_water_meter_id: Mapped[uuid.UUID | None] = mapped_column(
         UUID(as_uuid=True), ForeignKey("meters.id", ondelete="SET NULL")
     )
-    tariff_history: Mapped[list[dict]] = mapped_column(JSONB, nullable=False, default=list)
-    budget: Mapped[dict | None] = mapped_column(JSONB)
+    tariff_history: Mapped[list[dict[str, Any]]] = mapped_column(JSONB, nullable=False, default=list)
+    budget: Mapped[dict[str, Any] | None] = mapped_column(JSONB)
 
-    user: Mapped["User"] = relationship(back_populates="meters")  # type: ignore[name-defined]
-    readings: Mapped[list["Reading"]] = relationship(back_populates="meter", cascade="all, delete-orphan")  # type: ignore[name-defined]
+    user: Mapped[User] = relationship(back_populates="meters")  # type: ignore[name-defined]  # noqa: F821
+    readings: Mapped[list[Reading]] = relationship(back_populates="meter", cascade="all, delete-orphan")  # type: ignore[name-defined]  # noqa: F821

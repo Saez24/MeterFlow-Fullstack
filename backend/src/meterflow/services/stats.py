@@ -1,5 +1,4 @@
 from collections import defaultdict
-from datetime import date
 from decimal import Decimal
 
 from meterflow.models.meter import Meter
@@ -64,13 +63,15 @@ def year_over_year_diff(
         return None
 
     prev_cost = sum(
-        m.total_cost for m in prev_stats.months if m.month <= max_month
+        (m.total_cost for m in prev_stats.months if m.month <= max_month),
+        Decimal("0"),
     )
     if prev_cost == Decimal("0"):
         return None
 
     current_cost = sum(
-        m.total_cost for m in current_stats.months if m.month <= max_month
+        (m.total_cost for m in current_stats.months if m.month <= max_month),
+        Decimal("0"),
     )
     percent = (current_cost - prev_cost) / prev_cost * Decimal("100")
     return percent, prev_stats.year

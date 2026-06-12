@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import uuid
 from datetime import date
 from decimal import Decimal
@@ -28,4 +30,4 @@ class Reading(UUIDMixin, TimestampMixin, Base):
     note: Mapped[str | None] = mapped_column(Text)
     photo: Mapped[str | None] = mapped_column(Text)
 
-    meter: Mapped["Meter"] = relationship(back_populates="readings")  # type: ignore[name-defined]
+    meter: Mapped[Meter] = relationship(back_populates="readings")  # type: ignore[name-defined]  # noqa: F821

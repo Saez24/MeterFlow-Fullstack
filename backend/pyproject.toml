@@ -44,11 +44,15 @@ line-length = 88
 target-version = ["py313"]
 
 [tool.ruff]
-line-length = 88
+line-length = 100
 
 [tool.ruff.lint]
-select = ["E", "F", "I", "UP", "S", "ANN", "B", "RUF"]
-ignore = ["ANN101", "ANN102", "S101"]
+select = ["E", "F", "I", "UP", "S", "B", "RUF"]
+ignore = [
+    "B008",   # FastAPI Depends() in argument defaults — standard pattern
+    "S101",   # assert in tests
+    "E501",   # line too long — enforced by black/formatter
+]
 
 [tool.mypy]
 strict = true
