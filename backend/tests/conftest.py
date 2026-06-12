@@ -20,6 +20,13 @@ TEST_DATABASE_URL = os.environ.get(
 _engine = create_async_engine(TEST_DATABASE_URL, echo=False, poolclass=NullPool)
 
 
+@pytest.fixture(autouse=True)
+def disable_rate_limits() -> None:
+    app.state.limiter._enabled = False
+    yield
+    app.state.limiter._enabled = True
+
+
 @pytest.fixture(scope="session", autouse=True)
 def setup_database() -> None:
     async def _setup() -> None:
