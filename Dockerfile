@@ -39,8 +39,7 @@ COPY backend/alembic.ini .
 COPY backend/alembic/ alembic/
 
 # Angular Static Files
-COPY --from=frontend-builder /app/dist/MeterFlow/browser/de /usr/share/nginx/html/
-COPY --from=frontend-builder /app/dist/MeterFlow/browser/en /usr/share/nginx/html/en/
+COPY --from=frontend-builder /app/dist/MeterFlow/browser /usr/share/nginx/html
 
 # Default: 2 uvicorn workers — override with -e UVICORN_WORKERS=4
 ENV UVICORN_WORKERS=2

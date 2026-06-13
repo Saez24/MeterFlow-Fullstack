@@ -48,10 +48,7 @@
             "polyfills": [
               "@angular/localize/init"
             ],
-            "localize": [
-              "de",
-              "en"
-            ]
+            "localize": false
           },
           "configurations": {
             "production": {
@@ -74,7 +71,6 @@
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true,
-              "localize": false,
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
