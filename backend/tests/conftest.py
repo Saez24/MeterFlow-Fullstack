@@ -1,6 +1,7 @@
 import asyncio
 import os
-from collections.abc import AsyncGenerator
+from collections.abc import AsyncGenerator, Generator
+from unittest.mock import AsyncMock, patch
 
 import pytest
 import pytest_asyncio
@@ -9,6 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.pool import NullPool
 
 from meterflow.database import get_db
+from meterflow.limiter import limiter
 from meterflow.main import app
 from meterflow.models.base import Base
 
@@ -21,10 +23,9 @@ _engine = create_async_engine(TEST_DATABASE_URL, echo=False, poolclass=NullPool)
 
 
 @pytest.fixture(autouse=True)
-def disable_rate_limits() -> None:
-    app.state.limiter._enabled = False
-    yield
-    app.state.limiter._enabled = True
+def disable_rate_limits() -> Generator[None, None, None]:
+    with patch.object(limiter, "_check_request_limit", new_callable=AsyncMock):
+        yield
 
 
 @pytest.fixture(scope="session", autouse=True)
