@@ -2,10 +2,10 @@ name: Build & Publish Docker Image
 
 on:
   push:
-    branches: [fullstack]
+    branches: [main]
     tags: ['v*']
   pull_request:
-    branches: [fullstack]
+    branches: [main]
 
 env:
   REGISTRY: ghcr.io
