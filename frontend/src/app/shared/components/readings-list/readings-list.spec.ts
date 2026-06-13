@@ -2,6 +2,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
 
 import { ReadingsList } from './readings-list';
+import { SupabaseService } from '../../../core/services/supabase.service';
+import { createSupabaseMock } from '../../../testing/supabase.service.mock';
 
 describe('ReadingsList', () => {
   let component: ReadingsList;
@@ -10,7 +12,10 @@ describe('ReadingsList', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [ReadingsList],
-      providers: [provideZonelessChangeDetection()],
+      providers: [
+        provideZonelessChangeDetection(),
+        { provide: SupabaseService, useValue: createSupabaseMock() },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ReadingsList);

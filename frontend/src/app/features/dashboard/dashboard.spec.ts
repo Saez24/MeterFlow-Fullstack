@@ -5,6 +5,7 @@ import { provideRouter, ActivatedRoute } from '@angular/router';
 import { vi } from 'vitest';
 import { SupabaseService } from '../../core/services/supabase.service';
 import { EnergyService } from '../../core/services/energy.service';
+import { createSupabaseMock } from '../../testing/supabase.service.mock';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('Dashboard', () => {
@@ -31,7 +32,7 @@ describe('Dashboard', () => {
       providers: [
         provideZonelessChangeDetection(),
         provideRouter([]),
-        SupabaseService,
+        { provide: SupabaseService, useValue: createSupabaseMock() },
         EnergyService,
         {
           provide: ActivatedRoute,
