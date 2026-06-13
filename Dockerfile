@@ -6,6 +6,9 @@ COPY frontend/package.json frontend/package-lock.json ./
 RUN npm ci --prefer-offline
 
 COPY frontend/ .
+RUN mkdir -p src/environments && \
+    printf 'export const environment = { apiUrl: '"'"'/api/v1'"'"', production: true };\n' > src/environments/environment.ts && \
+    printf 'export const environment = { apiUrl: '"'"'/api/v1'"'"', production: false };\n' > src/environments/environment.development.ts
 RUN npm run build -- --configuration=production
 
 # ── Stage 2: Python Build ─────────────────────────────────────────────────────
