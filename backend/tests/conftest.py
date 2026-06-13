@@ -1,6 +1,7 @@
 import asyncio
 import os
 from collections.abc import AsyncGenerator, Generator
+from typing import Any
 from unittest.mock import AsyncMock, patch
 
 import pytest
@@ -24,7 +25,10 @@ _engine = create_async_engine(TEST_DATABASE_URL, echo=False, poolclass=NullPool)
 
 @pytest.fixture(autouse=True)
 def disable_rate_limits() -> Generator[None, None, None]:
-    with patch.object(limiter, "_check_request_limit", new_callable=AsyncMock):
+    async def _noop(request: Any, *args: Any, **kwargs: Any) -> None:
+        request.state.view_rate_limit = None
+
+    with patch.object(limiter, "_check_request_limit", AsyncMock(side_effect=_noop)):
         yield
 
 
