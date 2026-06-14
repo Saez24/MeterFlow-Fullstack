@@ -31,10 +31,11 @@ _REFRESH_MAX_AGE = settings.refresh_token_expire_days * 86400
 
 
 def _set_auth_cookies(
-    response: Response, access_token: str, refresh_token: str, request: Request
+    response: Response, access_token: str, refresh_token: str
 ) -> None:
-    proto = request.headers.get("x-forwarded-proto", request.url.scheme)
-    _secure = proto == "https"
+    # Secure flag is driven by config, not the spoofable x-forwarded-proto header.
+    # Set COOKIE_SECURE=true once served behind an HTTPS proxy.
+    _secure = settings.cookie_secure
     response.set_cookie(
         key="access_token",
         value=access_token,
@@ -72,7 +73,7 @@ async def register(
 
     access_token = create_access_token(user.id, user.email)
     refresh_token = await create_refresh_token(db, user.id)
-    _set_auth_cookies(response, access_token, refresh_token, request)
+    _set_auth_cookies(response, access_token, refresh_token)
     logger.info("auth.register.success user_id=%s", user.id)
     return UserResponse.model_validate(user)
 
@@ -95,14 +96,13 @@ async def login(
 
     access_token = create_access_token(user.id, user.email)
     refresh_token = await create_refresh_token(db, user.id)
-    _set_auth_cookies(response, access_token, refresh_token, request)
+    _set_auth_cookies(response, access_token, refresh_token)
     logger.info("auth.login.success user_id=%s", user.id)
     return UserResponse.model_validate(user)
 
 
 @router.post("/refresh", response_model=UserResponse)
 async def refresh(
-    request: Request,
     response: Response,
     refresh_token: Annotated[str | None, Cookie()] = None,
     db: AsyncSession = Depends(get_db),
@@ -128,7 +128,7 @@ async def refresh(
         )
 
     new_access = create_access_token(user.id, user.email)
-    _set_auth_cookies(response, new_access, new_refresh_raw, request)
+    _set_auth_cookies(response, new_access, new_refresh_raw)
     return UserResponse.model_validate(user)
 
 

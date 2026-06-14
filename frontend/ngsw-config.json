@@ -28,23 +28,13 @@
   ],
   "dataGroups": [
     {
-      "name": "supabase-api",
-      "urls": ["https://*.supabase.co/rest/v1/**"],
+      "name": "api",
+      "urls": ["/api/v1/**"],
       "cacheConfig": {
         "strategy": "freshness",
-        "maxSize": 50,
-        "maxAge": "1h",
-        "timeout": "10s"
-      }
-    },
-    {
-      "name": "supabase-auth",
-      "urls": ["https://*.supabase.co/auth/v1/**"],
-      "cacheConfig": {
-        "strategy": "freshness",
-        "maxSize": 10,
-        "maxAge": "10m",
-        "timeout": "10s"
+        "maxSize": 100,
+        "maxAge": "5m",
+        "timeout": "5s"
       }
     }
   ]

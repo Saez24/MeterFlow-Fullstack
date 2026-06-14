@@ -1,7 +1,7 @@
 from datetime import date
 from decimal import Decimal
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Path
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from meterflow.auth.dependencies import get_current_user
@@ -20,7 +20,7 @@ router = APIRouter(prefix="/stats", tags=["stats"])
 
 @router.get("/year/{year}", response_model=YearStats)
 async def get_year_stats(
-    year: int,
+    year: int = Path(ge=1900, le=2100),
     current_user: CurrentUser = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ) -> YearStats:

@@ -20,6 +20,10 @@ class Settings(BaseSettings):
     environment: Literal["development", "production"] = "production"
     allowed_origins: str = "http://localhost:4200"
 
+    # Set to True when served behind an HTTPS-terminating proxy so auth cookies
+    # carry the Secure flag. Never derived from request headers (spoofable).
+    cookie_secure: bool = False
+
     storage_backend: Literal["minio", "local", "none"] = "none"
     local_storage_path: str = "/data/photos"
 

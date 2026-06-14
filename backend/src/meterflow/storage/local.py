@@ -9,6 +9,10 @@ class LocalStorageProvider(StorageProvider):
         self._base = base_path
 
     def _full_path(self, file_key: str) -> str:
+        # file_key may originate from user-supplied data (e.g. imported photo
+        # references), so reject any path-traversal characters before use.
+        if not file_key or "/" in file_key or "\\" in file_key or ".." in file_key:
+            raise ValueError("Invalid file key")
         return f"{self._base}/{file_key}"
 
     async def upload(self, file_id: str, data: bytes, content_type: str) -> str:
