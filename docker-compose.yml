@@ -12,3 +12,6 @@ services:
       timeout: 10s
       retries: 3
     restart: unless-stopped
+    # Resource-Limits gegen OOM / Noisy-Neighbor (devops-standards.md)
+    mem_limit: 512m
+    cpus: "1.0"

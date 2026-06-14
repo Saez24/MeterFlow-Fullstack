@@ -12,7 +12,7 @@ RUN mkdir -p src/environments && \
 RUN npm run build -- --configuration=production
 
 # ── Stage 2: Python Build ─────────────────────────────────────────────────────
-FROM python:3.13-slim AS backend-builder
+FROM python:3.14-slim AS backend-builder
 
 WORKDIR /build
 COPY backend/pyproject.toml .
@@ -22,7 +22,7 @@ RUN pip install --no-cache-dir build && \
     python -m build --wheel --outdir /wheels
 
 # ── Stage 3: Runtime ──────────────────────────────────────────────────────────
-FROM python:3.13-slim
+FROM python:3.14-slim
 
 # System-Pakete: nginx + supervisor
 RUN apt-get update && \

@@ -46,7 +46,7 @@ app.add_middleware(
     allow_origins=settings.allowed_origins_list,
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allow_headers=["Content-Type", "Cookie"],
+    allow_headers=["Content-Type"],
 )
 
 _PREFIX = "/api/v1"
