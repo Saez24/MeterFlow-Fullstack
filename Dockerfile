@@ -29,8 +29,10 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends nginx supervisor curl && \
     rm -rf /var/lib/apt/lists/*
 
-# Non-root user for uvicorn
-RUN groupadd --system appuser && useradd --system --gid appuser --no-create-home appuser
+# Non-root user for uvicorn (with home dir so asyncpg's ~/.postgresql SSL lookup
+# resolves to an accessible path, not the inaccessible /root)
+RUN groupadd --system appuser && \
+    useradd --system --gid appuser --create-home --home-dir /home/appuser appuser
 
 # Python-Paket installieren
 COPY --from=backend-builder /wheels/*.whl /tmp/
