@@ -55,7 +55,7 @@ def _set_auth_cookies(
 
 
 @router.post("/register", status_code=status.HTTP_201_CREATED, response_model=UserResponse)
-@limiter.limit("5/minute")
+@limiter.limit("2/minute")
 async def register(
     request: Request,
     body: RegisterRequest,
@@ -78,7 +78,7 @@ async def register(
 
 
 @router.post("/login", response_model=UserResponse)
-@limiter.limit("10/minute")
+@limiter.limit("3/minute")
 async def login(
     request: Request,
     body: LoginRequest,

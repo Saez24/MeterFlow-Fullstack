@@ -29,6 +29,9 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends nginx supervisor curl && \
     rm -rf /var/lib/apt/lists/*
 
+# Non-root user for uvicorn
+RUN groupadd --system appuser && useradd --system --gid appuser --no-create-home appuser
+
 # Python-Paket installieren
 COPY --from=backend-builder /wheels/*.whl /tmp/
 RUN pip install --no-cache-dir /tmp/*.whl && rm /tmp/*.whl
@@ -40,6 +43,9 @@ COPY backend/alembic/ alembic/
 
 # Angular Static Files
 COPY --from=frontend-builder /app/dist/MeterFlow/browser /usr/share/nginx/html
+
+# /app owned by appuser so uvicorn and alembic can write
+RUN chown -R appuser:appuser /app
 
 # Default: 2 uvicorn workers — override with -e UVICORN_WORKERS=4
 ENV UVICORN_WORKERS=2

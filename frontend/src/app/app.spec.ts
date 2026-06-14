@@ -3,7 +3,7 @@ import { provideZonelessChangeDetection } from '@angular/core';
 import { App } from './app';
 import { provideRouter, ActivatedRoute, NavigationEnd } from '@angular/router';
 import { vi } from 'vitest';
-import { SupabaseService } from './core/services/supabase.service';
+import { ApiService } from './core/services/api.service';
 import { of } from 'rxjs';
 
 describe('App', () => {
@@ -27,7 +27,7 @@ describe('App', () => {
       providers: [
         provideZonelessChangeDetection(),
         provideRouter([{ path: '', component: App }]),
-        SupabaseService,
+        ApiService,
         {
           provide: ActivatedRoute,
           useValue: {

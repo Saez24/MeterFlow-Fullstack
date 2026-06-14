@@ -69,7 +69,6 @@ class MeterUpdate(BaseModel):
 
 class MeterResponse(BaseModel):
     id: uuid.UUID
-    user_id: uuid.UUID
     name: str
     type: str
     unit: str

@@ -8,7 +8,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { SupabaseService } from '../../core/services/supabase.service';
+import { ApiService } from '../../core/services/api.service';
 
 type AuthMode = 'login' | 'register';
 
@@ -22,7 +22,7 @@ type AuthMode = 'login' | 'register';
 
 })
 export class Auth {
-  private readonly supabase = inject(SupabaseService);
+  private readonly api = inject(ApiService);
   private readonly router = inject(Router);
   private readonly snackBar = inject(MatSnackBar);
   private readonly fb = inject(FormBuilder);
@@ -62,11 +62,11 @@ export class Auth {
 
     try {
       if (this.mode() === 'login') {
-        const { error } = await this.supabase.signIn(email!, password!);
+        const { error } = await this.api.signIn(email!, password!);
         if (error) throw error;
         this.router.navigate(['/dashboard']);
       } else {
-        const { error } = await this.supabase.signUp(email!, password!);
+        const { error } = await this.api.signUp(email!, password!);
         if (error) throw error;
         this.router.navigate(['/dashboard']);
       }

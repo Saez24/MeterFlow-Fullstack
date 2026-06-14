@@ -9,7 +9,7 @@ import { firstValueFrom } from 'rxjs';
 import { ReadingService } from '../../../../../core/services/reading.service';
 import { MeterDetailStateService } from '../../../../../core/services/meter-detail-state.service';
 import { ConfirmDialogComponent } from '../../../../../shared/components/confirm-dialog/confirm-dialog';
-import { SupabaseService } from '../../../../../core/services/supabase.service';
+import { ApiService } from '../../../../../core/services/api.service';
 
 @Component({
   selector: 'app-meter-readings',
@@ -25,7 +25,7 @@ export class MeterReadings {
   private readonly dialog = inject(MatDialog);
   private readonly datePipe = inject(DatePipe);
   private readonly state = inject(MeterDetailStateService);
-  private readonly supabaseService = inject(SupabaseService);
+  private readonly apiService = inject(ApiService);
 
   meter = this.state.meter;
   readings = this.state.readings;
@@ -51,7 +51,7 @@ export class MeterReadings {
     } else {
       this.isPhotoLoading.set(true);
       try {
-        const url = await this.supabaseService.getSignedPhotoUrl(photo);
+        const url = await this.apiService.getSignedPhotoUrl(photo);
         this.activePhotoUrl.set(url);
       } catch {
         this.activePhotoUrl.set(null);
@@ -81,7 +81,7 @@ export class MeterReadings {
     this.readingService.deleteReading(id);
     // Foto aus Storage löschen (nur bei Pfaden, nicht bei alten absoluten URLs)
     if (photoPath && !photoPath.startsWith('http')) {
-      try { await this.supabaseService.deletePhoto(photoPath); } catch { /* ignorieren */ }
+      try { await this.apiService.deletePhoto(photoPath); } catch { /* ignorieren */ }
     }
     this.snackBar.open($localize`:@@meterReadings.deleted:Ablesung gelöscht`, 'OK', { duration: 2000 });
   }

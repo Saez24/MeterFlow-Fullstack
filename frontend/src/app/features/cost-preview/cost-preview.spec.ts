@@ -1,8 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { CostPreview } from './cost-preview';
-import { SupabaseService } from '../../core/services/supabase.service';
-import { createSupabaseMock } from '../../testing/supabase.service.mock';
+import { ApiService } from '../../core/services/api.service';
+import { createApiServiceMock } from '../../testing/api.service.mock';
 
 describe('CostPreview', () => {
     let component: CostPreview;
@@ -13,7 +13,7 @@ describe('CostPreview', () => {
             imports: [CostPreview],
             providers: [
                 provideZonelessChangeDetection(),
-                { provide: SupabaseService, useValue: createSupabaseMock() },
+                { provide: ApiService, useValue: createApiServiceMock() },
             ],
         }).compileComponents();
 

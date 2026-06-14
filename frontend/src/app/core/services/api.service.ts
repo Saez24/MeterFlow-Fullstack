@@ -10,7 +10,7 @@ export interface AppUser {
 }
 
 @Injectable({ providedIn: 'root' })
-export class SupabaseService {
+export class ApiService {
   private readonly http = inject(HttpClient);
   private readonly base = environment.apiUrl;
 

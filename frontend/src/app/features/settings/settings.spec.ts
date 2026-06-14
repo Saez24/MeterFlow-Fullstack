@@ -3,9 +3,9 @@ import { provideZonelessChangeDetection } from '@angular/core';
 import { Settings } from './settings';
 import { provideRouter, ActivatedRoute } from '@angular/router';
 import { vi } from 'vitest';
-import { SupabaseService } from '../../core/services/supabase.service';
+import { ApiService } from '../../core/services/api.service';
 import { EnergyService } from '../../core/services/energy.service';
-import { createSupabaseMock } from '../../testing/supabase.service.mock';
+import { createApiServiceMock } from '../../testing/api.service.mock';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('Settings', () => {
@@ -32,7 +32,7 @@ describe('Settings', () => {
       providers: [
         provideZonelessChangeDetection(),
         provideRouter([]),
-        { provide: SupabaseService, useValue: createSupabaseMock() },
+        { provide: ApiService, useValue: createApiServiceMock() },
         EnergyService,
         {
           provide: ActivatedRoute,

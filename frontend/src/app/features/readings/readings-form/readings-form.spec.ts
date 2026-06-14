@@ -8,7 +8,7 @@ import { ReadingsForm } from './readings-form';
 import { MeterService } from '../../../core/services/meter.service';
 import { ReadingService } from '../../../core/services/reading.service';
 import { TariffService } from '../../../core/services/tariff.service';
-import { SupabaseService } from '../../../core/services/supabase.service';
+import { ApiService } from '../../../core/services/api.service';
 import { MeterConfig, MeterReading, EnergyType, TariffPeriod } from '../../../core/models/energy.models';
 import { vi } from 'vitest';
 
@@ -81,7 +81,7 @@ const mockTariffService = {
   },
 };
 
-const mockSupabaseService = {
+const mockApiService = {
   getSignedPhotoUrl: vi.fn().mockResolvedValue(null),
   uploadPhoto: vi.fn().mockResolvedValue('path/photo.jpg'),
   deletePhoto: vi.fn().mockResolvedValue(undefined),
@@ -104,7 +104,7 @@ describe('ReadingsForm', () => {
         { provide: MeterService, useValue: mockMeterService },
         { provide: ReadingService, useValue: mockReadingService },
         { provide: TariffService, useValue: mockTariffService },
-        { provide: SupabaseService, useValue: mockSupabaseService },
+        { provide: ApiService, useValue: mockApiService },
         {
           provide: ActivatedRoute,
           useValue: {

@@ -1,10 +1,10 @@
 import { Injectable, signal, computed, inject } from '@angular/core';
 import { MeterConfig, TariffPeriod } from '../models/energy.models';
-import { SupabaseService } from './supabase.service';
+import { ApiService } from './api.service';
 
 @Injectable({ providedIn: 'root' })
 export class MeterService {
-  private readonly supabase = inject(SupabaseService);
+  private readonly api = inject(ApiService);
 
   readonly meters = signal<MeterConfig[]>([]);
   readonly loading = signal(true);
@@ -17,7 +17,7 @@ export class MeterService {
 
   async loadMeters(): Promise<void> {
     this.loading.set(true);
-    const meters = await this.supabase.getMeters();
+    const meters = await this.api.getMeters();
     this.meters.set(meters);
     this.loading.set(false);
   }
@@ -27,18 +27,18 @@ export class MeterService {
   }
 
   async addMeter(meter: Omit<MeterConfig, 'id' | 'createdAt'>): Promise<MeterConfig> {
-    const saved = await this.supabase.addMeter(meter);
+    const saved = await this.api.addMeter(meter);
     this.meters.update((list) => [...list, saved]);
     return saved;
   }
 
   async updateMeter(id: string, changes: Partial<MeterConfig>): Promise<void> {
-    await this.supabase.updateMeter(id, changes);
+    await this.api.updateMeter(id, changes);
     this.meters.update((list) => list.map((m) => (m.id === id ? { ...m, ...changes } : m)));
   }
 
   async deleteMeter(id: string): Promise<void> {
-    await this.supabase.deleteMeter(id);
+    await this.api.deleteMeter(id);
     this.meters.update((list) => list.filter((m) => m.id !== id));
   }
 }

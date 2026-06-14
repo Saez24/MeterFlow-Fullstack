@@ -5,7 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ThemeService } from './core/services/theme.service';
-import { SupabaseService } from './core/services/supabase.service';
+import { ApiService } from './core/services/api.service';
 import { NotificationService } from './core/services/notification.service';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { filter, map } from 'rxjs';
@@ -33,7 +33,7 @@ interface NavItem {
 export class App {
   protected readonly title = signal('MeterFlow');
   readonly themeService = inject(ThemeService);
-  readonly supabaseService = inject(SupabaseService);
+  readonly apiService = inject(ApiService);
   readonly sidebarCollapsed = signal(false);
 
   private readonly router = inject(Router);
@@ -66,7 +66,7 @@ export class App {
   );
 
   readonly connectionColor = computed(() => {
-    switch (this.supabaseService.connectionStatus()) {
+    switch (this.apiService.connectionStatus()) {
       case 'connected': return 'var(--apple-blue)';
       case 'error': return '#EF4444';
       case 'checking': return '#F59E0B';
@@ -74,7 +74,7 @@ export class App {
   });
 
   readonly connectionTooltip = computed(() => {
-    switch (this.supabaseService.connectionStatus()) {
+    switch (this.apiService.connectionStatus()) {
       case 'connected': return $localize`:@@connection.connected:Verbunden`;
       case 'error': return $localize`:@@connection.error:Keine Verbindung`;
       case 'checking': return $localize`:@@connection.checking:Verbinde...`;
@@ -82,7 +82,7 @@ export class App {
   });
 
   async logout(): Promise<void> {
-    await this.supabaseService.signOut();
+    await this.apiService.signOut();
     this.router.navigate(['/auth']);
   }
 }

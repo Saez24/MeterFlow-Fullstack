@@ -1,11 +1,11 @@
 import { Injectable, signal, effect, inject } from '@angular/core';
-import { SupabaseService } from './supabase.service';
+import { ApiService } from './api.service';
 import { MeterService } from './meter.service';
 import { ReadingService } from './reading.service';
 
 @Injectable({ providedIn: 'root' })
 export class EnergyService {
-  private readonly supabase = inject(SupabaseService);
+  private readonly api = inject(ApiService);
   private readonly meterService = inject(MeterService);
   private readonly readingService = inject(ReadingService);
 
@@ -13,7 +13,7 @@ export class EnergyService {
 
   constructor() {
     effect(() => {
-      if (this.supabase.currentUser()) {
+      if (this.api.currentUser()) {
         this.loadAll();
       } else {
         this.meterService.meters.set([]);

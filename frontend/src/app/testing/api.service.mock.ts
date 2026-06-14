@@ -1,8 +1,8 @@
 import { signal } from '@angular/core';
 import { vi } from 'vitest';
-import { SupabaseService } from '../core/services/supabase.service';
+import { ApiService } from '../core/services/api.service';
 
-export function createSupabaseMock(): Partial<SupabaseService> {
+export function createApiServiceMock(): Partial<ApiService> {
   return {
     connectionStatus: signal('connected'),
     currentUser: signal(null),

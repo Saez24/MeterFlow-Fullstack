@@ -2,8 +2,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
 
 import { ReadingsList } from './readings-list';
-import { SupabaseService } from '../../../core/services/supabase.service';
-import { createSupabaseMock } from '../../../testing/supabase.service.mock';
+import { ApiService } from '../../../core/services/api.service';
+import { createApiServiceMock } from '../../../testing/api.service.mock';
 
 describe('ReadingsList', () => {
   let component: ReadingsList;
@@ -14,7 +14,7 @@ describe('ReadingsList', () => {
       imports: [ReadingsList],
       providers: [
         provideZonelessChangeDetection(),
-        { provide: SupabaseService, useValue: createSupabaseMock() },
+        { provide: ApiService, useValue: createApiServiceMock() },
       ],
     }).compileComponents();
 

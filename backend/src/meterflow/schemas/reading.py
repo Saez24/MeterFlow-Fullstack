@@ -23,7 +23,6 @@ class ReadingUpdate(BaseModel):
 
 class ReadingResponse(BaseModel):
     id: uuid.UUID
-    user_id: uuid.UUID
     meter_id: uuid.UUID
     date: Date
     value: Decimal

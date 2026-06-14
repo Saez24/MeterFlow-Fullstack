@@ -1,13 +1,13 @@
 import { Injectable, signal, computed, inject } from '@angular/core';
 import { MeterReading, MeterConfig } from '../models/energy.models';
-import { SupabaseService } from './supabase.service';
+import { ApiService } from './api.service';
 import { MeterService } from './meter.service';
 import { TariffService } from './tariff.service';
 import { Router } from '@angular/router';
 
 @Injectable({ providedIn: 'root' })
 export class ReadingService {
-  private readonly supabase = inject(SupabaseService);
+  private readonly api = inject(ApiService);
   private readonly meterService = inject(MeterService);
   private readonly tariffService = inject(TariffService);
   private readonly router = inject(Router);
@@ -40,7 +40,7 @@ export class ReadingService {
 
   async loadReadings(): Promise<void> {
     this.loading.set(true);
-    const readings = await this.supabase.getReadings();
+    const readings = await this.api.getReadings();
     this.readings.set(readings);
     this.loading.set(false);
   }
@@ -54,14 +54,14 @@ export class ReadingService {
   }
 
   async addReading(reading: Omit<MeterReading, 'id'>): Promise<MeterReading> {
-    const saved = await this.supabase.addReading(reading);
+    const saved = await this.api.addReading(reading);
     this.readings.update(list => [...list, saved]);
     await this.recalculateAllReadingsForMeter(reading.meterId);
     return saved;
   }
 
   async updateReading(id: string, changes: Partial<MeterReading>): Promise<void> {
-    await this.supabase.updateReading(id, changes);
+    await this.api.updateReading(id, changes);
     const oldReading = this.getReading(id);
     this.readings.update(list =>
       list.map(r => (r.id === id ? { ...r, ...changes } : r))
@@ -73,7 +73,7 @@ export class ReadingService {
   async deleteReading(id: string): Promise<void> {
     const reading = this.getReading(id);
     if (!reading) return;
-    await this.supabase.deleteReading(id);
+    await this.api.deleteReading(id);
     this.readings.update(list => list.filter(r => r.id !== id));
     await this.recalculateAllReadingsForMeter(reading.meterId);
     this.goBack();
@@ -84,7 +84,7 @@ export class ReadingService {
   }
 
   async recalculateAllReadingsForMeter(meterId: string): Promise<void> {
-    const updated = await this.supabase.recalculateReadings(meterId);
+    const updated = await this.api.recalculateReadings(meterId);
     this.readings.update(list => [
       ...list.filter(r => r.meterId !== meterId),
       ...updated,

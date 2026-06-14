@@ -18,7 +18,6 @@ class Co2FactorUpsert(BaseModel):
 
 class Co2FactorResponse(BaseModel):
     id: uuid.UUID
-    user_id: uuid.UUID
     energy_type: str
     factor_kg_per_unit: Decimal
     unit: str

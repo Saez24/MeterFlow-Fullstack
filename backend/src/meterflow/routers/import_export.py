@@ -5,13 +5,15 @@ from datetime import date, datetime
 from decimal import Decimal
 from typing import Any
 
-from fastapi import APIRouter, Depends, HTTPException, status
-from pydantic import BaseModel
+from fastapi import APIRouter, Depends, HTTPException, Request, status
+from pydantic import BaseModel, Field
+from sqlalchemy import select as sa_select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from meterflow.auth.dependencies import get_current_user
 from meterflow.auth.service import CurrentUser
 from meterflow.database import get_db
+from meterflow.limiter import limiter
 from meterflow.models.meter import Meter
 from meterflow.models.reading import Reading
 
@@ -52,8 +54,8 @@ class ImportMeter(BaseModel):
 
 
 class ImportPayload(BaseModel):
-    meters: list[ImportMeter] = []
-    readings: list[ImportReading] = []
+    meters: list[ImportMeter] = Field(default=[], max_length=10000)
+    readings: list[ImportReading] = Field(default=[], max_length=50000)
 
 
 class ImportResult(BaseModel):
@@ -81,7 +83,9 @@ def _parse_date(date_str: str) -> date:
 
 
 @router.post("/", response_model=ImportResult, status_code=status.HTTP_200_OK)
+@limiter.limit("5/minute")
 async def import_data(
+    request: Request,
     payload: ImportPayload,
     current_user: CurrentUser = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
@@ -99,10 +103,37 @@ async def import_data(
 
         existing = await db.get(Meter, db_id)
         if existing:
+            if existing.user_id != user_id:
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="Meter nicht gefunden oder kein Zugriff",
+                )
             if original_id:
                 meter_id_map[original_id] = db_id
             meters_skipped += 1
             continue
+
+        linked_water_meter_id: uuid.UUID | None = None
+        if m.linkedWaterMeterId:
+            try:
+                linked_id = uuid.UUID(m.linkedWaterMeterId)
+            except ValueError:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Ungültige linkedWaterMeterId im Import-Payload",
+                ) from None
+            owner_check = await db.execute(
+                sa_select(Meter.id).where(
+                    Meter.id == linked_id,
+                    Meter.user_id == user_id,
+                )
+            )
+            if owner_check.scalar_one_or_none() is None:
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="Verlinkter Wasserzähler nicht gefunden oder kein Zugriff",
+                )
+            linked_water_meter_id = linked_id
 
         meter = Meter(
             id=db_id,
@@ -120,9 +151,7 @@ async def import_data(
             calorific_value=m.calorificValue,
             z_number=m.zNumber,
             connected_load_kw=m.connectedLoadKw,
-            linked_water_meter_id=(
-                uuid.UUID(m.linkedWaterMeterId) if m.linkedWaterMeterId else None
-            ),
+            linked_water_meter_id=linked_water_meter_id,
             tariff_history=m.tariffHistory,
             budget=m.budget,
         )
@@ -140,6 +169,11 @@ async def import_data(
         db_id = r.id or uuid.uuid4()
         existing = await db.get(Reading, db_id)  # type: ignore[arg-type]
         if existing:
+            if existing.user_id != user_id:
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="Ablesung nicht gefunden oder kein Zugriff",
+                )
             readings_skipped += 1
             continue
 
@@ -155,9 +189,6 @@ async def import_data(
                     status_code=status.HTTP_400_BAD_REQUEST,
                     detail="Ungültige meter_id im Import-Payload",
                 ) from None
-            # Ownership check: meter must belong to current user
-            from sqlalchemy import select as sa_select
-
             meter_check = await db.execute(
                 sa_select(Meter.id).where(
                     Meter.id == meter_id,
