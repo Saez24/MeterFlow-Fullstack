@@ -12,15 +12,15 @@
     "e2e:debug": "playwright test --debug"
   },
   "private": true,
-  "packageManager": "npm@11.16.0",
+  "packageManager": "npm@11.17.0",
   "dependencies": {
     "@angular/animations": "^22.0.1",
-    "@angular/cdk": "^22.0.0",
+    "@angular/cdk": "^22.0.1",
     "@angular/common": "^22.0.1",
     "@angular/compiler": "^22.0.1",
     "@angular/core": "^22.0.1",
     "@angular/forms": "^22.0.1",
-    "@angular/material": "^22.0.0",
+    "@angular/material": "^22.0.1",
     "@angular/platform-browser": "^22.0.1",
     "@angular/router": "^22.0.1",
     "@angular/service-worker": "^22.0.1",
@@ -40,10 +40,10 @@
     "@angular/cli": "^22.0.2",
     "@angular/compiler-cli": "^22.0.1",
     "@angular/localize": "^22.0.1",
-    "@playwright/test": "^1.60.0",
+    "@playwright/test": "^1.61.0",
     "jsdom": "^29.1.1",
-    "prettier": "^3.8.3",
+    "prettier": "^3.8.4",
     "typescript": "~6.0.3",
-    "vitest": "^4.1.8"
+    "vitest": "^4.1.9"
   }
 }
